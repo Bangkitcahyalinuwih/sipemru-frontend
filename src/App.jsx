@@ -1,30 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// App.js
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import AdminLayout from './layouts/AdminLayout'
+import { Home } from './features/app/Home/Pages/Home'
+import { Booking } from './features/app/Home/Pages/Booking'
+import { History } from './features/app/Home/Pages/History'
+import { Navbar } from './features/app/Home/components/navbar'
 
-function App() {
+function AppContent() {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 gap-6 p-6">
-      
-      <h1 className="text-[var(--text-h)]">
-        SIPERU 🚀
-      </h1>
-
-      <p className="text-[var(--text)] max-w-xl">
-        Sistem Peminjaman Ruang berbasis React + Tailwind
-      </p>
-
-      <button className="px-6 py-2 rounded-xl bg-[var(--accent)] text-white hover:opacity-90 transition">
-        Mulai
-      </button>
-
-      <code>React + Vite + Tailwind v4</code>
-
-    </div>
+    <Routes>
+      <Route 
+        path="/" 
+        element={
+          <>
+            <Navbar />
+            <Home />
+          </>
+        } 
+      />
+      <Route 
+        path="/booking" 
+        element={
+          <>
+            <Navbar />
+            <Booking />
+          </>
+        } 
+      />
+      <Route 
+        path="/history" 
+        element={
+          <>
+            <Navbar />
+            <History />
+          </>
+        } 
+      />
+      <Route path="/admin/*" element={<AdminLayout />} />
+    </Routes>
   )
 }
 
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  )
+}
 
 export default App

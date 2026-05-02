@@ -1,16 +1,158 @@
-# React + Vite
+# 📌 SIPemru Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistem Peminjaman Ruangan Kampus berbasis **React + Vite + Tailwind CSS** dengan arsitektur modular (feature-based).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Deskripsi
 
-## React Compiler
+Aplikasi ini digunakan untuk:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* Menampilkan daftar ruangan kampus
+* Melakukan booking ruangan
+* Monitoring penggunaan ruangan melalui dashboard
+* Mengelola tampilan admin
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🧠 Arsitektur Project
+
+Project ini menggunakan pendekatan:
+
+👉 **Feature-Based Architecture**
+Setiap fitur dipisah berdasarkan domain, bukan berdasarkan jenis file.
+
+Keuntungan:
+
+* Mudah scale ke project besar
+* Kode lebih terorganisir
+* Cocok untuk tim development
+
+---
+
+## 📁 Struktur Folder (Detail)
+
+```bash
+src/
+│
+├── api/
+│   └── # Konfigurasi komunikasi ke backend (axios / fetch)
+│
+├── features/
+│   │
+│   ├── Admin/
+│   │   ├── components/
+│   │   │   ├── Header.jsx        # Header admin (topbar)
+│   │   │   └── Sidebar.jsx       # Sidebar navigasi admin
+│   │   │
+│   │   ├── config/
+│   │   │   └── sidebarMenu.js    # Konfigurasi menu sidebar (dynamic menu)
+│   │   │
+│   │   └── hooks/
+│   │       └── useDarkMode.js    # Custom hook untuk dark mode toggle
+│   │
+│   ├── app/
+│   │   └── Home/
+│   │       ├── components/
+│   │       │   ├── bookingForm.jsx  # Form booking ruangan
+│   │       │   ├── hero.jsx         # Section hero / landing
+│   │       │   ├── navbar.jsx       # Navbar user
+│   │       │   ├── roomList.jsx     # List ruangan + booking button
+│   │       │   └── stats.jsx        # Statistik ruangan
+│   │       │
+│   │       └── Pages/
+│   │           ├── Home.jsx         # Halaman utama user
+│   │           ├── Booking.jsx      # Halaman booking
+│   │           └── History.jsx      # Riwayat booking
+│   │
+│   ├── dashboard/
+│   │   ├── hooks/
+│   │   │   └── useDashboard.js     # Logic data dashboard (fetch + state)
+│   │   │
+│   │   ├── pages/
+│   │   │   └── DashboardPage.jsx   # Tampilan utama dashboard
+│   │   │
+│   │   └── services/
+│   │       └── dashboardService.js # API service untuk dashboard
+│
+├── layouts/
+│   └── AdminLayout.jsx             # Layout utama admin (wrapper sidebar + content)
+│
+├── store/
+│   └── # Global state (context / redux / zustand)
+│
+├── utils/
+│   └── # Helper functions (formatter, reusable logic)
+│
+├── App.jsx                         # Root routing aplikasi
+├── main.jsx                        # Entry point React
+├── index.css                       # Global styling (Tailwind)
+```
+
+---
+
+## 🔄 Alur Data (Flow Sederhana)
+
+1. **UI (components/pages)**
+   ⬇
+2. **Hooks (logic & state)**
+   ⬇
+3. **Services (API call)**
+   ⬇
+4. **Backend API**
+
+---
+
+## ⚙️ Teknologi yang Digunakan
+
+* React (UI Library)
+* Vite (Build Tool)
+* Tailwind CSS (Styling)
+* React Router (Routing)
+* Custom Hooks (State Logic)
+* Axios / Fetch (API Integration)
+
+---
+
+## 🛠️ Instalasi
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## 🌐 Environment
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+---
+
+## 📌 Best Practices yang Digunakan
+
+* ✅ Feature-based folder structure
+* ✅ Separation of concerns (UI, logic, service)
+* ✅ Reusable components
+* ✅ Custom hooks untuk logic
+* ✅ Modular & scalable
+
+---
+
+## 🔥 Highlight Project
+
+* Struktur sudah siap untuk scale ke aplikasi besar
+* Sudah memisahkan:
+
+  * UI (components)
+  * Logic (hooks)
+  * API (services)
+* Clean code & maintainable
+
+---
+
+## 👨‍💻 Author
+
+Septian Angga Saputra

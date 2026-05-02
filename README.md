@@ -155,4 +155,4 @@ VITE_API_URL=http://localhost:3000
 
 ## 👨‍💻 Author
 
-Septian Angga Saputra
+Kelompok 8

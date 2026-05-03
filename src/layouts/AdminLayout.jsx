@@ -4,7 +4,7 @@ import Sidebar from "../features/Admin/components/Sidebar";
 import Header from "../features/Admin/components/Header";
 import Dashboard from "../features/dashboard/pages/DashboardPage";
 
-export default function AdminLayout() {
+export const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();

@@ -1,44 +1,30 @@
-// App.js
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import AdminLayout from './layouts/AdminLayout'
-import { Home } from './features/app/Home/Pages/Home'
-import { Booking } from './features/app/Home/Pages/Booking'
-import { History } from './features/app/Home/Pages/History'
-import { Navbar } from './features/app/Home/components/navbar'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {AdminLayout} from "./layouts/AdminLayout";
+import { Home } from "./features/app/Home/Pages/Home";
+import { History } from "./features/app/Home/Pages/History";
+import { Navbar } from "./features/app/Home/components/navbar";
+
+import { Booking } from "./features/app/Home/Pages/Booking";
+import { RoomDetailPage } from "./features/app/Home/Pages/roomDetail";
+import RoomListPages from "./features/app/Home/Pages/RoomList";
+import { HistoryDetailPage } from "./features/app/Home/Pages/HistoryDetailPages";
 
 function AppContent() {
   return (
-    <Routes>
-      <Route 
-        path="/" 
-        element={
-          <>
-            <Navbar />
-            <Home />
-          </>
-        } 
-      />
-      <Route 
-        path="/booking" 
-        element={
-          <>
-            <Navbar />
-            <Booking />
-          </>
-        } 
-      />
-      <Route 
-        path="/history" 
-        element={
-          <>
-            <Navbar />
-            <History />
-          </>
-        } 
-      />
-      <Route path="/admin/*" element={<AdminLayout />} />
-    </Routes>
-  )
+    <>
+      <Navbar />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/roomlist" element={<RoomListPages />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/admin/*" element={<AdminLayout />} />
+        <Route path="/room/:id" element={<RoomDetailPage />} />
+        <Route path="/history/:id" element={<HistoryDetailPage />} />
+      </Routes>
+    </>
+  );
 }
 
 function App() {
@@ -46,7 +32,7 @@ function App() {
     <Router>
       <AppContent />
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

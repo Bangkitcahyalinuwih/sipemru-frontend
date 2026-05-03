@@ -10,7 +10,7 @@ export function Hero() {
   const [building, setBuilding] = useState('');
 
   const handleSearch = () => {
-    navigate('/booking', { state: { searchQuery, category, building } });
+    navigate('/roomlist', { state: { searchQuery, category, building } });
   };
 
   return (
@@ -22,7 +22,7 @@ export function Hero() {
         animate={{
           scale: [1, 1.2, 1],
           x: [0, 30, 0],
-          y: [0, -30, 0],
+          y: [0, -30, 0],   
         }}
         transition={{
           duration: 8,
@@ -64,7 +64,7 @@ export function Hero() {
             Temukan dan pesan ruangan kampus untuk kegiatan akademik dengan cepat dan efisien.
           </motion.p>
 
-          <motion.div
+          {/* <motion.div
             className="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,7 +127,7 @@ export function Hero() {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </motion.div> */}
         </div>
       </div>
     </div>

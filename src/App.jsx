@@ -1,5 +1,6 @@
+import { useLocation, useResolvedPath } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import {AdminLayout} from "./layouts/AdminLayout";
+import { AdminLayout } from "./layouts/AdminLayout";
 import { Home } from "./features/app/Home/Pages/Home";
 import { History } from "./features/app/Home/Pages/History";
 import { Navbar } from "./features/app/Home/components/navbar";
@@ -10,10 +11,15 @@ import RoomListPages from "./features/app/Home/Pages/RoomList";
 import { HistoryDetailPage } from "./features/app/Home/Pages/HistoryDetailPages";
 
 function AppContent() {
+  const location = useLocation();
+  
+  // Cek apakah path saat ini adalah admin route
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <>
-      <Navbar />
-
+      {!isAdminRoute && <Navbar />}
+      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/roomlist" element={<RoomListPages />} />

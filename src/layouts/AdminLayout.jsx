@@ -3,6 +3,8 @@ import { Outlet, useLocation, useNavigate, Routes, Route, Navigate } from "react
 import Sidebar from "../features/Admin/components/Sidebar";
 import Header from "../features/Admin/components/Header";
 import Dashboard from "../features/dashboard/pages/DashboardPage";
+import UsersPage from "../features/Admin/Users/pages/UsersPage";
+import RuanganPage from "../features/Admin/Ruangan/pages/RuanganPage";
 
 export const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -37,32 +39,25 @@ export const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* SIDEBAR */}
-      <div className={`${collapsed ? "w-16" : "w-56"} bg-slate-900 text-white transition-all duration-300 shrink-0`}>
+      <aside className={`${collapsed ? "w-16" : "w-56"} bg-slate-900 text-white transition-all duration-300`}>
         <Sidebar collapsed={collapsed} active={active} onNavClick={handleNavClick} />
-      </div>
-
-      {/* MAIN AREA */}
+      </aside>
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header collapsed={collapsed} setCollapsed={setCollapsed} active={active} />
-
-        {/* ✅ ROUTES DI SINI */}
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="bg-white rounded-2xl shadow-sm border min-h-full">
-            <Routes>
-              <Route index element={<Navigate to="dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="users" element={<div className="p-8"><h1>Users Page</h1></div>} />
-              <Route path="daftar-ruangan" element={<div className="p-8"><h1>Daftar Ruangan</h1></div>} />
-              <Route path="peminjaman" element={<div className="p-8"><h1>Peminjaman</h1></div>} />
-              <Route path="riwayat-peminjaman" element={<div className="p-8"><h1>Riwayat Peminjaman</h1></div>} />
-              <Route path="ruangan" element={<div className="p-8"><h1>Kelola Ruangan</h1></div>} />
-              <Route path="gedung" element={<div className="p-8"><h1>Kelola Gedung</h1></div>} />
-              <Route path="*" element={<Navigate to="dashboard" replace />} />
-            </Routes>
-          </div>
+        <main className="flex-1 overflow-y-auto">
+          <Routes>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="daftar-ruangan" element={<div className="p-6"><RuanganPage /></div>} />
+            <Route path="peminjaman" element={<div className="p-6"><h1>Peminjaman</h1></div>} />
+            <Route path="riwayat-peminjaman" element={<div className="p-6"><h1>Riwayat Peminjaman</h1></div>} />
+            <Route path="ruangan" element={<div className="p-6"><h1>Kelola Ruangan</h1></div>} />
+            <Route path="gedung" element={<div className="p-6"><h1>Kelola Gedung</h1></div>} />
+            <Route path="*" element={<Navigate to="dashboard" replace />} />
+          </Routes>
         </main>
       </div>
     </div>
   );
-}
+};

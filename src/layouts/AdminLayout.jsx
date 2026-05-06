@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Outlet, useLocation, useNavigate, Routes, Route, Navigate } from "react-router-dom";
+import { useLocation, useNavigate, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "../features/Admin/components/Sidebar";
 import Header from "../features/Admin/components/Header";
 import Dashboard from "../features/dashboard/pages/DashboardPage";
+import DaftarRuangan from "../features/Admin/pages/DaftarRuangan";
 
 export default function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -21,6 +22,16 @@ export default function AdminLayout() {
   };
 
   const active = getActiveMenu();
+
+  const pageTitles = {
+    dashboard: "Dashboard",
+    users: "Users",
+    "daftar-ruangan": "Daftar Ruangan",
+    peminjaman: "Peminjaman Baru",
+    "riwayat-peminjaman": "Riwayat Peminjaman",
+    ruangan: "Kelola Ruangan",
+    gedung: "Kelola Gedung",
+  };
 
   const handleNavClick = (menu) => {
     const routes = {
@@ -44,7 +55,7 @@ export default function AdminLayout() {
 
       {/* MAIN AREA */}
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Header collapsed={collapsed} setCollapsed={setCollapsed} active={active} />
+        <Header collapsed={collapsed} setCollapsed={setCollapsed} title={pageTitles[active] || "Dashboard"} />
 
         {/* ✅ ROUTES DI SINI */}
         <main className="flex-1 overflow-y-auto p-6">
@@ -53,7 +64,7 @@ export default function AdminLayout() {
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="users" element={<div className="p-8"><h1>Users Page</h1></div>} />
-              <Route path="daftar-ruangan" element={<div className="p-8"><h1>Daftar Ruangan</h1></div>} />
+              <Route path="daftar-ruangan" element={<DaftarRuangan />} />
               <Route path="peminjaman" element={<div className="p-8"><h1>Peminjaman</h1></div>} />
               <Route path="riwayat-peminjaman" element={<div className="p-8"><h1>Riwayat Peminjaman</h1></div>} />
               <Route path="ruangan" element={<div className="p-8"><h1>Kelola Ruangan</h1></div>} />

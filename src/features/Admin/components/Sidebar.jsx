@@ -16,7 +16,6 @@ export default function Sidebar({ collapsed, active, onNavClick }) {
         )}
       </div>
 
-      {/* Menu */}
       <nav className="p-2 flex-1 overflow-y-auto">
         <ul className="flex flex-col gap-1">
           {sidebarMenu.map((item, i) => {
@@ -57,7 +56,6 @@ export default function Sidebar({ collapsed, active, onNavClick }) {
         </ul>
       </nav>
 
-      {/* Footer */}
       {!collapsed && (
         <div className="p-2 border-t border-slate-800 mt-auto">
           <div className="flex items-center gap-2 px-2 py-2 cursor-pointer rounded-md hover:bg-slate-800 text-gray-300">

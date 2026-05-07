@@ -21,7 +21,12 @@ export const sidebarMenu = [
     icon: Users,
   },
   {
-    key: "daftar-ruangan",
+    key:"building",
+    label:"Gedung",
+    icon: Home,
+  },
+  {
+    key: "rooms",
     label: "Daftar Ruangan",
     icon: LayoutTemplate,
   },

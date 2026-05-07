@@ -1,26 +1,26 @@
+import api from "../../../api/api";
+
+const USE_API = false;
+
 export const getUser = async () => {
-  // simulasi delay API
-  await new Promise((res) => setTimeout(res, 500))
+  try {
+    if (!USE_API) {
+      return {
+        id: 1,
+        name: "Septian Angga",
+        email: "septian@gmail.com",
+        role: "Admin",
+      };
+    }
+    const res = await api.get("/me");
+    return res.data;
+  } catch (error) {
 
-  return {
-    id: 1,
-    name: "Septian Angga",
-    email: "septian@gmail.com",
-    role: "Admin",
-    avatar: "https://i.pravatar.cc/150?img=3"
+    console.error(
+      "Gagal mengambil user:",
+      error
+    );
+
+    return null;
   }
-}
-
-// import axios from "axios"
-
-// export const getUser = async () => {
-//   const token = localStorage.getItem("token")
-
-//   const res = await axios.get("/api/me", {
-//     headers: {
-//       Authorization: `Bearer ${token}`
-//     }
-//   })
-
-//   return res.data
-// }
+};

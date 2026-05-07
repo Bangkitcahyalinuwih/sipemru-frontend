@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import FilterBar from "../components/FilterBar";
 
 const roomData = [
   {
@@ -73,61 +74,18 @@ export default function DaftarRuangan() {
             <h1 className="text-2xl font-semibold text-slate-900">Daftar Ruang</h1>
             <p className="text-sm text-slate-500">Kelola dan lihat status ruangan kampus secara cepat.</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <label className="flex-1">
-              <span className="sr-only">Cari Ruangan</span>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari Ruangan..."
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-500"
-              />
-            </label>
-            <select
-              value={campus}
-              onChange={(e) => setCampus(e.target.value)}
-              className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none"
-            >
-              {filterOptions.campus.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <select
-              value={building}
-              onChange={(e) => setBuilding(e.target.value)}
-              className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none"
-            >
-              {filterOptions.building.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <select
-              value={floor}
-              onChange={(e) => setFloor(e.target.value)}
-              className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none"
-            >
-              {filterOptions.floor.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none"
-            >
-              {filterOptions.status.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FilterBar
+            query={query}
+            onQueryChange={setQuery}
+            filters={{ campus, building, floor, status }}
+            onFilterChange={(key, value) => {
+              if (key === "campus") setCampus(value);
+              if (key === "building") setBuilding(value);
+              if (key === "floor") setFloor(value);
+              if (key === "status") setStatus(value);
+            }}
+            filterOptions={filterOptions}
+          />
         </div>
 
         <div className="rounded-3xl border border-slate-800/10 bg-slate-950/80 p-6 shadow-xl shadow-slate-900/5 text-slate-100">

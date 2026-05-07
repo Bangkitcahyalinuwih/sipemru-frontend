@@ -1,3 +1,4 @@
+import { label } from "framer-motion/client";
 import {
   LayoutDashboard,
   Users,
@@ -7,6 +8,8 @@ import {
   History,
   CalendarDays,
   LayoutTemplate,
+  Book,
+  CalendarCheck,
 } from "lucide-react";
 
 export const sidebarMenu = [
@@ -31,14 +34,14 @@ export const sidebarMenu = [
     icon: LayoutTemplate,
   },
   {
-    key: "peminjaman",
-    label: "Peminjaman",
-    icon: Plus,
+    key: "schedule",
+    label: "Jadwal Peminjaman",
+    icon: CalendarDays,
   },
   {
-    key: "riwayat-peminjaman",
-    label: "Riwayat Peminjaman",
-    icon: History,
+    key: "booking",
+    label: "Boooking",
+    icon: CalendarCheck,
   },
   {
     section: "Kelola Ruangan",

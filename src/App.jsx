@@ -13,7 +13,6 @@ import { HistoryDetailPage } from "./features/app/Home/Pages/HistoryDetailPages"
 function AppContent() {
   const location = useLocation();
   
-  // Cek apakah path saat ini adalah admin route
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (

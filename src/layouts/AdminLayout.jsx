@@ -7,8 +7,8 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import Sidebar from "../features/Admin/components/Sidebar";
-import Header from "../features/Admin/components/Header";
+import Sidebar from "../features/Admin/Content/components/Sidebar";
+import Header from "../features/Admin/Content/components/Header";
 import Dashboard from "../features/dashboard/pages/DashboardPage";
 
 import UsersPage from "../features/Admin/Users/pages/UsersPage";
@@ -21,6 +21,13 @@ import BuildingPage from "../features/Admin/Building/Pages/BuildingPage";
 import AddBuilding from "../features/Admin/Building/Components/AddBuilding";
 import EditBuilding from "../features/Admin/Building/Components/EditBuilding";
 
+import SchedulePage from "../features/Admin/Schedule/pages/Schedule";
+import AddSchedule from "../features/Admin/Schedule/components/AddSchedule";
+import EditSchedule from "../features/Admin/Schedule/components/EditSchedule";
+
+import BookingPage from "../features/Admin/Booking/pages/BookingPage";
+import AddBooking from "../features/Admin/Booking/components/AddBooking";
+
 export const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
@@ -32,8 +39,8 @@ export const AdminLayout = () => {
     if (path.includes("users")) return "users";
     if (path.includes("rooms")) return "rooms";
     if (path.includes("building")) return "building";
-    if (path.includes("peminjaman")) return "peminjaman";
-    if (path.includes("riwayat-peminjaman")) return "riwayat-peminjaman";
+    if (path.includes("schedule")) return "schedule";
+    if (path.includes("booking")) return "booking";
     if (path.includes("gedung")) return "gedung";
 
     return "dashboard";
@@ -47,8 +54,8 @@ export const AdminLayout = () => {
       users: "/admin/users",
       rooms: "/admin/rooms",
       building: "/admin/building",
-      peminjaman: "/admin/peminjaman",
-      "riwayat-peminjaman": "/admin/riwayat-peminjaman",
+      schedule: "/admin/schedule",
+      booking: "/admin/booking",
       gedung: "/admin/gedung",
     };
 
@@ -89,10 +96,15 @@ export const AdminLayout = () => {
             <Route path="building/add" element={<AddBuilding />} />
             <Route path="building/edit/:id" element={<EditBuilding />} />
 
-            <Route
-              path="peminjaman"
-              element={<h1 className="p-6">Peminjaman</h1>}
-            />
+            <Route path="schedule"element={<SchedulePage/>}/>
+            <Route path="schedule/add" element={<AddSchedule />} />
+            <Route path="schedule/edit/:id" element={<EditSchedule />} />
+
+            <Route path="booking"element={<BookingPage/>}/>
+            <Route path="booking/add"element={<AddBooking/>}/>
+
+
+
             <Route
               path="riwayat-peminjaman"
               element={<h1 className="p-6">Riwayat Peminjaman</h1>}

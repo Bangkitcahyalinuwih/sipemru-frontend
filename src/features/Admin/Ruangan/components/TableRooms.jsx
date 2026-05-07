@@ -63,12 +63,20 @@ const TableRuangan = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Data Ruangan</h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Data Ruangan</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Total Ruangan: {filteredRuangan.length}
+            </p>
+          </div>
 
-          <p className="text-sm text-gray-500 mt-1">
-            Total Ruangan: {filteredRuangan.length}
-          </p>
+          <button
+            onClick={() => navigate("/admin/rooms/add")}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition shadow-sm"
+          >
+            + Tambah Ruangan
+          </button>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">

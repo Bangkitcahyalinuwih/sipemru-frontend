@@ -31,7 +31,7 @@ export default function Header({ collapsed, setCollapsed, title }) {
   };
 
   return (
-    <div className="h-16 backdrop-blur-md bg-white/70 flex items-center justify-between px-6 border-b border-gray-200 shadow-sm">
+    <div className="sticky top-0 z-50 h-16 backdrop-blur-md bg-white/95 flex items-center justify-between px-6 border-b border-gray-200 shadow-md transition-shadow duration-300">
       <div className="flex items-center gap-4">
         <button
           onClick={() => setCollapsed(!collapsed)}

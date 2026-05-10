@@ -5,7 +5,6 @@ import { Stats } from "../components/stats";
 import { RoomList } from "../components/roomList";
 import { CardPeminjaman } from "../components/CardPeminjaman";
 
-/* ================= ANIMATION ================= */
 
 const pageVariant = {
   hidden: { opacity: 0 },
@@ -34,16 +33,15 @@ export function Home() {
       variants={pageVariant}
       initial="hidden"
       animate="show"
-      className="relative min-h-screen text-white overflow-x-hidden"
+      className="relative min-h-screen text-white overflow-x-hidden bg-[#070014] pb-20"
     >
-      {/* ================= GLOBAL BACKGROUND (DI LUAR HERO) ================= */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
+      {/* ================= GLOBAL BACKGROUND ================= */}
+      <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
         <div className="absolute top-[-120px] left-[5%] w-[500px] h-[500px] bg-purple-600/20 blur-3xl rounded-full" />
         <div className="absolute bottom-[-200px] right-[10%] w-[600px] h-[600px] bg-pink-600/10 blur-3xl rounded-full" />
-        <div className="absolute inset-0 bg-[#070014]" />
       </div>
 
-      {/* ================= HERO (FULL BACKGROUND CONTROL) ================= */}
+      {/* ================= HERO ================= */}
       <motion.div
         variants={sectionVariant}
         initial="hidden"

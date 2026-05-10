@@ -28,6 +28,8 @@ import EditSchedule from "../features/Admin/Schedule/components/EditSchedule";
 import BookingPage from "../features/Admin/Booking/pages/BookingPage";
 import AddBooking from "../features/Admin/Booking/components/AddBooking";
 
+import ApprovalBooking from "../features/Admin/Approval_Book/Pages/Approval_Pages";
+
 export const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
@@ -42,6 +44,7 @@ export const AdminLayout = () => {
     if (path.includes("schedule")) return "schedule";
     if (path.includes("booking")) return "booking";
     if (path.includes("gedung")) return "gedung";
+    if (path.includes("approval")) return "approval";
 
     return "dashboard";
   };
@@ -57,6 +60,7 @@ export const AdminLayout = () => {
       schedule: "/admin/schedule",
       booking: "/admin/booking",
       gedung: "/admin/gedung",
+      approval: "/admin/approval-booking",
     };
 
     navigate(routes[menu] || "/admin/dashboard");
@@ -104,14 +108,13 @@ export const AdminLayout = () => {
             <Route path="booking/add"element={<AddBooking/>}/>
 
 
-
             <Route
               path="riwayat-peminjaman"
               element={<h1 className="p-6">Riwayat Peminjaman</h1>}
             />
             <Route
-              path="gedung"
-              element={<h1 className="p-6">Kelola Gedung</h1>}
+              path="approval-booking"
+              element={<ApprovalBooking/>}
             />
 
             <Route path="*" element={<Navigate to="dashboard" replace />} />

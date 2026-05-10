@@ -18,7 +18,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import { createBooking } from "../../../Admin/Booking/service/BookingService";
 
-// INPUT COMPONENT
 const Input = ({ icon: Icon, ...props }) => (
   <div className="relative">
     <Icon
@@ -56,7 +55,6 @@ const Input = ({ icon: Icon, ...props }) => (
   </div>
 );
 
-// LOADING OVERLAY COMPONENT
 const LoadingOverlay = () => (
   <motion.div
     initial={{ opacity: 0 }}
@@ -108,13 +106,9 @@ const LoadingOverlay = () => (
         "
       />
 
-      <p className="text-white text-lg font-semibold">
-        Memproses Booking...
-      </p>
+      <p className="text-white text-lg font-semibold">Memproses Booking...</p>
 
-      <p className="text-white/60 text-sm mt-2">
-        Mohon tunggu sebentar
-      </p>
+      <p className="text-white/60 text-sm mt-2">Mohon tunggu sebentar</p>
     </motion.div>
   </motion.div>
 );
@@ -194,14 +188,11 @@ export function BookingForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { roomName = "", roomId = "" } =
-    location.state || {};
+  const { roomName = "", roomId = "" } = location.state || {};
 
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [showSuccess, setShowSuccess] =
-    useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -307,17 +298,10 @@ export function BookingForm() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 px-4 py-10">
-
       <AnimatePresence>
-        {isSubmitting && !showSuccess && (
-          <LoadingOverlay />
-        )}
+        {isSubmitting && !showSuccess && <LoadingOverlay />}
 
-        {showSuccess && (
-          <SuccessOverlay
-            onComplete={handleSuccessComplete}
-          />
-        )}
+        {showSuccess && <SuccessOverlay onComplete={handleSuccessComplete} />}
       </AnimatePresence>
 
       {/* BACKGROUND EFFECT */}
@@ -395,9 +379,7 @@ export function BookingForm() {
                 backdrop-blur-xl
               "
             >
-              <h2 className="text-3xl font-bold text-white">
-                Booking Ruangan
-              </h2>
+              <h2 className="text-3xl font-bold text-white">Booking Ruangan</h2>
 
               <p className="text-white/70 mt-2 text-sm">
                 Isi data peminjaman ruangan dengan lengkap
@@ -478,33 +460,102 @@ export function BookingForm() {
               </div>
 
               {/* DATE */}
-              <Input
-                icon={Calendar}
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-              />
+              <div className="relative group">
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
 
-              {/* TIME */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  icon={Clock}
-                  type="time"
-                  name="startTime"
-                  value={formData.startTime}
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
                   onChange={handleChange}
-                />
+                  className="
+                            w-full
+                            pl-11
+                            pr-4
+                            py-3
+                            rounded-2xl
 
-                <Input
-                  icon={Clock}
-                  type="time"
-                  name="endTime"
-                  value={formData.endTime}
-                  onChange={handleChange}
+                            bg-white/10 backdrop-blur-xl
+                            border border-white/20
+
+                            text-white
+                            [color-scheme:dark]
+
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-cyan-400
+
+                            hover:border-cyan-400/40
+                            transition-all
+                          "
                 />
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* START TIME */}
+                <div className="relative group">
+                  <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
+
+                  <input
+                    type="time"
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleChange}
+                    className="
+                            w-full
+                            pl-11
+                            pr-4
+                            py-3
+                            rounded-2xl
+
+                            bg-white/10 backdrop-blur-xl
+                            border border-white/20
+
+                            text-white
+                            [color-scheme:dark]
+
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-cyan-400
+
+                            hover:border-cyan-400/40
+                            transition-all
+                          "
+                  />
+                </div>
+
+                {/* END TIME */}
+                <div className="relative group">
+                  <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
+
+                  <input
+                    type="time"
+                    name="endTime"
+                    value={formData.endTime}
+                    onChange={handleChange}
+                    className="
+          w-full
+          pl-11
+          pr-4
+          py-3
+          rounded-2xl
+
+          bg-white/10 backdrop-blur-xl
+          border border-white/20
+
+          text-white
+          [color-scheme:dark]
+
+          focus:outline-none
+          focus:ring-2
+          focus:ring-cyan-400
+
+          hover:border-cyan-400/40
+          transition-all
+        "
+                  />
+                </div>
+              </div>
               {/* PURPOSE */}
               <div className="relative">
                 <FileText

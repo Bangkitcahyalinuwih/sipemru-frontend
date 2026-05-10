@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { toast } from "sonner";
 
-import echo from "../services/echo";
+import echo from "../lib/echo";
 
 export function useRealtimeBookings({
   currentUser,

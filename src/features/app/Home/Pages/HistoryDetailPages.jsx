@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { BookingDetailCard } from "../components/History/BookingDetailCard";
+import { BookingDetailCard } from "../components/HistoryDetail/BookingDetailCard";
 import { BackButton } from "../components/BackButton";
 
 export function HistoryDetailPage() {

@@ -15,7 +15,7 @@ import { HistoryDetailPage } from "../features/app/Home/Pages/HistoryDetailPages
 
 function LayoutWrapper() {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white">
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white flex flex-col">
 
       {/* BACKGROUND EFFECT */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
@@ -31,12 +31,12 @@ function LayoutWrapper() {
       <Navbar />
 
       {/* PAGE CONTENT (WAJIB OUTLET) */}
-      <main className="relative z-10">
+      <main className="relative z-10 flex-1">
         <Outlet />
       </main>
 
       {/* FOOTER */}
-      <footer className="relative border-t border-white/10 bg-black/20 backdrop-blur-xl">
+      <footer className="relative border-t border-white/10 bg-black/20 backdrop-blur-xl mt-auto">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
 
           <div className="grid md:grid-cols-3 gap-10">

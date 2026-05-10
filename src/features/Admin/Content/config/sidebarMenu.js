@@ -52,8 +52,8 @@ export const sidebarMenu = [
     icon: Home,
   },
   {
-    key: "gedung",
-    label: "Kelola Gedung",
+    key: "approval",
+    label: "Kelola Booking",
     icon: CalendarDays,
   },
 ];

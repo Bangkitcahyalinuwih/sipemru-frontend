@@ -22,7 +22,6 @@ import { useRealtimeBookings } from "../hook/useRealtimeBookings";
 export function History() {
   const navigate = useNavigate();
 
-  /* ================= USER ================= */
   const [currentUser] = useState(() => {
     return (
       JSON.parse(localStorage.getItem("user")) || {
@@ -31,12 +30,10 @@ export function History() {
     );
   });
 
-  /* ================= STATE ================= */
   const [loading, setLoading] = useState(true);
   const [bookingHistory, setBookingHistory] = useState([]);
   const [cancelLoading, setCancelLoading] = useState(null);
 
-  /* ================= FETCH ================= */
   const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
@@ -56,18 +53,15 @@ export function History() {
     }
   }, [currentUser.id]);
 
-  /* ================= INITIAL ================= */
   useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
 
-  /* ================= REALTIME ================= */
   useRealtimeBookings({
     currentUser,
     setBookingHistory,
   });
 
-  /* ================= CANCEL ================= */
   const handleCancel = async (id) => {
     try {
       setCancelLoading(id);
@@ -96,7 +90,6 @@ export function History() {
     }
   };
 
-  /* ================= DETAIL ================= */
   const handleDetail = (booking) => {
     navigate(`/history/${booking.id}`, {
       state: booking,
@@ -105,33 +98,21 @@ export function History() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 py-10">
-
-      {/* ===== background glow (lightweight) ===== */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-blue-500/10 rounded-full blur-2xl" />
       <div className="absolute bottom-0 right-0 w-72 h-72 bg-cyan-400/10 rounded-full blur-2xl" />
-
       <div className="relative z-10 max-w-7xl mx-auto px-4">
-
-        {/* HEADER */}
         <div className="mb-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-md">
           <HistoryHeader />
         </div>
-
-        {/* LOADING */}
         {loading ? (
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl shadow-md">
             <HistoryLoading />
           </div>
         ) : bookingHistory.length === 0 ? (
-
-          /* EMPTY */
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl shadow-md">
             <HistoryEmpty />
           </div>
-
         ) : (
-
-          /* LIST */
           <div className="space-y-4">
 
             {bookingHistory.map((booking, index) => (

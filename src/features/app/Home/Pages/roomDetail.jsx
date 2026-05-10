@@ -4,8 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
 import { RoomDetailCard } from "../components/roomDetaiil";
 
-/* ================= ANIMATION ================= */
-
 const pageVariant = {
   hidden: { opacity: 0 },
   show: {
@@ -14,18 +12,6 @@ const pageVariant = {
       duration: 0.6,
       when: "beforeChildren",
       staggerChildren: 0.15,
-    },
-  },
-};
-
-const sectionVariant = {
-  hidden: { opacity: 0, y: 40 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
     },
   },
 };
@@ -57,10 +43,7 @@ export function RoomDetailPage() {
         text-white overflow-x-hidden
       "
     >
-      {/* ================= GLOBAL BACKGROUND ================= */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-
-        {/* PURPLE GLOW */}
         <div
           className="
             absolute top-[-120px] left-[5%]
@@ -69,8 +52,6 @@ export function RoomDetailPage() {
             blur-3xl rounded-full
           "
         />
-
-        {/* PINK GLOW */}
         <div
           className="
             absolute bottom-[-200px] right-[10%]
@@ -79,12 +60,8 @@ export function RoomDetailPage() {
             blur-3xl rounded-full
           "
         />
-
-        {/* DARK BASE */}
         <div className="absolute inset-0 bg-[#070014]" />
       </div>
-
-      {/* ================= CONTENT ================= */}
       <motion.div
         variants={sectionVariant}
         initial="hidden"

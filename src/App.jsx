@@ -1,5 +1,3 @@
-// src/App.jsx
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,13 +11,8 @@ function App() {
   return (
     <Router>
       <Routes>
-
-        {/* USER */}
         <Route path="/*" element={<UserLayout />} />
-
-        {/* ADMIN */}
         <Route path="/admin/*" element={<AdminLayout />} />
-
       </Routes>
     </Router>
   );

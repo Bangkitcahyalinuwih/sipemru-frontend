@@ -70,20 +70,10 @@ export const CardPeminjaman = () => {
 
   return (
     <section className="relative overflow-hidden py-32">
-
-      {/* BACKGROUND */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-
-        {/* Top Glow */}
         <div className="absolute top-[-150px] left-[5%] w-[450px] h-[450px] rounded-full bg-purple-600/15 blur-3xl" />
-
-        {/* Right Glow */}
         <div className="absolute bottom-[-100px] right-[5%] w-[500px] h-[500px] rounded-full bg-pink-600/10 blur-3xl" />
-
-        {/* Center Glow */}
         <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-3xl" />
-
-        {/* Grid */}
         <div
           className="
             absolute inset-0
@@ -95,8 +85,6 @@ export const CardPeminjaman = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6">
-
-        {/* HEADER */}
         <motion.div
           className="text-center mb-24"
           initial={{ opacity: 0, y: 40 }}
@@ -104,7 +92,6 @@ export const CardPeminjaman = () => {
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
         >
-          {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/20 bg-white/[0.03] backdrop-blur-xl mb-6">
             <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
 
@@ -112,8 +99,6 @@ export const CardPeminjaman = () => {
               Proses Reservasi
             </span>
           </div>
-
-          {/* Title */}
           <h2 className="text-4xl md:text-6xl font-bold leading-tight">
 
             <span className="text-white">
@@ -127,14 +112,12 @@ export const CardPeminjaman = () => {
             </span>
           </h2>
 
-          {/* Desc */}
           <p className="mt-6 text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
             Ikuti langkah sederhana berikut untuk melakukan reservasi ruangan
             dengan cepat, efisien, dan terjadwal secara otomatis.
           </p>
         </motion.div>
 
-        {/* CARD GRID */}
         <motion.div
           variants={containerVariant}
           initial="hidden"
@@ -165,7 +148,6 @@ export const CardPeminjaman = () => {
               "
             >
 
-              {/* Hover Glow */}
               <div
                 className={`
                   absolute inset-0 opacity-0
@@ -175,10 +157,7 @@ export const CardPeminjaman = () => {
                 `}
               />
 
-              {/* Glass Overlay */}
               <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent" />
-
-              {/* Connector */}
               {index !== steps.length - 1 && (
                 <div className="hidden lg:block absolute top-1/2 -right-8 z-20">
 
@@ -193,7 +172,6 @@ export const CardPeminjaman = () => {
                 </div>
               )}
 
-              {/* Number */}
               <div
                 className={`
                   absolute top-6 left-1/2 -translate-x-1/2
@@ -205,10 +183,7 @@ export const CardPeminjaman = () => {
                 {step.id}
               </div>
 
-              {/* Content */}
               <div className="relative flex flex-col items-center text-center pt-12">
-
-                {/* Icon */}
                 <div
                   className={`
                     mb-8 flex h-24 w-24 items-center justify-center
@@ -221,21 +196,15 @@ export const CardPeminjaman = () => {
                   {step.icon}
                 </div>
 
-                {/* Title */}
                 <h3 className="text-2xl font-semibold text-white leading-snug mb-5">
                   {step.title}
                 </h3>
 
-                {/* Desc */}
                 <p className="text-gray-400 leading-relaxed text-base">
                   {step.desc}
                 </p>
               </div>
-
-              {/* Decorative Blur */}
               <div className="absolute -bottom-16 -right-16 h-40 w-40 rounded-full bg-white/[0.03] blur-3xl" />
-
-              {/* Border */}
               <div className="pointer-events-none absolute inset-0 rounded-[32px] border border-white/5" />
             </motion.div>
           ))}

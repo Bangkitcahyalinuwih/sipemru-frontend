@@ -1,7 +1,4 @@
-// features/dashboard/dashboardService.js
-
 export const fetchRooms = async () => {
-  // simulasi delay API
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   return [

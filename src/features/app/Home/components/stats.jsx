@@ -68,7 +68,6 @@ export function Stats() {
                 }}
                 className="group relative cursor-pointer"
               >
-                {/* Glow */}
                 <motion.div
                   className={`absolute -inset-1 rounded-3xl blur-2xl bg-gradient-to-r ${stat.glowColor}`}
                   animate={{
@@ -76,7 +75,6 @@ export function Stats() {
                   }}
                 />
 
-                {/* Card */}
                 <div
                   className={`
                     relative overflow-hidden rounded-3xl
@@ -87,12 +85,9 @@ export function Stats() {
                 >
                   <div className="p-7 lg:p-8 flex items-center gap-5 lg:gap-6">
 
-                    {/* ICON */}
                     <div className={`relative flex h-16 w-16 items-center justify-center rounded-2xl ${stat.bgColor}`}>
                       <Icon className={`h-8 w-8 ${stat.iconColor}`} />
                     </div>
-
-                    {/* TEXT */}
                     <div className="flex-1">
                       <h3
                         className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}

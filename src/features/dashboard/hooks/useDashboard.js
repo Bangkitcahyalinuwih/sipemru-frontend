@@ -9,7 +9,6 @@ export function useDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  /* FETCH DATA */
   useEffect(() => {
     const load = async () => {
       try {
@@ -25,7 +24,6 @@ export function useDashboard() {
     load();
   }, []);
 
-  /* FILTER */
   const filteredRooms = rooms.filter((r) => {
     const campusMatch = filter === "ALL" || r.campus === filter;
     const searchMatch =
@@ -34,7 +32,6 @@ export function useDashboard() {
     return campusMatch && searchMatch;
   });
 
-  /* STATS */
   const stats = {
     total: rooms.length,
     used: rooms.filter((r) =>

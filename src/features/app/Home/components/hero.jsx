@@ -5,42 +5,32 @@ import { useState, useEffect } from "react";
 
 export function Hero() {
   const navigate = useNavigate();
-
-  // State untuk tanggal real-time
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
 
-  // Update tanggal setiap hari (opsional, untuk real-time)
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentDate(new Date());
-    }, 86400000); // Update setiap 24 jam
+    }, 86400000);
 
     return () => clearInterval(timer);
   }, []);
 
-  // Fungsi untuk mendapatkan data kalender berdasarkan bulan dan tahun real-time
   const getCalendarData = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
     const firstDayOfMonth = new Date(year, month, 1);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    // Mendapatkan hari pertama (0 = Minggu, 1 = Senin, dst)
-    // Kita ingin Senin sebagai hari pertama, jadi perlu penyesuaian
     let startDayOfWeek = firstDayOfMonth.getDay();
-    // Konversi ke format Senin = 0, Minggu = 6
     startDayOfWeek = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1;
 
     const dates = [];
 
-    // Tambahkan hari kosong di awal bulan
     for (let i = 0; i < startDayOfWeek; i++) {
       dates.push({ day: null, date: null });
     }
 
-    // Tambahkan tanggal bulan ini
     for (let i = 1; i <= daysInMonth; i++) {
       dates.push({ day: i, date: i });
     }
@@ -49,14 +39,13 @@ export function Hero() {
   };
 
   const { dates, daysInMonth, year, month } = getCalendarData();
-  const today = currentDate.getDate(); // Tanggal hari ini real-time
+  const today = currentDate.getDate(); 
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
 
-  // Cek apakah bulan yang ditampilkan adalah bulan saat ini
+
   const isCurrentMonth = month === currentMonth && year === currentYear;
 
-  // Nama bulan dalam bahasa Indonesia
   const monthNames = [
     "Januari",
     "Februari",
@@ -72,7 +61,6 @@ export function Hero() {
     "Desember",
   ];
 
-  // Fungsi untuk navigasi bulan (opsional)
   const goToPreviousMonth = () => {
     setCurrentDate(new Date(year, month - 1, 1));
   };
@@ -88,7 +76,6 @@ export function Hero() {
 
   return (
     <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden min-h-[90vh]">
-      {/* DOTS PATTERN BACKGROUND */}
       <div className="absolute inset-0 opacity-10">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -100,13 +87,11 @@ export function Hero() {
         </svg>
       </div>
 
-      {/* ANIMATED BACKGROUND PATTERN */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.25),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.25),transparent_50%)]" />
       </div>
 
-      {/* FLOATING ELEMENTS */}
       <motion.div
         className="absolute top-32 left-[10%] w-2 h-2 bg-purple-500 rounded-full"
         animate={{
@@ -124,7 +109,6 @@ export function Hero() {
         transition={{ duration: 5, repeat: Infinity, delay: 1 }}
       />
 
-      {/* GLOW EFFECTS */}
       <motion.div
         className="absolute top-20 -left-10 w-96 h-96 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full blur-[120px] opacity-15"
         animate={{
@@ -145,11 +129,8 @@ export function Hero() {
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* CONTENT - DIPERLEBAR DAN DIGESER */}
       <div className="relative max-w-[90%] mx-auto px-6 py-16 lg:py-20 grid lg:grid-cols-2 gap-8 items-center">
-        {/* LEFT CONTENT - DIPERKECIL LEBARNYA */}
         <div className="space-y-8 max-w-xl">
-          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -190,7 +171,6 @@ export function Hero() {
             atau rapat dengan sistem yang mudah dan efisien.
           </motion.p>
 
-          {/* Features */}
           <motion.div
             className="grid grid-cols-3 gap-4"
             initial={{ opacity: 0, y: 30 }}
@@ -211,7 +191,6 @@ export function Hero() {
             ))}
           </motion.div>
 
-          {/* CTA Buttons */}
           <motion.div
             className="flex flex-wrap gap-4"
             initial={{ opacity: 0, y: 30 }}
@@ -235,25 +214,20 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* RIGHT CONTENT - CALENDAR CARD (DIGESER KE KIRI) */}
         <motion.div
           className="relative flex justify-center lg:justify-end"
           initial={{ opacity: 0, x: 100, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          {/* Background Glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-blue-500 blur-[120px] opacity-10 scale-110"></div>
 
-          {/* Main Card */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-blue-500 blur-[120px] opacity-10 scale-110"></div>
           <div className="relative">
-            {/* Floating Card */}
             <motion.div
               className="relative bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl px-12 py-6 w-full max-w-[720px] hover:bg-white/15 transition-colors"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
-              {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full shadow-lg shadow-red-500/50"></div>
@@ -261,7 +235,6 @@ export function Hero() {
                   <div className="w-3 h-3 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></div>
                 </div>
 
-                {/* Navigasi Bulan */}
                 <div className="flex items-center gap-3">
                   <button
                     onClick={goToPreviousMonth}
@@ -294,15 +267,11 @@ export function Hero() {
                   )}
                 </div>
               </div>
-
-              {/* Calendar */}
               <div className="bg-gradient-to-br from-white/5 to-purple-500/10 rounded-2xl px-8 py-5 shadow-inner border border-white/10">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <div className="w-1 h-6 bg-gradient-to-b from-purple-400 to-blue-400 rounded-full"></div>
                   Booking Ruangan
                 </h3>
-
-                {/* Day Header */}
                 <div className="grid grid-cols-7 gap-3 text-xs font-semibold text-slate-400 mb-3">
                   {["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map(
                     (d, i) => (
@@ -312,8 +281,6 @@ export function Hero() {
                     ),
                   )}
                 </div>
-
-                {/* Dates */}
                 <div className="grid grid-cols-7 gap-3 text-sm">
                   {dates.map((item, i) => {
                     const dateNumber = item.date;
@@ -356,7 +323,6 @@ export function Hero() {
                   })}
                 </div>
 
-                {/* Info */}
                 <div className="mt-3 text-xs text-slate-400 text-center">
                   {daysInMonth} hari di bulan {monthNames[month]}
                 </div>
@@ -373,7 +339,6 @@ export function Hero() {
                   </span>
                 </div>
 
-                {/* Button */}
                 <motion.div
                   className="mt-4 px-5 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg cursor-pointer hover:shadow-purple-500/20 transition-shadow border border-purple-400/30 backdrop-blur-sm"
                   whileHover={{ scale: 1.02 }}
@@ -396,7 +361,6 @@ export function Hero() {
               </div>
             </motion.div>
 
-            {/* Floating Mini Cards */}
             <motion.div
               className="absolute -top-6 -right-6 bg-white/10 backdrop-blur-xl rounded-2xl shadow-xl p-5 w-36 border border-white/20 hover:bg-white/15 transition-colors"
               animate={{ y: [0, -15, 0], rotate: [0, 3, 0] }}

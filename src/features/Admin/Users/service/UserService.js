@@ -6,8 +6,6 @@ const USE_API = false;
 const STORAGE_KEY = "dummy_users";
 const AUTH_KEY = "user";
 
-/* ================= DUMMY DATA ================= */
-
 const initialUsers = [
   {
     id: 10,
@@ -33,8 +31,6 @@ const initialUsers = [
   },
 ];
 
-/* ================= LOAD LOCAL STORAGE ================= */
-
 const loadUsers = () => {
   const stored =
     localStorage.getItem(STORAGE_KEY);
@@ -52,8 +48,6 @@ const saveUsers = () => {
     JSON.stringify(dummyUsers)
   );
 };
-
-/* ================= GET ALL USERS ================= */
 
 export const getUsers = async () => {
   try {
@@ -73,8 +67,6 @@ export const getUsers = async () => {
     return [];
   }
 };
-
-/* ================= GET USER BY ID ================= */
 
 export const getUserById = async (id) => {
   try {
@@ -150,8 +142,6 @@ export const loginUser = async (
     throw error;
   }
 };
-
-/* ================= CURRENT USER ================= */
 
 export const getCurrentUser = () => {
   const user =

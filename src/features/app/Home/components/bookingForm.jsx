@@ -112,8 +112,6 @@ const LoadingOverlay = () => (
     </motion.div>
   </motion.div>
 );
-
-// SUCCESS OVERLAY COMPONENT
 const SuccessOverlay = ({ onComplete }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -303,8 +301,6 @@ export function BookingForm() {
 
         {showSuccess && <SuccessOverlay onComplete={handleSuccessComplete} />}
       </AnimatePresence>
-
-      {/* BACKGROUND EFFECT */}
       <div className="absolute inset-0 overflow-hidden">
         <div
           className="
@@ -334,7 +330,6 @@ export function BookingForm() {
       </div>
 
       <div className="relative max-w-3xl mx-auto">
-        {/* BACK BUTTON */}
         <button
           onClick={() => navigate(-1)}
           className="
@@ -356,7 +351,6 @@ export function BookingForm() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* CARD */}
           <div
             className="
               rounded-3xl
@@ -368,7 +362,6 @@ export function BookingForm() {
               overflow-hidden
             "
           >
-            {/* HEADER */}
             <div
               className="
                 px-8
@@ -385,10 +378,7 @@ export function BookingForm() {
                 Isi data peminjaman ruangan dengan lengkap
               </p>
             </div>
-
-            {/* FORM */}
             <form onSubmit={handleSubmit} className="p-8 space-y-5">
-              {/* NAMA */}
               <Input
                 icon={User}
                 name="name"
@@ -396,8 +386,6 @@ export function BookingForm() {
                 value={formData.name}
                 onChange={handleChange}
               />
-
-              {/* ROOM */}
               <div className="relative">
                 <Building2
                   className="
@@ -430,7 +418,6 @@ export function BookingForm() {
                 />
               </div>
 
-              {/* ORGANISASI */}
               <Input
                 icon={Building2}
                 name="organization"
@@ -439,7 +426,6 @@ export function BookingForm() {
                 onChange={handleChange}
               />
 
-              {/* PESERTA & PHONE */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   icon={Users}
@@ -459,7 +445,6 @@ export function BookingForm() {
                 />
               </div>
 
-              {/* DATE */}
               <div className="relative group">
                 <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
 
@@ -492,7 +477,6 @@ export function BookingForm() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* START TIME */}
                 <div className="relative group">
                   <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
 
@@ -524,7 +508,6 @@ export function BookingForm() {
                   />
                 </div>
 
-                {/* END TIME */}
                 <div className="relative group">
                   <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
 
@@ -556,7 +539,6 @@ export function BookingForm() {
                   />
                 </div>
               </div>
-              {/* PURPOSE */}
               <div className="relative">
                 <FileText
                   className="
@@ -595,7 +577,6 @@ export function BookingForm() {
                 />
               </div>
 
-              {/* BUTTON */}
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 whileHover={{ scale: 1.01 }}

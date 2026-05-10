@@ -6,8 +6,6 @@ const USE_API = false;
 
 const STORAGE_KEY = "dummy_bookings";
 
-/* ================= INITIAL DUMMY ================= */
-
 const initialDummyBookings = [
   {
     id: 1,
@@ -44,8 +42,6 @@ const initialDummyBookings = [
   },
 ];
 
-/* ================= LOCAL STORAGE ================= */
-
 const loadBookings = () => {
   const stored = localStorage.getItem(
     STORAGE_KEY
@@ -65,12 +61,9 @@ const saveBookings = () => {
   );
 };
 
-/* ================= GET BOOKINGS ================= */
-
 export const getBookings = async () => {
   try {
     if (!USE_API) {
-      // simulasi loading
       await new Promise((resolve) =>
         setTimeout(resolve, 500)
       );
@@ -128,12 +121,9 @@ export const createBooking = async (
     if (!USE_API) {
       const newData = {
         id: Date.now(),
-
         status: "pending",
-
         created_at:
           new Date().toISOString(),
-
         ...data,
       };
 

@@ -1,9 +1,6 @@
-// src/layouts/UserLayout.jsx
-
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Navbar } from "../features/app/Home/components/Header";
 
-/* ================= PAGES ================= */
 import { Home } from "../features/app/Home/Pages/Home";
 import { History } from "../features/app/Home/Pages/History";
 import { Booking } from "../features/app/Home/Pages/Booking";
@@ -11,13 +8,9 @@ import RoomListPages from "../features/app/Home/Pages/RoomList";
 import { RoomDetailPage } from "../features/app/Home/Pages/roomDetail";
 import { HistoryDetailPage } from "../features/app/Home/Pages/HistoryDetailPages";
 
-/* ================= LAYOUT WRAPPER ================= */
-
 function LayoutWrapper() {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white flex flex-col">
-
-      {/* BACKGROUND EFFECT */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="absolute top-[-120px] left-[5%] h-[500px] w-[500px] rounded-full bg-purple-500/20 blur-3xl animate-pulse" />
         <div className="absolute top-[20%] right-[5%] h-[500px] w-[500px] rounded-full bg-pink-500/10 blur-3xl animate-pulse delay-1000" />
@@ -26,22 +19,13 @@ function LayoutWrapper() {
 
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)] bg-[size:70px_70px]" />
       </div>
-
-      {/* NAVBAR */}
       <Navbar />
-
-      {/* PAGE CONTENT (WAJIB OUTLET) */}
       <main className="relative z-10 flex-1">
         <Outlet />
       </main>
-
-      {/* FOOTER */}
       <footer className="relative border-t border-white/10 bg-black/20 backdrop-blur-xl mt-auto">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-
           <div className="grid md:grid-cols-3 gap-10">
-
-            {/* BRAND */}
             <div>
               <h2 className="text-xl font-bold bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
                 Simaru
@@ -50,8 +34,6 @@ function LayoutWrapper() {
                 Sistem Manajemen Ruangan untuk peminjaman, pengelolaan, dan monitoring ruangan secara modern.
               </p>
             </div>
-
-            {/* MENU */}
             <div>
               <h3 className="text-white font-semibold mb-4">Menu</h3>
               <ul className="space-y-2 text-sm text-gray-400">
@@ -61,8 +43,6 @@ function LayoutWrapper() {
                 <li className="hover:text-white transition cursor-pointer">Booking</li>
               </ul>
             </div>
-
-            {/* INFO */}
             <div>
               <h3 className="text-white font-semibold mb-4">Kontak</h3>
               <ul className="space-y-2 text-sm text-gray-400">
@@ -71,10 +51,7 @@ function LayoutWrapper() {
                 <li>Madiun, Indonesia</li>
               </ul>
             </div>
-
           </div>
-
-          {/* BOTTOM BAR */}
           <div className="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-gray-500">
               © {new Date().getFullYear()} Simaru. All rights reserved.
@@ -86,21 +63,16 @@ function LayoutWrapper() {
               <span className="hover:text-white cursor-pointer">Support</span>
             </div>
           </div>
-
         </div>
       </footer>
-
     </div>
   );
 }
-
-/* ================= ROUTES ================= */
 
 export function UserLayout() {
   return (
     <Routes>
       <Route element={<LayoutWrapper />}>
-        {/* CHILD ROUTES (INI YANG DIRENDER DI OUTLET) */}
         <Route path="/" element={<Home />} />
         <Route path="/roomlist" element={<RoomListPages />} />
         <Route path="/history" element={<History />} />

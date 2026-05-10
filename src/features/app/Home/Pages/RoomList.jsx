@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { RoomList } from "../components/roomList";
 import { getRuangan } from "../../../Admin/Ruangan/service/ruanganService";
 
-/* ================= ANIMATION ================= */
-
 const pageVariant = {
   hidden: { opacity: 0 },
   show: {
@@ -13,18 +11,6 @@ const pageVariant = {
       duration: 0.6,
       when: "beforeChildren",
       staggerChildren: 0.15,
-    },
-  },
-};
-
-const sectionVariant = {
-  hidden: { opacity: 0, y: 40 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
     },
   },
 };
@@ -68,14 +54,11 @@ export function RoomListPages() {
       animate="show"
       className="relative min-h-screen text-white overflow-x-hidden"
     >
-      {/* ================= BACKGROUND ================= */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="absolute top-[-120px] left-[5%] w-[500px] h-[500px] bg-purple-600/20 blur-3xl rounded-full" />
         <div className="absolute bottom-[-200px] right-[10%] w-[600px] h-[600px] bg-pink-600/10 blur-3xl rounded-full" />
         <div className="absolute inset-0 bg-[#070014]" />
       </div>
-
-      {/* ================= CONTENT ================= */}
       <motion.div
         variants={sectionVariant}
         initial="hidden"
@@ -83,15 +66,12 @@ export function RoomListPages() {
         viewport={{ once: true }}
         className="relative z-10 max-w-7xl mx-auto px-4 py-20"
       >
-        {/* HEADER */}
         <div className="mb-10">
           <h1 className="text-3xl font-bold">Daftar Ruangan</h1>
           <p className="text-gray-400 text-sm mt-1">
             Pilih ruangan sesuai kebutuhan kegiatan
           </p>
         </div>
-
-        {/* SEARCH (PINDAH SINI) */}
         <input
           type="text"
           placeholder="Cari ruangan..."
@@ -104,8 +84,6 @@ export function RoomListPages() {
             focus:ring-2 focus:ring-purple-500/40
           "
         />
-
-        {/* LOADING */}
         {loading ? (
           <p className="text-gray-400">Loading...</p>
         ) : (

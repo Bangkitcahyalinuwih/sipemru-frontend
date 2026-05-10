@@ -53,7 +53,6 @@ const TableBooking = () => {
     }
   };
 
-  // AMBIL NAMA USER BERDASARKAN USER_ID
   const getUserName = (userId) => {
     const user = users.find(
       (item) =>
@@ -124,20 +123,16 @@ const TableBooking = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-
-        {/* HEADER */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">
               Data Booking
             </h1>
-
             <p className="text-sm text-gray-500 mt-1">
               Total Booking:{" "}
               {filteredBookings.length}
             </p>
           </div>
-
           <button
             onClick={() =>
               navigate(
@@ -149,11 +144,7 @@ const TableBooking = () => {
             + Tambah Booking
           </button>
         </div>
-
-        {/* CARD */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-
-          {/* SEARCH */}
           <div className="p-5 border-b border-gray-100">
             <div className="relative w-full md:w-80">
               <Search

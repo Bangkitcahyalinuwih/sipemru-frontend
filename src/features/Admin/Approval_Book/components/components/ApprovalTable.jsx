@@ -12,8 +12,6 @@ import {
 } from "lucide-react";
 import { getBookings, updateBooking } from "../../../Booking/service/BookingService";
 
-
-
 const ApprovalBooking = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +38,6 @@ const ApprovalBooking = () => {
     return bookings.filter((item) => item.status === "pending");
   }, [bookings]);
 
-  // search filter
   const filteredBookings = useMemo(() => {
     return pendingBookings.filter((item) => {
       const keyword = search.toLowerCase();
@@ -77,23 +74,16 @@ const ApprovalBooking = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-
-        {/* HEADER */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
           <div>
             <h1 className="text-2xl font-bold text-gray-800">
               Approval Booking
             </h1>
-
             <p className="text-sm text-gray-500 mt-1">
               Total Pending: {filteredBookings.length}
             </p>
           </div>
-
         </div>
-
-        {/* SEARCH */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-5 border-b border-gray-100">
             <div className="relative w-full md:w-80">

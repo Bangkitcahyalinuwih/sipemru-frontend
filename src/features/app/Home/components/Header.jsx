@@ -1,5 +1,3 @@
-// src/features/app/Home/components/navbar.jsx
-
 import { Link, useLocation } from "react-router-dom";
 import { LogOut, Settings, User, Menu, X } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -25,7 +23,6 @@ export function Navbar({
     [location]
   );
 
-  /* ================= SCROLL DETECTION ================= */
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
 
@@ -33,7 +30,6 @@ export function Navbar({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  /* ================= CLOSE OUTSIDE ================= */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -57,14 +53,11 @@ export function Navbar({
     return () =>
       document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen, isMobileMenuOpen]);
-
-  /* ================= ROUTE CHANGE ================= */
   useEffect(() => {
     setIsDropdownOpen(false);
     setIsMobileMenuOpen(false);
   }, [location]);
 
-  /* ================= ESC ================= */
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
@@ -77,7 +70,6 @@ export function Navbar({
     return () => document.removeEventListener("keydown", handleEsc);
   }, []);
 
-  /* ================= BODY LOCK ================= */
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", isMobileMenuOpen);
 
@@ -126,10 +118,7 @@ export function Navbar({
         }
       `}
     >
-      {/* TOP GLOW */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-400/40 to-transparent" />
-
-      {/* GLOW EFFECT */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
         <div className="absolute -top-20 left-0 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
         <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-pink-600/10 blur-3xl" />
@@ -137,8 +126,6 @@ export function Navbar({
 
       <div className="relative px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-
-          {/* LOGO */}
           <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
               <span className="text-lg font-bold text-white">R</span>
@@ -152,15 +139,11 @@ export function Navbar({
             </div>
           </Link>
 
-          {/* DESKTOP MENU */}
           <div className="hidden md:flex items-center gap-2 rounded-full border border-white/5 bg-white/[0.03] px-2 py-2 backdrop-blur-xl">
             <NavLinks />
           </div>
 
-          {/* RIGHT */}
           <div className="flex items-center gap-3">
-
-            {/* MOBILE BUTTON */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden flex h-10 w-10 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition"
@@ -172,7 +155,6 @@ export function Navbar({
               )}
             </button>
 
-            {/* PROFILE */}
             <div className="relative" ref={dropdownRef}>
               <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                 <div className="h-11 w-11 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center text-white font-semibold">
@@ -211,7 +193,6 @@ export function Navbar({
         </div>
       </div>
 
-      {/* MOBILE MENU */}
       {isMobileMenuOpen && (
         <div
           ref={mobileMenuRef}

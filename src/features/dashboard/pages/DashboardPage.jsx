@@ -52,20 +52,17 @@ export default function ModernAdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Interactive States
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateRange, setDateRange] = useState("all");
   const [selectedCard, setSelectedCard] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  /* ================= REAL-TIME CLOCK ================= */
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  /* ================= FETCH DATA ================= */
   const fetchData = async () => {
     try {
       setRefreshing(true);
@@ -87,7 +84,6 @@ export default function ModernAdminDashboard() {
     fetchData();
   }, []);
 
-  /* ================= FILTERING ================= */
   const filteredBookings = useMemo(() => {
     let filtered = [...bookings];
 
@@ -119,7 +115,6 @@ export default function ModernAdminDashboard() {
     return filtered;
   }, [bookings, searchTerm, statusFilter, dateRange]);
 
-  /* ================= ADVANCED ANALYTICS ================= */
   const analytics = useMemo(() => {
     const total = filteredBookings.length;
     const pending = filteredBookings.filter((b) => b.status === "pending").length;
@@ -127,13 +122,11 @@ export default function ModernAdminDashboard() {
     const rejected = filteredBookings.filter((b) => b.status === "rejected").length;
     const ongoing = filteredBookings.filter((b) => b.status === "ongoing").length;
 
-    // Today's bookings
     const today = filteredBookings.filter((b) => {
       const date = new Date(b.created_at || b.date);
       return date.toDateString() === new Date().toDateString();
     }).length;
 
-    // Weekly trend
     const thisWeek = bookings.filter((b) => {
       const date = new Date(b.created_at || b.date);
       const diffDays = (new Date() - date) / (1000 * 60 * 60 * 24);
@@ -148,10 +141,8 @@ export default function ModernAdminDashboard() {
 
     const weeklyChange = lastWeek === 0 ? 0 : Math.round(((thisWeek - lastWeek) / lastWeek) * 100);
 
-    // Approval rate
     const approvalRate = total === 0 ? 0 : Math.round((approved / total) * 100);
 
-    // Top rooms
     const roomCounts = {};
     bookings.forEach((b) => {
       roomCounts[b.room_name] = (roomCounts[b.room_name] || 0) + 1;
@@ -160,7 +151,6 @@ export default function ModernAdminDashboard() {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
 
-    // Top organizations
     const orgCounts = {};
     bookings.forEach((b) => {
       orgCounts[b.organization] = (orgCounts[b.organization] || 0) + 1;
@@ -169,7 +159,6 @@ export default function ModernAdminDashboard() {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
 
-    // Generate chart data for booking trends (last 7 days)
     const trendData = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
@@ -189,7 +178,6 @@ export default function ModernAdminDashboard() {
       trendData.push({ date: dayName, bookings: count, timestamp: dateStr });
     }
 
-    // Status distribution data for pie chart
     const statusData = [
       { name: "Approved", value: approved, color: "#10b981" },
       { name: "Pending", value: pending, color: "#f59e0b" },
@@ -197,13 +185,11 @@ export default function ModernAdminDashboard() {
       { name: "Rejected", value: rejected, color: "#ef4444" },
     ].filter(item => item.value > 0);
 
-    // Room usage data for bar chart
     const roomData = topRooms.map(([name, count]) => ({
       name,
       bookings: count,
     }));
 
-    // Organization data
     const orgData = topOrgs.map(([name, count]) => ({
       name,
       bookings: count,
@@ -229,17 +215,13 @@ export default function ModernAdminDashboard() {
     };
   }, [filteredBookings, bookings, users]);
 
-  /* ================= LOADING STATE ================= */
   if (loading) {
     return <LoadingState />;
   }
 
-  /* ================= MAIN DASHBOARD ================= */
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
       <div className="max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        
-        {/* ================= HERO HEADER ================= */}
         <HeroHeader 
           currentTime={currentTime}
           onRefresh={fetchData}
@@ -247,7 +229,6 @@ export default function ModernAdminDashboard() {
           todayCount={analytics.today}
         />
 
-        {/* ================= FILTERS ================= */}
         <FilterSection
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -263,7 +244,6 @@ export default function ModernAdminDashboard() {
           }}
         />
 
-        {/* ================= KPI CARDS ================= */}
         <KpiSection 
           analytics={analytics}
           selectedCard={selectedCard}
@@ -271,7 +251,6 @@ export default function ModernAdminDashboard() {
           setStatusFilter={setStatusFilter}
         />
 
-        {/* ================= CHART ANALYTICS GRID ================= */}
         <div className="grid lg:grid-cols-2 gap-6">
           <BookingTrendChart data={analytics.trendData} />
           <StatusDistributionChart data={analytics.statusData} />
@@ -282,20 +261,17 @@ export default function ModernAdminDashboard() {
           <OrganizationActivityChart data={analytics.orgData} />
         </div>
 
-        {/* ================= ANALYTICS GRID ================= */}
         <div className="grid lg:grid-cols-3 gap-6">
           <ApprovalRateCard analytics={analytics} />
           <WeeklyTrendCard analytics={analytics} />
           <QuickInsightCard analytics={analytics} />
         </div>
 
-        {/* ================= TOP PERFORMERS ================= */}
         <div className="grid lg:grid-cols-2 gap-6">
           <TopRoomsCard topRooms={analytics.topRooms} />
           <TopOrganizationsCard topOrgs={analytics.topOrgs} />
         </div>
 
-        {/* ================= RECENT BOOKINGS ================= */}
         <RecentBookingsTable 
           bookings={filteredBookings.slice(0, 10)}
           total={filteredBookings.length}
@@ -305,7 +281,6 @@ export default function ModernAdminDashboard() {
   );
 }
 
-/* ================= LOADING STATE ================= */
 function LoadingState() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex items-center justify-center">
@@ -333,7 +308,6 @@ function LoadingState() {
   );
 }
 
-/* ================= HERO HEADER ================= */
 function HeroHeader({ currentTime, onRefresh, refreshing, todayCount }) {
   const greeting = () => {
     const hour = currentTime.getHours();
@@ -368,7 +342,7 @@ function HeroHeader({ currentTime, onRefresh, refreshing, todayCount }) {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
@@ -406,7 +380,6 @@ function HeroHeader({ currentTime, onRefresh, refreshing, todayCount }) {
   );
 }
 
-/* ================= FILTER SECTION ================= */
 function FilterSection({ searchTerm, setSearchTerm, statusFilter, setStatusFilter, dateRange, setDateRange, onClearAll }) {
   const hasActiveFilters = searchTerm || statusFilter !== "all" || dateRange !== "all";
 
@@ -496,7 +469,6 @@ function FilterSection({ searchTerm, setSearchTerm, statusFilter, setStatusFilte
   );
 }
 
-/* ================= KPI SECTION ================= */
 function KpiSection({ analytics, selectedCard, setSelectedCard, setStatusFilter }) {
   const kpiCards = [
     {
@@ -590,10 +562,8 @@ function KpiCard({ id, label, value, icon: Icon, gradient, change, selected, onC
         }
       `}
     >
-      {/* Animated Background */}
       <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
       
-      {/* Icon Badge */}
       <div className={`
         absolute -top-2 -right-2 p-3 rounded-xl shadow-lg
         bg-gradient-to-br ${gradient} opacity-90
@@ -628,7 +598,6 @@ function KpiCard({ id, label, value, icon: Icon, gradient, change, selected, onC
   );
 }
 
-/* ================= APPROVAL RATE CARD ================= */
 function ApprovalRateCard({ analytics }) {
   const sparklineData = [65, 70, 68, 75, 78, 82, analytics.approvalRate];
 
@@ -672,7 +641,6 @@ function ApprovalRateCard({ analytics }) {
           </motion.div>
         </div>
 
-        {/* Sparkline */}
         <div className="flex items-end gap-1 h-12">
           {sparklineData.map((value, index) => (
             <motion.div
@@ -690,7 +658,6 @@ function ApprovalRateCard({ analytics }) {
   );
 }
 
-/* ================= WEEKLY TREND CARD ================= */
 function WeeklyTrendCard({ analytics }) {
   const isPositive = analytics.weeklyChange >= 0;
 
@@ -741,7 +708,6 @@ function WeeklyTrendCard({ analytics }) {
   );
 }
 
-/* ================= QUICK INSIGHT CARD ================= */
 function QuickInsightCard({ analytics }) {
   return (
     <motion.div
@@ -824,7 +790,6 @@ function InsightRow({ icon, label, value, total, color }) {
   );
 }
 
-/* ================= TOP ROOMS CARD ================= */
 function TopRoomsCard({ topRooms }) {
   return (
     <motion.div
@@ -879,7 +844,6 @@ function TopRoomsCard({ topRooms }) {
   );
 }
 
-/* ================= TOP ORGANIZATIONS CARD ================= */
 function TopOrganizationsCard({ topOrgs }) {
   return (
     <motion.div
@@ -926,7 +890,6 @@ function TopOrganizationsCard({ topOrgs }) {
   );
 }
 
-/* ================= RECENT BOOKINGS TABLE ================= */
 function RecentBookingsTable({ bookings, total }) {
   return (
     <motion.div
@@ -1029,7 +992,6 @@ function BookingRow({ booking, index }) {
   );
 }
 
-/* ================= BOOKING TREND CHART ================= */
 function BookingTrendChart({ data }) {
   return (
     <motion.div
@@ -1084,7 +1046,6 @@ function BookingTrendChart({ data }) {
   );
 }
 
-/* ================= STATUS DISTRIBUTION CHART ================= */
 function StatusDistributionChart({ data }) {
   const COLORS = {
     Approved: "#10b981",
@@ -1148,7 +1109,6 @@ function StatusDistributionChart({ data }) {
   );
 }
 
-/* ================= ROOM USAGE CHART ================= */
 function RoomUsageChart({ data }) {
   return (
     <motion.div
@@ -1194,7 +1154,6 @@ function RoomUsageChart({ data }) {
   );
 }
 
-/* ================= ORGANIZATION ACTIVITY CHART ================= */
 function OrganizationActivityChart({ data }) {
   return (
     <motion.div

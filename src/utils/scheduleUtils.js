@@ -1,12 +1,3 @@
-/**
- * Utility functions untuk menangani jadwal dan status ruangan
- */
-
-/**
- * Parse waktu dari format string HH:MM ke Date object
- * @param {string} timeStr - Format "HH:MM"
- * @returns {Date}
- */
 export const parseTimeString = (timeStr) => {
   const [hours, minutes] = timeStr.split(":").map(Number);
   const date = new Date();
@@ -14,11 +5,6 @@ export const parseTimeString = (timeStr) => {
   return date;
 };
 
-/**
- * Convert Date ke format HH:MM:SS
- * @param {Date} date
- * @returns {string}
- */
 export const formatTime = (date) => {
   return date.toLocaleTimeString("id-ID", {
     hour: "2-digit",
@@ -27,13 +13,6 @@ export const formatTime = (date) => {
   });
 };
 
-/**
- * Check apakah current time berada dalam range jadwal
- * @param {Date} currentTime - Waktu saat ini
- * @param {Date|string} startTime - Waktu mulai (Date atau "HH:MM")
- * @param {Date|string} endTime - Waktu selesai (Date atau "HH:MM")
- * @returns {boolean}
- */
 export const isTimeInRange = (currentTime, startTime, endTime) => {
   let start = startTime instanceof Date ? startTime : parseTimeString(startTime);
   let end = endTime instanceof Date ? endTime : parseTimeString(endTime);
@@ -45,13 +24,6 @@ export const isTimeInRange = (currentTime, startTime, endTime) => {
   return currentTime >= start && currentTime <= end;
 };
 
-/**
- * Tentukan status ruangan berdasarkan jadwal
- * @param {Array} schedules - Daftar jadwal
- * @param {number} roomId - ID ruangan
- * @param {Date} currentTime - Waktu saat ini
- * @returns {string} Status ruangan
- */
 export const getRoomStatus = (schedules, roomId, currentTime) => {
   if (!schedules || schedules.length === 0) {
     return "available";
@@ -68,7 +40,7 @@ export const getRoomStatus = (schedules, roomId, currentTime) => {
   });
 
   if (activeSchedule) {
-    return "occupied"; // Sedang dipakai
+    return "occupied";
   }
 
   // Cek apakah ada jadwal yang akan datang hari ini
@@ -82,50 +54,28 @@ export const getRoomStatus = (schedules, roomId, currentTime) => {
   });
 
   if (upcomingSchedule) {
-    return "scheduled"; // Ada jadwal yang akan datang
+    return "scheduled";
   }
 
-  return "available"; // Tersedia
+  return "available";
 };
 
-/**
- * Format waktu untuk display (HH:MM)
- * @param {Date} date
- * @returns {string}
- */
 export const formatTimeShort = (date) => {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
 };
 
-/**
- * Get sisa waktu jadwal (dalam menit)
- * @param {Date} endTime
- * @param {Date} currentTime
- * @returns {number} Menit tersisa
- */
 export const getTimeRemaining = (endTime, currentTime) => {
   const diff = endTime - currentTime;
-  return Math.ceil(diff / 1000 / 60); // Convert ke menit
+  return Math.ceil(diff / 1000 / 60);
 };
 
-/**
- * Get waktu yang sudah berlalu (dalam menit)
- * @param {Date} startTime
- * @param {Date} currentTime
- * @returns {number} Menit yang sudah berlalu
- */
 export const getElapsedTime = (startTime, currentTime) => {
   const diff = currentTime - startTime;
-  return Math.floor(diff / 1000 / 60); // Convert ke menit
+  return Math.floor(diff / 1000 / 60);
 };
 
-/**
- * Kelompokkan jadwal berdasarkan ruangan
- * @param {Array} schedules
- * @returns {Object}
- */
 export const groupSchedulesByRoom = (schedules) => {
   return schedules.reduce((acc, schedule) => {
     const roomId = schedule.room_id;
@@ -137,11 +87,6 @@ export const groupSchedulesByRoom = (schedules) => {
   }, {});
 };
 
-/**
- * Sort jadwal berdasarkan waktu mulai
- * @param {Array} schedules
- * @returns {Array}
- */
 export const sortSchedulesByTime = (schedules) => {
   return [...schedules].sort(
     (a, b) => new Date(a.start_time) - new Date(b.start_time)

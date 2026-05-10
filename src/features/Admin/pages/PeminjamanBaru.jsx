@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
 import FilterBar from "../components/FilterBar";
 import StatusBadge from "../components/StatusBadge";
+import ActionButtons from "../components/ActionButtons";
 
 const bookingData = [
   {
@@ -138,14 +139,10 @@ export default function PeminjamanBaru() {
                       <StatusBadge status={booking.status} />
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex items-center gap-2">
-                        <button className="inline-flex items-center justify-center rounded-full border border-emerald-500 bg-emerald-500/10 px-2.5 py-1 text-emerald-200 hover:bg-emerald-500/20">
-                          <Check className="w-3.5 h-3.5" />
-                        </button>
-                        <button className="inline-flex items-center justify-center rounded-full border border-red-500 bg-red-500/10 px-2.5 py-1 text-red-200 hover:bg-red-500/20">
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                      <ActionButtons
+                        agreement={() => alert(`Menyetujui peminjaman ${booking.id}`)}
+                        rejection={() => alert(`Menolak peminjaman ${booking.id}`)}
+                      />
                     </td>
                   </tr>
                 ))}

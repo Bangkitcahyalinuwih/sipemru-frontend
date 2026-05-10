@@ -4,6 +4,7 @@ import Sidebar from "../features/Admin/components/Sidebar";
 import Header from "../features/Admin/components/Header";
 import Dashboard from "../features/dashboard/pages/DashboardPage";
 import DaftarRuangan from "../features/Admin/pages/DaftarRuangan";
+import KelolaRuangan from "../features/Admin/pages/KelolaRuangan";
 
 export default function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -67,7 +68,7 @@ export default function AdminLayout() {
               <Route path="daftar-ruangan" element={<DaftarRuangan />} />
               <Route path="peminjaman" element={<div className="p-8"><h1>Peminjaman</h1></div>} />
               <Route path="riwayat-peminjaman" element={<div className="p-8"><h1>Riwayat Peminjaman</h1></div>} />
-              <Route path="ruangan" element={<div className="p-8"><h1>Kelola Ruangan</h1></div>} />
+              <Route path="ruangan" element={<KelolaRuangan />} />
               <Route path="gedung" element={<div className="p-8"><h1>Kelola Gedung</h1></div>} />
               <Route path="*" element={<Navigate to="dashboard" replace />} />
             </Routes>

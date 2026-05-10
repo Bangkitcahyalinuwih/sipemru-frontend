@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import FilterBar from "../components/FilterBar";
+import StatusBadge from "../components/StatusBadge";
 
 const roomData = [
   {
@@ -39,12 +40,6 @@ const filterOptions = {
   building: ["Semua Gedung", "Gedung M. Nuh", "Gedung A", "Gedung B"],
   floor: ["Semua Lantai", "Lantai 1", "Lantai 2", "Lantai 3"],
   status: ["Semua Status", "Berlangsung", "Sedang Dipakai", "Tersedia"],
-};
-
-const statusStyles = {
-  Berlangsung: "bg-blue-500 text-white",
-  "Sedang Dipakai": "bg-red-500 text-white",
-  Tersedia: "bg-green-500 text-white",
 };
 
 export default function DaftarRuangan() {
@@ -119,9 +114,7 @@ export default function DaftarRuangan() {
                     <td className="px-4 py-4 text-slate-300">{room.floor}</td>
                     <td className="px-4 py-4 text-slate-300">{room.capacity}</td>
                     <td className="px-4 py-4">
-                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[room.status] || "bg-slate-500 text-white"}`}>
-                        {room.status}
-                      </span>
+                     <StatusBadge status={room.status} />
                     </td>
                   </tr>
                 ))}

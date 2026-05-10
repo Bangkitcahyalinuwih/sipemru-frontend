@@ -28,6 +28,30 @@ let dummyRuangan = [
     facilities: ["Sound System", "Stage", "AC"],
     foto: null,
   },
+  {
+    id: 3,
+    code: "R003",
+    name: "Ruang Kelas 1",
+    type: "classroom",
+    capacity: 50,
+    floor: 1,
+    approval_type: "manual",
+    description: "Digunakan untuk seminar dan acara besar.",
+    facilities: ["Sound System", "Stage", "AC"],
+    foto: null,
+  },
+  {
+    id: 4,
+    code: "R004",
+    name: "Ruang Rapat 1",
+    type: "meeting_room",
+    capacity: 20,
+    floor: 1,
+    approval_type: "manual",
+    description: "Digunakan untuk seminar dan acara besar.",
+    facilities: ["Sound System", "Stage", "AC"],
+    foto: null,
+  },
 ];
 
 export const getRuangan = async () => {

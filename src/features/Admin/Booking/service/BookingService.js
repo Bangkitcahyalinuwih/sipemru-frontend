@@ -1,9 +1,14 @@
 import api from "../../../../api/api";
 
 const API_URL = "/bookings";
+
 const USE_API = false;
 
-let dummyBookings = [
+const STORAGE_KEY = "dummy_bookings";
+
+/* ================= INITIAL DUMMY ================= */
+
+const initialDummyBookings = [
   {
     id: 1,
     user_id: 1,
@@ -20,6 +25,7 @@ let dummyBookings = [
     end_time: "10:00",
     status: "approved",
   },
+
   {
     id: 2,
     user_id: 2,
@@ -38,9 +44,37 @@ let dummyBookings = [
   },
 ];
 
+/* ================= LOCAL STORAGE ================= */
+
+const loadBookings = () => {
+  const stored = localStorage.getItem(
+    STORAGE_KEY
+  );
+
+  return stored
+    ? JSON.parse(stored)
+    : initialDummyBookings;
+};
+
+let dummyBookings = loadBookings();
+
+const saveBookings = () => {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(dummyBookings)
+  );
+};
+
+/* ================= GET BOOKINGS ================= */
+
 export const getBookings = async () => {
   try {
     if (!USE_API) {
+      // simulasi loading
+      await new Promise((resolve) =>
+        setTimeout(resolve, 500)
+      );
+
       return [...dummyBookings];
     }
 
@@ -48,96 +82,188 @@ export const getBookings = async () => {
 
     return res.data;
   } catch (error) {
-    console.error("Gagal ambil bookings:", error);
+    console.error(
+      "Gagal ambil bookings:",
+      error
+    );
 
     return [];
   }
 };
+
+/* ================= GET BY ID ================= */
 
 export const getBookingById = async (id) => {
   try {
     if (!USE_API) {
       return (
         dummyBookings.find(
-          (item) => item.id === Number(id)
+          (item) =>
+            item.id === Number(id)
         ) || null
       );
     }
 
-    const res = await api.get(`${API_URL}/${id}`);
+    const res = await api.get(
+      `${API_URL}/${id}`
+    );
 
     return res.data;
   } catch (error) {
-    console.error("Gagal ambil booking:", error);
+    console.error(
+      "Gagal ambil booking:",
+      error
+    );
 
     return null;
   }
 };
 
-export const createBooking = async (data) => {
+/* ================= CREATE ================= */
+
+export const createBooking = async (
+  data
+) => {
   try {
     if (!USE_API) {
       const newData = {
         id: Date.now(),
+
         status: "pending",
+
+        created_at:
+          new Date().toISOString(),
+
         ...data,
       };
 
-      dummyBookings.push(newData);
+      dummyBookings.unshift(newData);
+
+      saveBookings();
 
       return newData;
     }
 
-    const res = await api.post(API_URL, data);
+    const res = await api.post(
+      API_URL,
+      data
+    );
 
     return res.data;
   } catch (error) {
-    console.error("Gagal tambah booking:", error);
+    console.error(
+      "Gagal tambah booking:",
+      error
+    );
 
     throw error;
   }
 };
 
-export const updateBooking = async (id, data) => {
+/* ================= UPDATE ================= */
+
+export const updateBooking = async (
+  id,
+  data
+) => {
   try {
     if (!USE_API) {
-      dummyBookings = dummyBookings.map((item) =>
-        item.id === Number(id)
-          ? {
-              ...item,
-              ...data,
-            }
-          : item
-      );
+      dummyBookings =
+        dummyBookings.map((item) =>
+          item.id === Number(id)
+            ? {
+                ...item,
+                ...data,
+              }
+            : item
+        );
+
+      saveBookings();
 
       return true;
     }
 
-    await api.put(`${API_URL}/${id}`, data);
+    await api.put(
+      `${API_URL}/${id}`,
+      data
+    );
 
     return true;
   } catch (error) {
-    console.error("Gagal update booking:", error);
+    console.error(
+      "Gagal update booking:",
+      error
+    );
 
     return false;
   }
 };
 
-export const deleteBooking = async (id) => {
+/* ================= DELETE ================= */
+
+export const deleteBooking = async (
+  id
+) => {
   try {
     if (!USE_API) {
-      dummyBookings = dummyBookings.filter(
-        (item) => item.id !== Number(id)
-      );
+      dummyBookings =
+        dummyBookings.filter(
+          (item) =>
+            item.id !== Number(id)
+        );
+
+      saveBookings();
 
       return true;
     }
 
-    await api.delete(`${API_URL}/${id}`);
+    await api.delete(
+      `${API_URL}/${id}`
+    );
 
     return true;
   } catch (error) {
-    console.error("Gagal hapus booking:", error);
+    console.error(
+      "Gagal hapus booking:",
+      error
+    );
+
+    return false;
+  }
+};
+
+/* ================= CANCEL ================= */
+
+export const cancelBooking = async (
+  id
+) => {
+  try {
+    if (!USE_API) {
+      dummyBookings =
+        dummyBookings.map((item) =>
+          item.id === Number(id)
+            ? {
+                ...item,
+                status: "cancelled",
+              }
+            : item
+        );
+
+      saveBookings();
+
+      return true;
+    }
+
+    await api.patch(
+      `${API_URL}/${id}/cancel`
+    );
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Gagal cancel booking:",
+      error
+    );
 
     return false;
   }

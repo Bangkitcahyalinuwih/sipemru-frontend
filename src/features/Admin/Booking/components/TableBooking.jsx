@@ -17,39 +17,78 @@ import {
   deleteBooking,
 } from "../service/BookingService";
 
+import { getUsers } from "../../Users/service/UserService";
+
 const TableBooking = () => {
   const [bookings, setBookings] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchBookings();
+    fetchData();
   }, []);
 
-  const fetchBookings = async () => {
-    setLoading(true);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
 
-    const data = await getBookings();
+      const bookingData = await getBookings();
+      const userData = await getUsers();
 
-    setBookings(data);
+      setBookings(bookingData);
+      setUsers(userData);
+    } catch (error) {
+      console.error(error);
 
-    setLoading(false);
+      Swal.fire(
+        "Gagal",
+        "Gagal mengambil data booking",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // AMBIL NAMA USER BERDASARKAN USER_ID
+  const getUserName = (userId) => {
+    const user = users.find(
+      (item) =>
+        Number(item.id) === Number(userId)
+    );
+
+    return (
+      user?.name || "User tidak ditemukan"
+    );
   };
 
   const filteredBookings = useMemo(() => {
     return bookings.filter((item) => {
-      const keyword = search.toLowerCase();
+      const keyword =
+        search.toLowerCase();
 
       return (
-        item.room_name?.toLowerCase().includes(keyword) ||
-        item.purpose?.toLowerCase().includes(keyword) ||
-        item.organization?.toLowerCase().includes(keyword) ||
-        item.pic_name?.toLowerCase().includes(keyword)
+        item.room_name
+          ?.toLowerCase()
+          .includes(keyword) ||
+        item.purpose
+          ?.toLowerCase()
+          .includes(keyword) ||
+        item.organization
+          ?.toLowerCase()
+          .includes(keyword) ||
+        item.pic_name
+          ?.toLowerCase()
+          .includes(keyword) ||
+        getUserName(item.user_id)
+          .toLowerCase()
+          .includes(keyword)
       );
     });
-  }, [bookings, search]);
+  }, [bookings, search, users]);
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -72,7 +111,7 @@ const TableBooking = () => {
         "success"
       );
 
-      fetchBookings();
+      fetchData();
     } else {
       Swal.fire(
         "Gagal",
@@ -86,6 +125,7 @@ const TableBooking = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
 
+        {/* HEADER */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">
@@ -93,20 +133,27 @@ const TableBooking = () => {
             </h1>
 
             <p className="text-sm text-gray-500 mt-1">
-              Total Booking: {filteredBookings.length}
+              Total Booking:{" "}
+              {filteredBookings.length}
             </p>
           </div>
 
           <button
-            onClick={() => navigate("/admin/booking/add")}
+            onClick={() =>
+              navigate(
+                "/admin/booking/add"
+              )
+            }
             className="bg-blue-600 text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 transition shadow-sm"
           >
             + Tambah Booking
           </button>
         </div>
 
+        {/* CARD */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
 
+          {/* SEARCH */}
           <div className="p-5 border-b border-gray-100">
             <div className="relative w-full md:w-80">
               <Search
@@ -119,13 +166,16 @@ const TableBooking = () => {
                 placeholder="Cari booking..."
                 value={search}
                 onChange={(e) =>
-                  setSearch(e.target.value)
+                  setSearch(
+                    e.target.value
+                  )
                 }
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition"
               />
             </div>
           </div>
 
+          {/* TABLE */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
 
@@ -133,6 +183,10 @@ const TableBooking = () => {
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold">
                     No
+                  </th>
+
+                  <th className="px-6 py-4 text-left font-semibold">
+                    User
                   </th>
 
                   <th className="px-6 py-4 text-left font-semibold">
@@ -177,147 +231,202 @@ const TableBooking = () => {
                 {loading ? (
                   <tr>
                     <td
-                      colSpan="10"
+                      colSpan="11"
                       className="text-center py-10 text-gray-500"
                     >
                       Loading...
                     </td>
                   </tr>
-                ) : filteredBookings.length === 0 ? (
+                ) : filteredBookings.length ===
+                  0 ? (
                   <tr>
                     <td
-                      colSpan="10"
+                      colSpan="11"
                       className="text-center py-10 text-gray-500"
                     >
                       Data booking kosong
                     </td>
                   </tr>
                 ) : (
-                  filteredBookings.map((item, index) => (
-                    <tr
-                      key={item.id}
-                      className="border-t border-gray-100 hover:bg-gray-50 transition"
-                    >
-                      <td className="px-6 py-4">
-                        {index + 1}
-                      </td>
+                  filteredBookings.map(
+                    (item, index) => (
+                      <tr
+                        key={item.id}
+                        className="border-t border-gray-100 hover:bg-gray-50 transition"
+                      >
+                        <td className="px-6 py-4">
+                          {index + 1}
+                        </td>
 
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                            <Building2
-                              size={18}
-                              className="text-blue-600"
-                            />
-                          </div>
-
+                        {/* USER */}
+                        <td className="px-6 py-4">
                           <div>
                             <p className="font-medium text-gray-800">
-                              {item.room_name}
+                              {getUserName(
+                                item.user_id
+                              )}
                             </p>
 
-                            <p className="text-xs text-gray-500 capitalize">
-                              {item.jenis_peminjaman}
+                            <p className="text-xs text-gray-500">
+                              ID:{" "}
+                              {item.user_id}
                             </p>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      <td className="px-6 py-4 font-medium text-gray-700">
-                        {item.purpose}
-                      </td>
+                        {/* ROOM */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                              <Building2
+                                size={18}
+                                className="text-blue-600"
+                              />
+                            </div>
 
-                      <td className="px-6 py-4">
-                        {item.organization}
-                      </td>
+                            <div>
+                              <p className="font-medium text-gray-800">
+                                {
+                                  item.room_name
+                                }
+                              </p>
 
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <Users
-                            size={15}
-                            className="text-gray-400"
-                          />
+                              <p className="text-xs text-gray-500 capitalize">
+                                {
+                                  item.jenis_peminjaman
+                                }
+                              </p>
+                            </div>
+                          </div>
+                        </td>
 
-                          {item.jumlah_peserta}
-                        </div>
-                      </td>
+                        {/* PURPOSE */}
+                        <td className="px-6 py-4 font-medium text-gray-700">
+                          {item.purpose}
+                        </td>
 
-                      <td className="px-6 py-4">
-                        <div>
-                          <p className="font-medium">
-                            {item.pic_name}
-                          </p>
+                        {/* ORGANIZATION */}
+                        <td className="px-6 py-4">
+                          {
+                            item.organization
+                          }
+                        </td>
 
-                          <p className="text-xs text-gray-500">
-                            {item.pic_phone}
-                          </p>
-                        </div>
-                      </td>
+                        {/* PARTICIPANTS */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <Users
+                              size={15}
+                              className="text-gray-400"
+                            />
 
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <CalendarDays
-                            size={15}
-                            className="text-gray-400"
-                          />
-
-                          {item.booking_date}
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <Clock3
-                            size={15}
-                            className="text-gray-400"
-                          />
-
-                          {item.start_time} -{" "}
-                          {item.end_time}
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                            item.status === "approved"
-                              ? "bg-green-100 text-green-700"
-                              : item.status === "pending"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-red-100 text-red-700"
-                          }`}
-                        >
-                          {item.status}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <div className="flex justify-center gap-2">
-
-                          <button
-                            onClick={() =>
-                              navigate(
-                                `/admin/booking/edit/${item.id}`
-                              )
+                            {
+                              item.jumlah_peserta
                             }
-                            className="p-2 rounded-xl hover:bg-blue-100 text-blue-600 transition"
-                          >
-                            <Pencil size={18} />
-                          </button>
+                          </div>
+                        </td>
 
-                          <button
-                            onClick={() =>
-                              handleDelete(item.id)
+                        {/* PIC */}
+                        <td className="px-6 py-4">
+                          <div>
+                            <p className="font-medium">
+                              {
+                                item.pic_name
+                              }
+                            </p>
+
+                            <p className="text-xs text-gray-500">
+                              {
+                                item.pic_phone
+                              }
+                            </p>
+                          </div>
+                        </td>
+
+                        {/* DATE */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <CalendarDays
+                              size={15}
+                              className="text-gray-400"
+                            />
+
+                            {
+                              item.booking_date
                             }
-                            className="p-2 rounded-xl hover:bg-red-100 text-red-600 transition"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+                          </div>
+                        </td>
 
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                        {/* TIME */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <Clock3
+                              size={15}
+                              className="text-gray-400"
+                            />
+
+                            {
+                              item.start_time
+                            }{" "}
+                            -{" "}
+                            {
+                              item.end_time
+                            }
+                          </div>
+                        </td>
+
+                        {/* STATUS */}
+                        <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                              item.status ===
+                              "approved"
+                                ? "bg-green-100 text-green-700"
+                                : item.status ===
+                                  "pending"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                        </td>
+
+                        {/* ACTION */}
+                        <td className="px-6 py-4">
+                          <div className="flex justify-center gap-2">
+
+                            <button
+                              onClick={() =>
+                                navigate(
+                                  `/admin/booking/edit/${item.id}`
+                                )
+                              }
+                              className="p-2 rounded-xl hover:bg-blue-100 text-blue-600 transition"
+                            >
+                              <Pencil
+                                size={18}
+                              />
+                            </button>
+
+                            <button
+                              onClick={() =>
+                                handleDelete(
+                                  item.id
+                                )
+                              }
+                              className="p-2 rounded-xl hover:bg-red-100 text-red-600 transition"
+                            >
+                              <Trash2
+                                size={18}
+                              />
+                            </button>
+
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  )
                 )}
               </tbody>
 

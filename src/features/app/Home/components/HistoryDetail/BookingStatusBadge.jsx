@@ -23,7 +23,7 @@ export function BookingStatusBadge({ status }) {
   };
 
   const current = config[status] || {
-    label: "Unknown",
+    label: "Dibatalkan",
     style: "bg-gray-100 text-gray-700",
     icon: AlertCircle,
   };

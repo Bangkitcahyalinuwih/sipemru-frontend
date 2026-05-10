@@ -1209,7 +1209,7 @@ function OrganizationActivityChart({ data }) {
         </div>
         <div>
           <h3 className="font-bold text-slate-900">Organization Activity</h3>
-          <p className="text-xs text-slate-500">Top active organizations</p>
+          <p className="text-xs text-slate-500">Top active organization</p>
         </div>
       </div>
 

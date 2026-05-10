@@ -1,4 +1,4 @@
-import { Edit3, Eye, Trash2 } from "lucide-react";
+import { Edit3, Eye, Trash2, Check, X } from "lucide-react";
 
 export default function ActionButtons({ onDelete, onInspect, onUpdate, agreement, rejection }) {
   return (

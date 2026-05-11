@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { Plus } from "lucide-react";
 import FilterBar from "../components/FilterBar";
 import StatusBadge from "../components/StatusBadge";
 import ActionButtons from "../components/ActionButtons";
+import RoomFormModal from "../components/RoomFormModal";
 
-const roomData = [
+const initialRooms = [
   {
     id: 1,
     code: "R-LB217",
@@ -35,17 +35,18 @@ const filterOptions = {
 };
 
 export default function KelolaRuangan() {
+  const [rooms, setRooms] = useState(initialRooms);
   const [query, setQuery] = useState("");
   const [campus, setCampus] = useState("Semua Kampus");
   const [building, setBuilding] = useState("Semua Gedung");
   const [floor, setFloor] = useState("Semua Lantai");
   const [status, setStatus] = useState("Semua Status");
-  const [showFormPlaceholder, setShowFormPlaceholder] = useState(false);
+  const [showFormModal, setShowFormModal] = useState(false);
 
   const filters = { campus, building, floor, status };
 
   const filteredRooms = useMemo(() => {
-    return roomData.filter((room) => {
+    return rooms.filter((room) => {
       const searchText = `${room.code} ${room.name} ${room.campus} ${room.building} ${room.floor}`.toLowerCase();
       const matchesQuery = searchText.includes(query.toLowerCase());
       const matchesCampus = campus === "Semua Kampus" || room.campus === campus;
@@ -78,23 +79,22 @@ export default function KelolaRuangan() {
               filterOptions={filterOptions}
               placeholder="Cari Ruangan..."
             />
-            <button
-              type="button"
-              onClick={() => setShowFormPlaceholder(true)}
-              className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
-              <Plus className="w-4 h-4" />
-              Tambah Ruangan
-            </button>
+            <ActionButtons onInsert={() => setShowFormModal(true)} showInsert={true} />
           </div>
         </div>
 
-        {showFormPlaceholder && (
-          <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-6 text-amber-100">
-            <p className="text-sm font-medium">Form tambah ruangan akan ditampilkan di sini.</p>
-            <p className="text-sm text-amber-200">Implementasi form input dapat diselesaikan pada langkah selanjutnya.</p>
-          </div>
-        )}
+        <RoomFormModal
+          open={showFormModal}
+          onClose={() => setShowFormModal(false)}
+          onSubmit={(room) => {
+            setRooms((current) => [room, ...current]);
+            setShowFormModal(false);
+          }}
+          campusOptions={filterOptions.campus}
+          buildingOptions={filterOptions.building}
+          floorOptions={filterOptions.floor}
+          statusOptions={filterOptions.status.slice(1)}
+        />
 
         <div className="rounded-3xl border border-slate-800/10 bg-slate-950/80 p-6 shadow-xl shadow-slate-900/5 text-slate-100">
           <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">

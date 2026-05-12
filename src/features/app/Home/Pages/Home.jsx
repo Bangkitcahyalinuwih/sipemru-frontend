@@ -124,7 +124,7 @@ export function Home() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative z-10 mt-28"
+        className="relative z-10 mt-28 px-1.5 mb-10 "
       >
         <Stats />
       </motion.div>
@@ -134,7 +134,7 @@ export function Home() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative z-10"
+        className="relative z-10 mb-10 mt-6 p-14"
       >
         <RoomList rooms={rooms} />
       </motion.div>

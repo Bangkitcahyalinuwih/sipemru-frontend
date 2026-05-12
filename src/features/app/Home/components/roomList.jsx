@@ -25,6 +25,7 @@ const Badge = ({ type }) => {
         rounded-full
         backdrop-blur-md
         border
+        capitalize
         ${color}
       `}
     >
@@ -43,8 +44,9 @@ export function RoomList({
       className="
         grid
         grid-cols-1
-        md:grid-cols-2
+        sm:grid-cols-2
         lg:grid-cols-3
+        xl:grid-cols-4
         gap-8
       "
     >
@@ -89,11 +91,11 @@ export function RoomList({
           <div className="p-5 relative z-10">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-lg">
+                <h3 className="font-semibold text-lg capitalize">
                   {room?.name}
                 </h3>
 
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 mt-1 uppercase tracking-wide">
                   Kode: {room?.code}
                 </p>
               </div>
@@ -102,28 +104,28 @@ export function RoomList({
             </div>
 
             <div className="mt-4 space-y-2 text-sm text-gray-300">
-              <p className="flex items-center gap-2">
+              <p className="flex items-center gap-2 capitalize">
                 <Users size={15} />
                 {room?.capacity} Orang
               </p>
 
-              <p className="flex items-center gap-2">
+              <p className="flex items-center gap-2 capitalize">
                 <Layers3 size={15} />
                 Lantai {room?.floor}
               </p>
 
-              <p className="flex items-center gap-2">
+              <p className="flex items-center gap-2 capitalize">
                 <ShieldCheck size={15} />
                 Approval: {room?.approval_type}
               </p>
 
-              <p className="flex items-center gap-2">
+              <p className="flex items-center gap-2 capitalize">
                 <Building2 size={15} />
                 {room?.type}
               </p>
             </div>
 
-            <p className="text-sm text-gray-400 mt-4 line-clamp-2">
+            <p className="text-sm text-gray-400 mt-4 line-clamp-2 capitalize">
               {room?.description}
             </p>
 
@@ -139,6 +141,7 @@ export function RoomList({
                       bg-white/10
                       border border-white/10
                       text-gray-300
+                      capitalize
                     "
                   >
                     {item}

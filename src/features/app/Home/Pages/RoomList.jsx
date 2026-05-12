@@ -1,93 +1,277 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+
 import { RoomList } from "../components/roomList";
+
 import { getRuangan } from "../../../Admin/Ruangan/service/ruanganService";
 
 const pageVariant = {
-  hidden: { opacity: 0 },
+  hidden: {
+    opacity: 0,
+  },
+
   show: {
     opacity: 1,
+
     transition: {
-      duration: 0.6,
+      duration: 0.5,
       when: "beforeChildren",
-      staggerChildren: 0.15,
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const sectionVariant = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+
+  show: {
+    opacity: 1,
+    y: 0,
+
+    transition: {
+      duration: 0.5,
     },
   },
 };
 
 export function RoomListPages() {
   const [rooms, setRooms] = useState([]);
+
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+
+  const [loading, setLoading] =
+    useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchRooms = async () => {
       try {
         setLoading(true);
-        const data = await getRuangan();
+
+        const data =
+          await getRuangan();
+
         setRooms(data || []);
       } catch (error) {
-        console.error(error);
+        console.error(
+          "Error fetch ruangan:",
+          error
+        );
+
         setRooms([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchRooms();
   }, []);
 
-  const filteredRooms = rooms.filter((r) => {
-    const keyword = search.toLowerCase();
+  const filteredRooms = rooms.filter(
+    (room) => {
+      const keyword =
+        search.toLowerCase();
 
-    return (
-      (r?.name || "").toLowerCase().includes(keyword) ||
-      (r?.code || "").toLowerCase().includes(keyword) ||
-      (r?.type || "").toLowerCase().includes(keyword)
-    );
-  });
+      return (
+        (room?.name || "")
+          .toLowerCase()
+          .includes(keyword) ||
+        (room?.code || "")
+          .toLowerCase()
+          .includes(keyword) ||
+        (room?.type || "")
+          .toLowerCase()
+          .includes(keyword)
+      );
+    }
+  );
 
   return (
     <motion.div
       variants={pageVariant}
       initial="hidden"
       animate="show"
-      className="relative min-h-screen text-white overflow-x-hidden"
+      className="
+        relative
+        min-h-screen
+        overflow-x-hidden
+        bg-[#070014]
+        text-white
+      "
     >
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-[-120px] left-[5%] w-[500px] h-[500px] bg-purple-600/20 blur-3xl rounded-full" />
-        <div className="absolute bottom-[-200px] right-[10%] w-[600px] h-[600px] bg-pink-600/10 blur-3xl rounded-full" />
-        <div className="absolute inset-0 bg-[#070014]" />
-      </div>
-      <motion.div
-        variants={sectionVariant}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        className="relative z-10 max-w-7xl mx-auto px-4 py-20"
-      >
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold">Daftar Ruangan</h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Pilih ruangan sesuai kebutuhan kegiatan
-          </p>
-        </div>
-        <input
-          type="text"
-          placeholder="Cari ruangan..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div
           className="
-            w-full md:w-1/2 px-5 py-3 mb-10
-            rounded-2xl bg-white/10 text-white
-            border border-white/20 outline-none
-            focus:ring-2 focus:ring-purple-500/40
+            absolute
+            top-[-150px]
+            left-[5%]
+            w-[500px]
+            h-[500px]
+            rounded-full
+            bg-purple-600/20
+            blur-3xl
           "
         />
+
+        <div
+          className="
+            absolute
+            bottom-[-200px]
+            right-[10%]
+            w-[600px]
+            h-[600px]
+            rounded-full
+            bg-pink-600/10
+            blur-3xl
+          "
+        />
+
+        <div
+          className="
+            absolute
+            top-[30%]
+            left-[45%]
+            w-[400px]
+            h-[400px]
+            rounded-full
+            bg-cyan-500/10
+            blur-3xl
+          "
+        />
+      </div>
+
+      <motion.div
+        variants={sectionVariant}
+        className="
+          relative z-10
+          max-w-7xl
+          mx-auto
+          px-4
+          py-20
+        "
+      >
+        <div className="mb-10">
+          <div
+            className="
+              inline-flex
+              items-center
+              gap-2
+              px-4 py-2
+              rounded-full
+              border border-white/10
+              bg-white/5
+              backdrop-blur-xl
+              text-sm
+              text-purple-300
+              mb-5
+            "
+          >
+            Smart Room Booking
+          </div>
+
+          <h1
+            className="
+              text-4xl
+              md:text-5xl
+              font-bold
+              tracking-tight
+            "
+          >
+            Daftar Ruangan
+          </h1>
+
+          <p
+            className="
+              text-gray-400
+              text-sm
+              md:text-base
+              mt-3
+              max-w-2xl
+            "
+          >
+            Pilih ruangan sesuai
+            kebutuhan kegiatan,
+            seminar, workshop,
+            praktikum, dan acara
+            kampus lainnya.
+          </p>
+        </div>
+
+        <motion.div
+          variants={sectionVariant}
+          className="mb-10"
+        >
+          <input
+            type="text"
+            placeholder="Cari ruangan berdasarkan nama, kode, atau tipe..."
+            value={search}
+            onChange={(e) =>
+              setSearch(
+                e.target.value
+              )
+            }
+            className="
+              w-full
+              md:w-[420px]
+              px-5 py-3.5
+              rounded-2xl
+              border border-white/10
+              bg-white/5
+              backdrop-blur-2xl
+              text-white
+              placeholder:text-gray-500
+              outline-none
+              transition-all
+              focus:border-purple-500/40
+              focus:ring-2
+              focus:ring-purple-500/20
+            "
+          />
+        </motion.div>
+
         {loading ? (
-          <p className="text-gray-400">Loading...</p>
+          <motion.div
+            variants={sectionVariant}
+            className="
+              h-[300px]
+              rounded-3xl
+              border border-white/10
+              bg-white/5
+              backdrop-blur-2xl
+              flex items-center justify-center
+            "
+          >
+            <p className="text-gray-400">
+              Loading ruangan...
+            </p>
+          </motion.div>
+        ) : filteredRooms.length ===
+          0 ? (
+          <motion.div
+            variants={sectionVariant}
+            className="
+              h-[300px]
+              rounded-3xl
+              border border-white/10
+              bg-white/5
+              backdrop-blur-2xl
+              flex items-center justify-center
+            "
+          >
+            <p className="text-gray-400">
+              Ruangan tidak ditemukan
+            </p>
+          </motion.div>
         ) : (
-          <RoomList rooms={filteredRooms} />
+          <motion.div
+            variants={sectionVariant}
+          >
+            <RoomList
+              rooms={filteredRooms}
+            />
+          </motion.div>
         )}
       </motion.div>
     </motion.div>

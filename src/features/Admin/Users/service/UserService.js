@@ -18,17 +18,20 @@ const initialUsers = [
     phone: "08123456789",
     email_verified_at: "2025-01-01",
   },
-  {
-    id: 25,
-    name: "Budi Santoso",
-    email: "budi@gmail.com",
-    password: "123456",
-    role: "mahasiswa",
-    nim: "87654321",
-    jurusan: "Sistem Informasi",
-    phone: "08987654321",
-    email_verified_at: null,
-  },
+{
+  id: 25,
+  name: "Budi Santoso",
+  email: "budi@gmail.com",
+  password: "123456",
+  role: "mahasiswa",
+  nim: "87654321",
+  jurusan: "Sistem Informasi",
+  phone: "08987654321",
+  email_verified_at: null,
+
+  token:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy.mahasiswa.token",
+}
 ];
 
 const loadUsers = () => {

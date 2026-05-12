@@ -2,6 +2,7 @@ import {
   Routes,
   Route,
   Outlet,
+  Navigate,
 } from "react-router-dom";
 
 import { Navbar } from "../features/app/Home/components/Header";
@@ -13,12 +14,39 @@ import RoomListPages from "../features/app/Home/Pages/RoomList";
 import { RoomDetailPage } from "../features/app/Home/Pages/roomDetail";
 import { HistoryDetailPage } from "../features/app/Home/Pages/HistoryDetailPages";
 
+
+
+
+import RegisterPage from "../features/app/auth/pages/RegisterPages";
+import LoginPage from "../features/app/auth/pages/LoginPages";
+import { getCurrentUser } from "../features/Admin/Users/service/UserService";
+
+
+function ProtectedRoute({
+  children,
+}) {
+  const user = getCurrentUser();
+
+  if (!user) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
+
+  return children;
+}
+
+/* ================= LAYOUT ================= */
+
 function LayoutWrapper() {
   return (
     <div
       className="
         relative
-        h-screen
+        min-h-screen
         overflow-hidden
         bg-gradient-to-br
         from-slate-950
@@ -28,6 +56,7 @@ function LayoutWrapper() {
         flex flex-col
       "
     >
+      {/* Background */}
       <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
         <div
           className="
@@ -87,8 +116,10 @@ function LayoutWrapper() {
         />
       </div>
 
+      {/* Navbar */}
       <Navbar />
 
+      {/* Content */}
       <div
         className="
           flex-1
@@ -106,6 +137,7 @@ function LayoutWrapper() {
           <Outlet />
         </main>
 
+        {/* Footer */}
         <footer
           className="
             relative
@@ -169,8 +201,14 @@ function LayoutWrapper() {
 
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li>Email: support@simaru.app</li>
-                  <li>Telp: +62 812-0000-0000</li>
-                  <li>Madiun, Indonesia</li>
+
+                  <li>
+                    Telp: +62 812-0000-0000
+                  </li>
+
+                  <li>
+                    Madiun, Indonesia
+                  </li>
                 </ul>
               </div>
             </div>
@@ -185,7 +223,9 @@ function LayoutWrapper() {
               "
             >
               <p className="text-xs text-gray-500">
-                © {new Date().getFullYear()} Simaru.
+                ©{" "}
+                {new Date().getFullYear()}{" "}
+                Simaru.
                 All rights reserved.
               </p>
 
@@ -210,9 +250,22 @@ function LayoutWrapper() {
   );
 }
 
+
 export function UserLayout() {
   return (
     <Routes>
+
+      <Route
+        path="/login"
+        element={<LoginPage />}
+      />
+
+      <Route
+        path="/register"
+        element={<RegisterPage />}
+      />
+
+
       <Route element={<LayoutWrapper />}>
         <Route
           path="/"
@@ -225,23 +278,39 @@ export function UserLayout() {
         />
 
         <Route
-          path="/history"
-          element={<History />}
+          path="/booking"
+          element={
+            <ProtectedRoute>
+              <Booking />
+            </ProtectedRoute>
+          }
         />
 
         <Route
-          path="/booking"
-          element={<Booking />}
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <History />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/room/:id"
-          element={<RoomDetailPage />}
+          element={
+            <ProtectedRoute>
+              <RoomDetailPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/history/:id"
-          element={<HistoryDetailPage />}
+          element={
+            <ProtectedRoute>
+              <HistoryDetailPage />
+            </ProtectedRoute>
+          }
         />
       </Route>
     </Routes>

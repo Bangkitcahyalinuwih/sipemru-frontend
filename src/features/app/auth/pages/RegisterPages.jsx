@@ -1,0 +1,12 @@
+import RegisterForm from "../components/RegisterForm";
+
+
+const RegisterPage = () => {
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <RegisterForm />
+    </div>
+  );
+};
+
+export default RegisterPage;

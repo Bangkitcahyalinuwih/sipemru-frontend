@@ -13,13 +13,10 @@ import { Booking } from "../features/app/Home/Pages/Booking";
 import RoomListPages from "../features/app/Home/Pages/RoomList";
 import { RoomDetailPage } from "../features/app/Home/Pages/roomDetail";
 import { HistoryDetailPage } from "../features/app/Home/Pages/HistoryDetailPages";
-
-
-
-
 import RegisterPage from "../features/app/auth/pages/RegisterPages";
 import LoginPage from "../features/app/auth/pages/LoginPages";
 import { getCurrentUser } from "../features/Admin/Users/service/UserService";
+import ProfilePages from "../features/app/Home/Pages/ProfilePages";
 
 
 function ProtectedRoute({
@@ -255,6 +252,11 @@ export function UserLayout() {
   return (
     <Routes>
 
+      <Route
+        path="/profile"
+        element={<ProfilePages />}
+      />
+      
       <Route
         path="/login"
         element={<LoginPage />}

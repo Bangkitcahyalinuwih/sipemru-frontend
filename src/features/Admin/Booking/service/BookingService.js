@@ -84,8 +84,6 @@ export const getBookings = async () => {
   }
 };
 
-/* ================= GET BY ID ================= */
-
 export const getBookingById = async (id) => {
   try {
     if (!USE_API) {
@@ -111,8 +109,6 @@ export const getBookingById = async (id) => {
     return null;
   }
 };
-
-/* ================= CREATE ================= */
 
 export const createBooking = async (
   data
@@ -149,8 +145,6 @@ export const createBooking = async (
     throw error;
   }
 };
-
-/* ================= UPDATE ================= */
 
 export const updateBooking = async (
   id,
@@ -189,8 +183,6 @@ export const updateBooking = async (
   }
 };
 
-/* ================= DELETE ================= */
-
 export const deleteBooking = async (
   id
 ) => {
@@ -222,7 +214,6 @@ export const deleteBooking = async (
   }
 };
 
-/* ================= CANCEL ================= */
 
 export const cancelBooking = async (
   id

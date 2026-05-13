@@ -5,32 +5,65 @@ const api = axios.create({
 
   headers: {
     Accept: "application/json",
+    "Content-Type": "application/json",
   },
+
+  timeout: 10000,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+// REQUEST INTERCEPTOR
+api.interceptors.request.use(
+  (config) => {
+    const token =
+      localStorage.getItem(
+        "token"
+      );
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
-
-api.interceptors.response.use(
-  (res) => res,
-
-  (err) => {
-    if (err.response?.status === 401) {
-      localStorage.removeItem("token");
-
-      localStorage.removeItem("user");
-
-      window.location.href = "/login";
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
-    return Promise.reject(err);
+    return config;
+  },
+
+  (error) => {
+    return Promise.reject(
+      error
+    );
+  }
+);
+
+// RESPONSE INTERCEPTOR
+api.interceptors.response.use(
+  (response) => response,
+
+  (error) => {
+    const status =
+      error.response?.status;
+
+    // token invalid / expired
+    if (status === 401) {
+      localStorage.removeItem(
+        "token"
+      );
+
+      localStorage.removeItem(
+        "user"
+      );
+
+      // hindari loop redirect
+      if (
+        window.location.pathname !==
+        "/login"
+      ) {
+        window.location.href =
+          "/login";
+      }
+    }
+
+    return Promise.reject(
+      error
+    );
   }
 );
 

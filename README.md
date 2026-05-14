@@ -1,158 +1,174 @@
-# 📌 SIPemru Frontend
+# 📌 SIPemru - Sistem Informasi Peminjaman Ruangan
 
-Sistem Peminjaman Ruangan Kampus berbasis **React + Vite + Tailwind CSS** dengan arsitektur modular (feature-based).
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react)
+![Vite](https://img.shields.io/badge/Vite-Frontend-646CFF?logo=vite)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?logo=tailwindcss)
 
----
-
-## 🚀 Deskripsi
-
-Aplikasi ini digunakan untuk:
-
-* Menampilkan daftar ruangan kampus
-* Melakukan booking ruangan
-* Monitoring penggunaan ruangan melalui dashboard
-* Mengelola tampilan admin
+SIPemru adalah aplikasi web untuk manajemen peminjaman ruangan kampus berbasis **React + Vite + Tailwind CSS** dengan arsitektur modular berbasis fitur (Feature-Based Architecture).
 
 ---
 
-## 🧠 Arsitektur Project
+## 🎯 Core Features
 
-Project ini menggunakan pendekatan:
-
-👉 **Feature-Based Architecture**
-Setiap fitur dipisah berdasarkan domain, bukan berdasarkan jenis file.
-
-Keuntungan:
-
-* Mudah scale ke project besar
-* Kode lebih terorganisir
-* Cocok untuk tim development
+- 📚 Room Catalog - Informasi ruangan & ketersediaan
+- 📅 Booking System - Sistem peminjaman dengan validasi jadwal
+- 🧑‍💼 Admin Dashboard - Monitoring & manajemen peminjaman
+- 👥 User Management - Manajemen akun pengguna
+- 📊 Schedule Management - Visualisasi jadwal ruangan
+- 📱 Responsive Design - Support desktop & mobile
 
 ---
 
-## 📁 Struktur Folder (Detail)
+## 🏗️ Architecture
 
-```bash
+Project ini menggunakan **Feature-Based Architecture**, di mana setiap fitur dibuat modular berdasarkan domain bisnis.
+
+### Data Flow
+
+```
+
+UI Component → Hooks / State → Service Layer → API → Backend
+
+```
+
+---
+
+## 📁 Project Structure
+
+```
+
 src/
 │
-├── api/
-│   └── # Konfigurasi komunikasi ke backend (axios / fetch)
+├── api/                  # API configuration
+├── assets/               # Static assets
 │
-├── features/
-│   │
-│   ├── Admin/
-│   │   ├── components/
-│   │   │   ├── Header.jsx        # Header admin (topbar)
-│   │   │   └── Sidebar.jsx       # Sidebar navigasi admin
-│   │   │
-│   │   ├── config/
-│   │   │   └── sidebarMenu.js    # Konfigurasi menu sidebar (dynamic menu)
-│   │   │
-│   │   └── hooks/
-│   │       └── useDarkMode.js    # Custom hook untuk dark mode toggle
-│   │
-│   ├── app/
-│   │   └── Home/
-│   │       ├── components/
-│   │       │   ├── bookingForm.jsx  # Form booking ruangan
-│   │       │   ├── hero.jsx         # Section hero / landing
-│   │       │   ├── navbar.jsx       # Navbar user
-│   │       │   ├── roomList.jsx     # List ruangan + booking button
-│   │       │   └── stats.jsx        # Statistik ruangan
-│   │       │
-│   │       └── Pages/
-│   │           ├── Home.jsx         # Halaman utama user
-│   │           ├── Booking.jsx      # Halaman booking
-│   │           └── History.jsx      # Riwayat booking
-│   │
-│   ├── dashboard/
-│   │   ├── hooks/
-│   │   │   └── useDashboard.js     # Logic data dashboard (fetch + state)
-│   │   │
-│   │   ├── pages/
-│   │   │   └── DashboardPage.jsx   # Tampilan utama dashboard
-│   │   │
-│   │   └── services/
-│   │       └── dashboardService.js # API service untuk dashboard
+├── components/           # Shared UI components
+│   ├── ui/
+│   ├── layout/
+│   └── shared/
 │
-├── layouts/
-│   └── AdminLayout.jsx             # Layout utama admin (wrapper sidebar + content)
+├── features/             # Business features
+│   ├── admin/
+│   ├── user/
+│   ├── auth/
+│   └── dashboard/
 │
-├── store/
-│   └── # Global state (context / redux / zustand)
-│
-├── utils/
-│   └── # Helper functions (formatter, reusable logic)
-│
-├── App.jsx                         # Root routing aplikasi
-├── main.jsx                        # Entry point React
-├── index.css                       # Global styling (Tailwind)
+├── hooks/                # Global hooks
+├── layouts/              # Layout wrapper
+├── store/                # Global state
+├── utils/                # Helper functions
+└── App.jsx
+
 ```
 
 ---
 
-## 🔄 Alur Data (Flow Sederhana)
+## ⚙️ Tech Stack
 
-1. **UI (components/pages)**
-   ⬇
-2. **Hooks (logic & state)**
-   ⬇
-3. **Services (API call)**
-   ⬇
-4. **Backend API**
-
----
-
-## ⚙️ Teknologi yang Digunakan
-
-* React (UI Library)
-* Vite (Build Tool)
-* Tailwind CSS (Styling)
-* React Router (Routing)
-* Custom Hooks (State Logic)
-* Axios / Fetch (API Integration)
+- React 18
+- Vite
+- Tailwind CSS
+- React Router DOM
+- Axios
+- Zustand
 
 ---
 
-## 🛠️ Instalasi
+## 🚀 Deployment
 
-```bash
-npm install
-npm run dev
+Project ini sudah dioptimalkan untuk deployment menggunakan **Vercel** dengan build static menggunakan Vite.
+
+- Build output: `dist/`
+- Compatible dengan Vercel static hosting
+
+---
+
+## 🧠 Architecture Principles
+
+- Feature-based modular structure
+- Separation of concerns (UI / Logic / Service)
+- Reusable components
+- Scalable folder structure
+- Clean code principles
+
+---
+
+## 📌 Key Modules
+
+| Module | Description |
+|--------|-------------|
+| Booking | Peminjaman ruangan |
+| Schedule | Manajemen jadwal |
+| Rooms | Data ruangan |
+| Users | Manajemen user |
+| Approval | Persetujuan booking |
+| Dashboard | Monitoring sistem |
+
+---
+
+## 🎨 UI/UX Principles
+
+- Mobile-first responsive design
+- Tailwind utility-first styling
+- Consistent design system
+- Clean and minimal UI
+- Accessible components
+
+---
+
+## 🔐 Security
+
+- JWT Authentication
+- Role-based access control
+- Protected routes
+- Input validation
+- Secure API communication
+
+---
+
+## 📊 Performance
+
+- Code splitting per feature
+- Lazy loading components
+- Optimized Vite build
+- Minimal re-rendering
+- Lightweight bundle size
+
+---
+
+## 👨‍💻 Development Guidelines
+
+- Functional components only
+- Feature isolation required
+- Reusable components preferred
+- API separated from UI
+- Consistent naming convention
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👥 Team
+
+**Kelompok 8 - Web Based Application Project**
+
+| Name | Role |
+|------|------|
+| Member 1 | QA / Testing |
+| Member 2 | Backend Developer |
+| Member 3 | Frontend Developer |
+
+---
+
+## 📌 Status
+
+- Version: 1.0.0
+- Status: Active Development
+- Last Update: May 2026
 ```
 
----
-
-## 🌐 Environment
-
-```env
-VITE_API_URL=http://localhost:3000
-```
-
----
-
-## 📌 Best Practices yang Digunakan
-
-* ✅ Feature-based folder structure
-* ✅ Separation of concerns (UI, logic, service)
-* ✅ Reusable components
-* ✅ Custom hooks untuk logic
-* ✅ Modular & scalable
-
----
-
-## 🔥 Highlight Project
-
-* Struktur sudah siap untuk scale ke aplikasi besar
-* Sudah memisahkan:
-
-  * UI (components)
-  * Logic (hooks)
-  * API (services)
-* Clean code & maintainable
-
----
-
-## 👨‍💻 Author
-
-Kelompok 8

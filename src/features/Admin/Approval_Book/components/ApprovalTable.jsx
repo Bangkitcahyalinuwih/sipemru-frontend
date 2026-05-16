@@ -10,7 +10,7 @@ import {
   Clock3,
   Users,
 } from "lucide-react";
-import { getBookings, updateBooking } from "../../../Booking/service/BookingService";
+import { getBookings, updateBooking } from "../../Booking/service/BookingService";
 
 const ApprovalBooking = () => {
   const [bookings, setBookings] = useState([]);

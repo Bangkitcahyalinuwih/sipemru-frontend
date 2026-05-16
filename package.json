@@ -12,6 +12,8 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@mobiscroll/react-lite": "^4.10.9",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "axios": "^1.15.2",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",
@@ -32,6 +34,7 @@
     "recharts": "^3.8.1",
     "sonner": "^2.0.7",
     "sweetalert2": "^11.26.24",
+    "three": "^0.184.0",
     "zustand": "^5.0.12"
   },
   "devDependencies": {

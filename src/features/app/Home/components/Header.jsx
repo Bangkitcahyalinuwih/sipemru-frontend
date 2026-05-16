@@ -182,30 +182,48 @@ export function Navbar() {
   );
 
   return (
-    <nav
-      className={`
-        sticky top-0 z-[999]
-        w-full
-        rounded-2xl
-        border border-white/10
-        transition-all duration-300
-        ${
-          isScrolled
-            ? "bg-[#0b0118]/95 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.35)]"
-            : "bg-[#0b0118]/70 backdrop-blur-xl"
-        }
-      `}
-    >
+<nav
+  className={`
+    sticky z-[999]
+    w-full
+    transition-all duration-300
+    ${
+      isScrolled
+        ? "top-3 mx-4 my-0 rounded-2xl border border-white/10 bg-[#0b0118]/20 shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+        : "top-0 border-b border-white/10 bg-[#0b0118]/90 w-full"
+    }
+    backdrop-blur-2xl
+  `}
+>
+<div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/10 pointer-events-none" />
 
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-400/40 to-transparent" />
-      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+<div
+  className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none"
+  style={{
+    backgroundImage:
+      "url('https://www.transparenttextures.com/patterns/noise.png')",
+  }}
+/>
+<div className={`pointer-events-none absolute -top-20 left-10 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl ${
+  isScrolled ? "opacity-0" : "opacity-100"
+} transition-opacity duration-300`} />
+<div className={`pointer-events-none absolute top-0 right-10 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl ${
+  isScrolled ? "opacity-0" : "opacity-100"
+} transition-opacity duration-300`} />
+
+      <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-400/40 to-transparent ${
+        isScrolled ? "opacity-0" : "opacity-100"
+      } transition-opacity duration-300`} />
+      <div className={`pointer-events-none absolute inset-0 overflow-hidden ${isScrolled ? "rounded-2xl" : "rounded-none"}`}>
         <div className="absolute -top-20 left-0 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
 
         <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-pink-600/10 blur-3xl" />
       </div>
 
       <div className="relative px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className={`flex h-16 items-center justify-between ${
+          isScrolled ? "px-2" : ""
+        }`}>
           <Link
             to="/"
             className="flex items-center gap-3 transition hover:opacity-80"
@@ -352,7 +370,9 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div
           ref={mobileMenuRef}
-          className="absolute left-0 right-0 top-full mt-3 rounded-2xl border border-white/10 bg-[#120021]/95 p-4 shadow-2xl backdrop-blur-2xl md:hidden"
+          className={`absolute top-full mt-3 rounded-2xl border border-white/10 bg-[#120021]/95 p-4 shadow-2xl backdrop-blur-2xl md:hidden ${
+            isScrolled ? "left-4 right-4" : "left-0 right-0"
+          }`}
         >
           <div className="flex flex-col gap-2">
             <NavLinks />

@@ -2,9 +2,9 @@ import React, { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 
 import { getBookings, updateBooking } from "../../Booking/service/BookingService";
-import ApprovalHeader from "../components/components/ApprovalHeader";
-import ApprovalSearch from "../components/components/ApprovalSearch";
-import ApprovalTable from "../components/components/ApprovalTable";
+import ApprovalHeader from "../components/ApprovalHeader";
+import ApprovalSearch from "../components/ApprovalSearch";
+import ApprovalTable from "../components/ApprovalTable";
 
 
 

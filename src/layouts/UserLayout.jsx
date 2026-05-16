@@ -36,7 +36,6 @@ function ProtectedRoute({
   return children;
 }
 
-/* ================= LAYOUT ================= */
 
 function LayoutWrapper() {
   return (
@@ -44,7 +43,6 @@ function LayoutWrapper() {
       className="
         relative
         min-h-screen
-        overflow-hidden
         bg-gradient-to-br
         from-slate-950
         via-indigo-950
@@ -113,17 +111,8 @@ function LayoutWrapper() {
         />
       </div>
 
-      {/* Navbar */}
       <Navbar />
-
-      {/* Content */}
-      <div
-        className="
-          flex-1
-          overflow-y-auto
-          overflow-x-hidden
-        "
-      >
+<div className="flex-1">
         <main
           className="
             relative z-10
@@ -134,7 +123,6 @@ function LayoutWrapper() {
           <Outlet />
         </main>
 
-        {/* Footer */}
         <footer
           className="
             relative

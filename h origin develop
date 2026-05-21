@@ -1,0 +1,63 @@
+*   [33m7680662[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m)[m resolve merge conflict using Register-View README~
+[31m|[m[32m\[m  
+[31m|[m * [33m5eb43ff[m[33m ([m[1;31morigin/features/Register-VIew[m[33m, [m[1;32mfeatures/Register-VIew[m[33m)[m features/Register-VIew
+* [32m|[m [33md98f818[m[33m ([m[1;31morigin/develop[m[33m)[m Update README.md
+[32m|[m[32m/[m  
+* [33m40c8c75[m[33m ([m[1;31morigin/features/add-schedule-style-replace[m[33m, [m[1;32mfeatures/add-schedule-style-replace[m[33m)[m features/add-schedule-style-replace
+* [33m44b2aab[m[33m ([m[1;31morigin/features/ui-profile-build[m[33m, [m[1;32mfeatures/ui-profile-build[m[33m)[m features/ui-profile-build
+* [33m075be05[m[33m ([m[1;31morigin/features/auth-layout-users[m[33m, [m[1;32mfeatures/auth-layout-users[m[33m)[m features/auth-layout-users
+* [33m96607f3[m[33m ([m[1;31morigin/features/Room-List-Users-Grid-System[m[33m, [m[1;32mfeatures/Room-List-Users-Grid-System[m[33m)[m features/Room-List-Users-Grid-System
+* [33m0707322[m[33m ([m[1;31morigin/features/history-detail-style[m[33m, [m[1;32mfeatures/history-detail-style[m[33m)[m features/history-detail-style
+* [33m08f41e4[m[33m ([m[1;31morigin/features/dashboard-admin-grafik[m[33m, [m[1;32mfeatures/dashboard-admin-grafik[m[33m)[m features/dashboard-admin-grafik
+* [33mc4fce74[m features/dashboard-admin
+*   [33ma41a2cb[m Merge branch 'features/admin-dashboard' into develop
+[33m|[m[34m\[m  
+[33m|[m * [33mad83eef[m[33m ([m[1;31morigin/features/admin-dashboard[m[33m, [m[1;32mfeatures/admin-dashboard[m[33m)[m features/admin-dashboard
+* [34m|[m   [33m0d8b47f[m Merge branch 'Build-Table-Room+Users' into develop
+[35m|[m[36m\[m [34m\[m  
+[35m|[m * [34m|[m [33m048df08[m[33m ([m[1;31morigin/Build-Table-Room+Users[m[33m, [m[1;32mBuild-Table-Room+Users[m[33m)[m remove env from tracking
+* [36m|[m [34m|[m [33m655e021[m remove env from git tracking
+[34m|[m [36m|[m[34m/[m  
+[34m|[m[34m/[m[36m|[m   
+* [36m|[m   [33ma08184e[m Merge branch 'features/approval-booking-admin' into develop :wq#  the commit.
+[1;31m|[m[1;32m\[m [36m\[m  
+[1;31m|[m * [36m|[m [33m5e0c8e1[m[33m ([m[1;31morigin/features/approval-booking-admin[m[33m, [m[1;32mfeatures/approval-booking-admin[m[33m)[m features/approval-booking-admin
+[1;31m|[m * [36m|[m [33mebc5e23[m[33m ([m[1;31morigin/features/history-glasmorphism-theme[m[33m, [m[1;32mfeatures/history-glasmorphism-theme[m[33m)[m features/historu-glamorphism-theme
+[1;31m|[m * [36m|[m [33m8e88adf[m[33m ([m[1;31morigin/features/booking-form-users-[m[33m, [m[1;32mfeatures/booking-form-users-[m[33m)[m features/booking-form-users
+[1;31m|[m[1;31m/[m [36m/[m  
+* [36m|[m [33mbda0378[m[33m ([m[1;31morigin/features/home-revision-style-glassmorphism[m[33m, [m[1;32mfeatures/home-revision-style-glassmorphism[m[33m)[m features/home-revision-style-glassmorphism
+* [36m|[m [33m624e112[m[33m ([m[1;31morigin/features/Booking-Management[m[33m, [m[1;32mfeatures/Booking-Management[m[33m)[m features/booking-management-system
+* [36m|[m [33m9256766[m[33m ([m[1;31morigin/features/Schedule-Management[m[33m, [m[1;32mfeatures/Schedule-Management[m[33m)[m features/Schedule
+* [36m|[m [33mc353872[m[33m ([m[1;31morigin/feature/building-management[m[33m, [m[1;32mfeature/building-management[m[33m)[m feat: building management module
+[36m|[m[36m/[m  
+* [33m8473879[m Fetch-Room+Users Table
+* [33mdd2ffdc[m[33m ([m[1;31morigin/Hero-Section-Updete-Saas[m[33m, [m[1;32mHero-Section-Updete-Saas[m[33m)[m Update Design Saas-
+*   [33m043ddf3[m[33m ([m[1;31morigin/History-Detail[m[33m, [m[1;32mHistory-Detail[m[33m)[m Merge branch 'main' of https://github.com/Bangkitcahyalinuwih/sipemru-frontend into History-Detail
+[1;33m|[m[1;34m\[m  
+[1;33m|[m * [33m4a3e4c5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Update ReadMe.md
+[1;33m|[m * [33m7a7d559[m Simaru-Website
+[1;33m|[m [1;34m|[m * [33md0d0f7e[m[33m ([m[1;31morigin/admin-kelolaJadwal[m[33m)[m - crate new file component for form - added form on kelola ruang - added insert button
+[1;33m|[m [1;34m|[m *   [33m0fcf8b5[m[33m ([m[1;31morigin/admin-kelolaRuang[m[33m)[m Merge branch 'admin-kelolaRuang' of https://github.com/Bangkitcahyalinuwih/sipemru-frontend into admin-kelolaRuang
+[1;33m|[m [1;34m|[m [1;36m|[m[31m\[m  
+[1;33m|[m [1;34m|[m [1;36m|[m * [33m75e1e8c[m -
+[1;33m|[m [1;34m|[m * [31m|[m [33mb12995f[m - adding new button componen to page paminjaman baru
+[1;33m|[m [1;34m|[m [31m|[m[31m/[m  
+[1;33m|[m [1;34m|[m * [33mc5de012[m - create page kelola ruang and import to admin admin layout
+[1;33m|[m [1;34m|[m * [33ma258636[m - (almost forgot)import the icons
+[1;33m|[m [1;34m|[m * [33m20fd9fb[m - create action button component
+[1;33m|[m [1;34m|[m * [33m7cec8f9[m[33m ([m[1;31morigin/admin-peminjamanBaru[m[33m)[m - create new file for reusable status component
+[1;33m|[m [1;34m|[m * [33ma5d8281[m - create page peminjaman baru
+[1;33m|[m [1;34m|[m [31m|[m * [33m350b74d[m[33m ([m[1;32mmain[m[33m)[m restore env example
+[1;33m|[m [1;34m|[m [31m|[m[1;34m/[m  
+[1;33m|[m [1;34m|[m[1;34m/[m[31m|[m   
+[1;33m|[m [1;34m|[m [31m|[m * [33m1190617[m[33m ([m[1;31morigin/admin-daftarRuangan[m[33m)[m - update status badge component
+[1;33m|[m [1;34m|[m [31m|[m * [33m3613dec[m - crate file for sttsu component
+[1;33m|[m [1;34m|[m [31m|[m * [33m7442623[m - create page peminjaman baru
+[1;33m|[m [1;34m|[m [31m|[m[31m/[m  
+[1;33m|[m [1;34m|[m * [33m1ddccce[m creating filter bar component and adding it to daftar ruangan page
+[1;33m|[m [1;34m|[m * [33m2aab000[m - adding daftar ruangan page - modifying admin layout to add daftar ruangan page in sidebar
+[1;33m|[m [1;34m|[m[1;33m/[m  
+[1;33m|[m[1;33m/[m[1;34m|[m   
+* [1;34m|[m [33m013f872[m[33m ([m[1;31morigin/Frotend-Home-Detail-Search[m[33m, [m[1;32mFrotend-Home-Detail-Search[m[33m)[m update frontend struktural Home Features -> Booking History And Home Pages
+[1;34m|[m[1;34m/[m  
+* [33m5530a47[m feat: initial React + Vite + Tailwind setup

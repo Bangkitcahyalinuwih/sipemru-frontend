@@ -1,110 +1,128 @@
-import { RoomCalendar } from "./RoomCalender";
+import RoomCalendar from "./RoomCalender";
 import { RoomInfo } from "./RoomInfo";
 
-export function RoomDetailCard({
-  room,
-  onBooking,
-}) {
+export function RoomDetailCard({ room, onBooking }) {
   return (
-    <div
-      className="
-        bg-white/5 backdrop-blur-2xl
-        border border-white/10
-        rounded-3xl overflow-hidden
-        shadow-2xl shadow-black/30
-        text-white
-      "
-    >
-      <div className="relative h-72 overflow-hidden">
-
-        <div className="absolute inset-0 bg-black/20 z-10" />
-
+    <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="relative h-80 overflow-hidden group">
         <img
           src={
             room.foto ||
             "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200"
           }
           alt={room.name}
-          className="
-            w-full h-full object-cover
-            hover:scale-105
-            transition duration-700
-          "
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
-        <div className="absolute top-5 right-5 z-20">
-          <span
-            className="
-              px-3 py-1 rounded-full
-              text-xs font-semibold
-              bg-indigo-500/20
-              border border-indigo-400/20
-              backdrop-blur-md
-              text-indigo-200
-            "
-          >
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+        
+        <div className="absolute top-6 right-6 z-10">
+          <span className="px-4 py-2 rounded-full text-xs font-bold bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 backdrop-blur-sm">
             {room.type}
           </span>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+          <h2 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+            {room.name}
+          </h2>
+        </div>
       </div>
 
-      <div className="p-6 space-y-6">
+      <div className="p-8 space-y-8">
         <RoomInfo room={room} />
+
+        {/* Description Section */}
         <div>
-          <h3 className="text-sm font-semibold text-gray-300 mb-2">
+          <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+            <span className="w-1 h-5 bg-indigo-500 rounded-full"></span>
             Deskripsi
           </h3>
-
-          <p className="text-sm text-gray-400 leading-relaxed">
-            {room.description ||
-              "Tidak ada deskripsi ruangan"}
+          <p className="text-slate-300 leading-relaxed">
+            {room.description || "Tidak ada deskripsi ruangan tersedia."}
           </p>
         </div>
+        
         <div>
-          <h3 className="text-sm font-semibold text-gray-300 mb-3">
+          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span className="w-1 h-5 bg-indigo-500 rounded-full"></span>
             Fasilitas
           </h3>
-
-          <div className="flex flex-wrap gap-2">
-            {room.facilities?.length > 0 ? (
-              room.facilities.map((item, index) => (
-                <span
+          
+          {room.facilities?.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {room.facilities.map((item, index) => (
+                <div
                   key={index}
-                  className="
-                    px-3 py-1.5 rounded-xl
-                    text-xs
-                    bg-white/10
-                    border border-white/10
-                    text-gray-300
-                  "
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:border-indigo-500/50 transition-colors group"
                 >
-                  {item}
-                </span>
-              ))
-            ) : (
-              <span className="text-sm text-gray-500">
-                Tidak ada fasilitas
-              </span>
-            )}
-          </div>
+                  <div className="w-2 h-2 rounded-full bg-indigo-400 group-hover:bg-indigo-300 transition-colors"></div>
+                  <span className="text-sm text-slate-200 font-medium">
+                    {item}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="px-4 py-8 rounded-xl bg-slate-800/40 border border-dashed border-slate-700/50 text-center">
+              <p className="text-slate-400 text-sm">
+                Belum ada informasi fasilitas
+              </p>
+            </div>
+          )}
         </div>
-        <RoomCalendar room={room} />
 
-        <button
-          onClick={onBooking}
-          className="
-            w-full py-3 rounded-2xl
-            text-sm font-medium
-            bg-gradient-to-r
-            from-indigo-500 to-purple-600
-            hover:from-indigo-600
-            hover:to-purple-700
-            transition
-            shadow-lg shadow-purple-500/20
-            cursor-pointer
-          "
-        >
-          Booking Ruangan
-        </button>
+        {/* Calendar Section */}
+        <div>
+          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span className="w-1 h-5 bg-indigo-500 rounded-full"></span>
+            Jadwal Penggunaan
+          </h3>
+          <RoomCalendar room={room} />
+        </div>
+
+        {/* CTA Button */}
+        <div className="pt-4">
+          <button
+            onClick={onBooking}
+            className="
+              w-full py-4 rounded-xl
+              text-base font-bold
+              bg-gradient-to-r from-indigo-600 to-purple-600
+              hover:from-indigo-500 hover:to-purple-500
+              active:scale-[0.98]
+              transition-all duration-200
+              shadow-xl shadow-indigo-500/25
+              hover:shadow-2xl hover:shadow-indigo-500/40
+              text-white
+              relative overflow-hidden
+              group
+            "
+          >
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              <svg 
+                className="w-5 h-5" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                />
+              </svg>
+              Booking Ruangan Sekarang
+            </span>
+
+            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+          </button>
+          
+          <p className="text-center text-slate-400 text-xs mt-3">
+            Pastikan jadwal Anda tidak bentrok dengan penggunaan lain
+          </p>
+        </div>
       </div>
     </div>
   );

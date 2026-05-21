@@ -38,6 +38,32 @@ export const getSchedules = async () => {
   }
 };
 
+export const getSchedulesByRoomId = async (
+  roomId,
+) => {
+  try {
+    if (!USE_API) {
+      return dummySchedules.filter(
+        (item) =>
+          item.room_id === Number(roomId),
+      );
+    }
+
+    const res = await api.get(
+      `${API_URL}/by-room/${roomId}`
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error(
+      "Gagal ambil schedules room:",
+      error,
+    );
+
+    return [];
+  }
+};
+
 export const getScheduleById = async (id) => {
   try {
     if (!USE_API) {

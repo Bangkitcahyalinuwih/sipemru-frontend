@@ -1,17 +1,25 @@
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
 
 import { Navbar } from "../features/app/Home/components/Header";
 
-import { Home } from "../features/app/Home/Pages/Home";
-import { History } from "../features/app/Home/Pages/History";
-import { Booking } from "../features/app/Home/Pages/Booking";
-import RoomListPages from "../features/app/Home/Pages/RoomList";
-import { RoomDetailPage } from "../features/app/Home/Pages/roomDetail";
-import { HistoryDetailPage } from "../features/app/Home/Pages/HistoryDetailPages";
-import RegisterPage from "../features/app/auth/pages/RegisterPages";
-import LoginPage from "../features/app/auth/pages/LoginPages";
+const Home = lazy(() => import("../features/app/Home/Pages/Home").then(m => ({ default: m.Home })));
+const History = lazy(() => import("../features/app/Home/Pages/History").then(m => ({ default: m.History })));
+const Booking = lazy(() => import("../features/app/Home/Pages/Booking").then(m => ({ default: m.Booking })));
+const RoomListPages = lazy(() => import("../features/app/Home/Pages/RoomList"));
+const RoomDetailPage = lazy(() => import("../features/app/Home/Pages/roomDetail").then(m => ({ default: m.RoomDetailPage })));
+const HistoryDetailPage = lazy(() => import("../features/app/Home/Pages/HistoryDetailPages").then(m => ({ default: m.HistoryDetailPage })));
+const RegisterPage = lazy(() => import("../features/app/auth/pages/RegisterPages"));
+const LoginPage = lazy(() => import("../features/app/auth/pages/LoginPages"));
+const ProfilePages = lazy(() => import("../features/app/Home/Pages/ProfilePages"));
+
 import { getCurrentUser } from "../features/Admin/Users/service/UserService";
-import ProfilePages from "../features/app/Home/Pages/ProfilePages";
+
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="text-gray-400">Loading page...</div>
+  </div>
+);
 
 function ProtectedRoute({ children }) {
   const user = getCurrentUser();
@@ -155,22 +163,24 @@ function LayoutWrapper() {
 export function UserLayout() {
   return (
     <Routes>
-      <Route path="/profile" element={<ProfilePages />} />
+      <Route path="/profile" element={<Suspense fallback={<PageLoader />}><ProfilePages /></Suspense>} />
 
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login" element={<Suspense fallback={<PageLoader />}><LoginPage /></Suspense>} />
 
-      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/register" element={<Suspense fallback={<PageLoader />}><RegisterPage /></Suspense>} />
 
       <Route element={<LayoutWrapper />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Suspense fallback={<PageLoader />}><Home /></Suspense>} />
 
-        <Route path="/roomlist" element={<RoomListPages />} />
+        <Route path="/roomlist" element={<Suspense fallback={<PageLoader />}><RoomListPages /></Suspense>} />
 
         <Route
           path="/booking"
           element={
             <ProtectedRoute>
-              <Booking />
+              <Suspense fallback={<PageLoader />}>
+                <Booking />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -179,7 +189,9 @@ export function UserLayout() {
           path="/history"
           element={
             <ProtectedRoute>
-              <History />
+              <Suspense fallback={<PageLoader />}>
+                <History />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -188,7 +200,9 @@ export function UserLayout() {
           path="/room/:id"
           element={
             <ProtectedRoute>
-              <RoomDetailPage />
+              <Suspense fallback={<PageLoader />}>
+                <RoomDetailPage />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -197,7 +211,9 @@ export function UserLayout() {
           path="/history/:id"
           element={
             <ProtectedRoute>
-              <HistoryDetailPage />
+              <Suspense fallback={<PageLoader />}>
+                <HistoryDetailPage />
+              </Suspense>
             </ProtectedRoute>
           }
         />

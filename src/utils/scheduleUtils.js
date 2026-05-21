@@ -17,7 +17,6 @@ export const isTimeInRange = (currentTime, startTime, endTime) => {
   let start = startTime instanceof Date ? startTime : parseTimeString(startTime);
   let end = endTime instanceof Date ? endTime : parseTimeString(endTime);
 
-  // Set tanggal sama dengan current time untuk perbandingan
   start.setFullYear(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
   end.setFullYear(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
 
@@ -29,7 +28,6 @@ export const getRoomStatus = (schedules, roomId, currentTime) => {
     return "available";
   }
 
-  // Cari jadwal yang aktif untuk ruangan ini
   const activeSchedule = schedules.find((schedule) => {
     if (schedule.room_id !== roomId) return false;
 
@@ -43,7 +41,6 @@ export const getRoomStatus = (schedules, roomId, currentTime) => {
     return "occupied";
   }
 
-  // Cek apakah ada jadwal yang akan datang hari ini
   const upcomingSchedule = schedules.find((schedule) => {
     if (schedule.room_id !== roomId) return false;
     const startTime = new Date(schedule.start_time);

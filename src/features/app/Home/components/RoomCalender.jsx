@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
-
 import FullCalendar from "@fullcalendar/react";
-
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-
 import idLocale from "@fullcalendar/core/locales/id";
-
 import { getSchedulesByRoomId } from "../../../Admin/Schedule/service/ScheduleService";
-
 import { getBookings } from "../../../Admin/Booking/service/BookingService";
 
 const dayMap = {
@@ -24,9 +19,7 @@ const dayMap = {
 
 export default function RoomCalendar({ room }) {
   const [schedules, setSchedules] = useState([]);
-
   const [bookings, setBookings] = useState([]);
-
   useEffect(() => {
     if (room?.id) {
       fetchCalendarData();
@@ -36,101 +29,49 @@ export default function RoomCalendar({ room }) {
   const fetchCalendarData = async () => {
     try {
       const scheduleData = await getSchedulesByRoomId(room.id);
-
       const bookingData = await getBookings();
-
-      /*
-        =========================
-        HANYA TAMPILKAN
-        BOOKING APPROVED
-        =========================
-      */
-
       const filteredBookings = bookingData.filter(
-        (item) =>
-          item.room_id === room.id &&
-          item.status === "approved",
+        (item) => item.room_id === room.id && item.status === "approved",
       );
-
       setSchedules(scheduleData);
-
       setBookings(filteredBookings);
     } catch (error) {
       console.error(error);
     }
   };
 
-  /*
-    =========================
-    SCHEDULE EVENTS
-    =========================
-  */
-
   const scheduleEvents = schedules.map((item) => ({
     id: `schedule-${item.id}`,
-
     title: `📘 ${item.course_name}`,
-
     daysOfWeek: [dayMap[item.day_of_week]],
-
     startTime: item.start_time,
-
     endTime: item.end_time,
-
     backgroundColor: "#6366f1",
-
     borderColor: "#6366f1",
-
     extendedProps: {
       type: "schedule",
-
       lecturer: item.lecturer,
-
       kelas: item.kelas,
-
       prodi: item.prodi,
-
       semester: item.semester,
     },
   }));
 
-  /*
-    =========================
-    BOOKING EVENTS
-    =========================
-  */
-
   const bookingEvents = bookings.map((item) => ({
     id: `booking-${item.id}`,
-
     title: `🏢 ${item.purpose}`,
-
     start: `${item.booking_date}T${item.start_time}`,
-
     end: `${item.booking_date}T${item.end_time}`,
-
     backgroundColor: "#10b981",
-
     borderColor: "#10b981",
-
     extendedProps: {
       type: "booking",
-
       status: item.status,
-
       organization: item.organization,
-
       pic: item.pic_name,
-
       peserta: item.jumlah_peserta,
     },
   }));
-
-  /*
-    =========================
-    MERGE EVENTS
-    =========================
-  */
 
   const events = [...scheduleEvents, ...bookingEvents];
 
@@ -146,13 +87,9 @@ export default function RoomCalendar({ room }) {
         p-6
       "
     >
-      {/* Glow Effects */}
       <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-500/30 blur-[100px] rounded-full pointer-events-none" />
-
       <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/30 blur-[100px] rounded-full pointer-events-none" />
-
       <div className="relative z-10">
-        {/* Header */}
         <div className="mb-6">
           <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
             Jadwal & Booking
@@ -160,13 +97,10 @@ export default function RoomCalendar({ room }) {
 
           <p className="text-sm text-gray-600 mt-1 opacity-80">
             Kalender penggunaan ruangan{" "}
-            <span className="font-semibold text-indigo-600">
-              {room?.name}
-            </span>
+            <span className="font-semibold text-indigo-600">{room?.name}</span>
           </p>
         </div>
 
-        {/* Legend */}
         <div className="flex flex-wrap gap-4 mb-6 text-xs font-medium text-gray-700">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/40 border border-white/50 backdrop-blur-sm shadow-sm">
             <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
@@ -179,7 +113,6 @@ export default function RoomCalendar({ room }) {
           </div>
         </div>
 
-        {/* Calendar */}
         <div
           className="
             rounded-2xl
@@ -191,11 +124,7 @@ export default function RoomCalendar({ room }) {
           "
         >
           <FullCalendar
-            plugins={[
-              dayGridPlugin,
-              timeGridPlugin,
-              interactionPlugin,
-            ]}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             locale={idLocale}
             initialView="dayGridMonth"
             selectable={true}
@@ -213,8 +142,7 @@ export default function RoomCalendar({ room }) {
             headerToolbar={{
               left: "prev,next today",
               center: "title",
-              right:
-                "dayGridMonth,timeGridWeek",
+              right: "dayGridMonth,timeGridWeek",
             }}
             buttonText={{
               today: "Hari Ini",
@@ -224,111 +152,69 @@ export default function RoomCalendar({ room }) {
             dayHeaderFormat={{
               weekday: "long",
             }}
-
-            /*
-              ======================
-              CLICK DATE
-              ======================
-            */
-
+            
             dateClick={(info) => {
-              const clickedDate =
-                info.date;
-
-              const dayNumber =
-                clickedDate.getDay();
-
-              const hasSchedule =
-                schedules.some(
-                  (item) =>
-                    dayMap[
-                      item.day_of_week
-                    ] === dayNumber,
-                );
+              const clickedDate = info.date;
+              const dayNumber = clickedDate.getDay();
+              const hasSchedule = schedules.some(
+                (item) => dayMap[item.day_of_week] === dayNumber,
+              );
 
               if (hasSchedule) {
-                alert(`
-Ruangan sedang digunakan
-untuk jadwal kuliah
-                `);
-
+                alert(` Ruangan sedang digunakan untuk jadwal kuliah `);
                 return;
               }
 
               alert(`
-Booking tanggal:
-${info.dateStr}
+                    Booking tanggal:
+                    ${info.dateStr}
 
-Ruangan:
-${room?.name}
+                    Ruangan:
+                    ${room?.name}
               `);
             }}
-
-            /*
-              ======================
-              CLICK EVENT
-              ======================
-            */
-
             eventClick={(info) => {
-              const props =
-                info.event.extendedProps;
-
-              /*
-                SCHEDULE
-              */
-
-              if (
-                props.type ===
-                "schedule"
-              ) {
+              const props = info.event.extendedProps;
+              if (props.type === "schedule") {
                 alert(`
-JADWAL KULIAH
+                    JADWAL KULIAH
 
-Mata Kuliah:
-${info.event.title}
+                    Mata Kuliah:
+                    ${info.event.title}
 
-Kelas:
-${props.kelas}
+                    Kelas:
+                    ${props.kelas}
 
-Dosen:
-${props.lecturer}
+                    Dosen:
+                    ${props.lecturer}
 
-Prodi:
-${props.prodi}
+                    Prodi:
+                    ${props.prodi}
 
-Semester:
-${props.semester}
+                    Semester:
+                    ${props.semester}
                 `);
 
                 return;
               }
-
-              /*
-                BOOKING
-              */
-
-              if (
-                props.type ===
-                "booking"
-              ) {
+              if (props.type === "booking") {
                 alert(`
-BOOKING RUANGAN
+                    BOOKING RUANGAN
 
-Kegiatan:
-${info.event.title}
+                    Kegiatan:
+                    ${info.event.title}
 
-PIC:
-${props.pic}
+                    PIC:
+                    ${props.pic}
 
-Organisasi:
-${props.organization}
+                    Organisasi:
+                    ${props.organization}
 
-Peserta:
-${props.peserta}
+                    Peserta:
+                    ${props.peserta}
 
-Status:
-${props.status}
+                    Status:
+                    ${props.status}
                 `);
               }
             }}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import {
   useLocation,
   useNavigate,
@@ -9,26 +9,27 @@ import {
 
 import Sidebar from "../features/Admin/Content/components/Sidebar";
 import Header from "../features/Admin/Content/components/Header";
-import Dashboard from "../features/dashboard/pages/DashboardPage";
 
-import UsersPage from "../features/Admin/Users/pages/UsersPage";
+const Dashboard = lazy(() => import("../features/dashboard/pages/DashboardPage"));
+const UsersPage = lazy(() => import("../features/Admin/Users/pages/UsersPage"));
+const RoomsPage = lazy(() => import("../features/Admin/Ruangan/pages/RoomsPage"));
+const AddRooms = lazy(() => import("../features/Admin/Ruangan/components/AddRooms"));
+const EditRooms = lazy(() => import("../features/Admin/Ruangan/components/EditRooms"));
+const BuildingPage = lazy(() => import("../features/Admin/Building/Pages/BuildingPage"));
+const AddBuilding = lazy(() => import("../features/Admin/Building/Components/AddBuilding"));
+const EditBuilding = lazy(() => import("../features/Admin/Building/Components/EditBuilding"));
+const SchedulePage = lazy(() => import("../features/Admin/Schedule/pages/Schedule"));
+const AddSchedule = lazy(() => import("../features/Admin/Schedule/components/AddSchedule"));
+const EditSchedule = lazy(() => import("../features/Admin/Schedule/components/EditSchedule"));
+const BookingPage = lazy(() => import("../features/Admin/Booking/pages/BookingPage"));
+const AddBooking = lazy(() => import("../features/Admin/Booking/components/AddBooking"));
+const ApprovalBooking = lazy(() => import("../features/Admin/Approval_Book/Pages/Approval_Pages"));
 
-import RoomsPage from "../features/Admin/Ruangan/pages/RoomsPage";
-import AddRooms from "../features/Admin/Ruangan/components/AddRooms";
-import EditRooms from "../features/Admin/Ruangan/components/EditRooms";
-
-import BuildingPage from "../features/Admin/Building/Pages/BuildingPage";
-import AddBuilding from "../features/Admin/Building/Components/AddBuilding";
-import EditBuilding from "../features/Admin/Building/Components/EditBuilding";
-
-import SchedulePage from "../features/Admin/Schedule/pages/Schedule";
-import AddSchedule from "../features/Admin/Schedule/components/AddSchedule";
-import EditSchedule from "../features/Admin/Schedule/components/EditSchedule";
-
-import BookingPage from "../features/Admin/Booking/pages/BookingPage";
-import AddBooking from "../features/Admin/Booking/components/AddBooking";
-
-import ApprovalBooking from "../features/Admin/Approval_Book/Pages/Approval_Pages";
+const PageLoader = () => (
+  <div className="flex items-center justify-center h-screen">
+    <div className="text-gray-600">Loading...</div>
+  </div>
+);
 
 export const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -89,23 +90,23 @@ export const AdminLayout = () => {
           <Routes>
             <Route index element={<Navigate to="dashboard" replace />} />
 
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="users" element={<UsersPage />} />
+            <Route path="dashboard" element={<Suspense fallback={<PageLoader />}><Dashboard /></Suspense>} />
+            <Route path="users" element={<Suspense fallback={<PageLoader />}><UsersPage /></Suspense>} />
 
-            <Route path="rooms" element={<RoomsPage />} />
-            <Route path="rooms/add" element={<AddRooms />} />
-            <Route path="rooms/edit/:id" element={<EditRooms />} />
+            <Route path="rooms" element={<Suspense fallback={<PageLoader />}><RoomsPage /></Suspense>} />
+            <Route path="rooms/add" element={<Suspense fallback={<PageLoader />}><AddRooms /></Suspense>} />
+            <Route path="rooms/edit/:id" element={<Suspense fallback={<PageLoader />}><EditRooms /></Suspense>} />
 
-            <Route path="building" element={<BuildingPage />} />
-            <Route path="building/add" element={<AddBuilding />} />
-            <Route path="building/edit/:id" element={<EditBuilding />} />
+            <Route path="building" element={<Suspense fallback={<PageLoader />}><BuildingPage /></Suspense>} />
+            <Route path="building/add" element={<Suspense fallback={<PageLoader />}><AddBuilding /></Suspense>} />
+            <Route path="building/edit/:id" element={<Suspense fallback={<PageLoader />}><EditBuilding /></Suspense>} />
 
-            <Route path="schedule"element={<SchedulePage/>}/>
-            <Route path="schedule/add" element={<AddSchedule />} />
-            <Route path="schedule/edit/:id" element={<EditSchedule />} />
+            <Route path="schedule" element={<Suspense fallback={<PageLoader />}><SchedulePage/></Suspense>}/>
+            <Route path="schedule/add" element={<Suspense fallback={<PageLoader />}><AddSchedule /></Suspense>} />
+            <Route path="schedule/edit/:id" element={<Suspense fallback={<PageLoader />}><EditSchedule /></Suspense>} />
 
-            <Route path="booking"element={<BookingPage/>}/>
-            <Route path="booking/add"element={<AddBooking/>}/>
+            <Route path="booking" element={<Suspense fallback={<PageLoader />}><BookingPage/></Suspense>}/>
+            <Route path="booking/add" element={<Suspense fallback={<PageLoader />}><AddBooking/></Suspense>}/>
 
 
             <Route
@@ -114,7 +115,7 @@ export const AdminLayout = () => {
             />
             <Route
               path="approval-booking"
-              element={<ApprovalBooking/>}
+              element={<Suspense fallback={<PageLoader />}><ApprovalBooking/></Suspense>}
             />
 
             <Route path="*" element={<Navigate to="dashboard" replace />} />

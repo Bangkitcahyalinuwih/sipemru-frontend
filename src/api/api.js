@@ -1,5 +1,8 @@
 import axios from "axios";
 
+const requestCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000;
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 
@@ -11,7 +14,6 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// REQUEST INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
     const token =
@@ -21,6 +23,19 @@ api.interceptors.request.use(
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (config.method === 'get') {
+      const cacheKey = config.url;
+      const cachedData = requestCache.get(cacheKey);
+      
+      if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
+        return Promise.reject({
+          config,
+          response: { data: cachedData.data },
+          isFromCache: true,
+        });
+      }
     }
 
     return config;
@@ -33,15 +48,29 @@ api.interceptors.request.use(
   }
 );
 
-// RESPONSE INTERCEPTOR
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.config.method === 'get') {
+      requestCache.set(response.config.url, {
+        data: response.data,
+        timestamp: Date.now(),
+      });
+    }
+    return response;
+  },
 
   (error) => {
+    if (error.isFromCache) {
+      return Promise.resolve({
+        data: error.response.data,
+        status: 200,
+        statusText: 'OK (cached)',
+      });
+    }
+
     const status =
       error.response?.status;
 
-    // token invalid / expired
     if (status === 401) {
       localStorage.removeItem(
         "token"
@@ -51,7 +80,7 @@ api.interceptors.response.use(
         "user"
       );
 
-      // hindari loop redirect
+
       if (
         window.location.pathname !==
         "/login"

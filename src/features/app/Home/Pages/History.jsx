@@ -96,51 +96,91 @@ export function History() {
     });
   };
 
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 py-10">
-      <div className="absolute top-0 left-0 w-72 h-72 bg-blue-500/10 rounded-full blur-2xl" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-cyan-400/10 rounded-full blur-2xl" />
-      <div className="relative z-10 max-w-7xl mx-auto px-4">
-        <div className="mb-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-md">
-          <HistoryHeader />
-        </div>
-        {loading ? (
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl shadow-md">
-            <HistoryLoading />
-          </div>
-        ) : bookingHistory.length === 0 ? (
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl shadow-md">
-            <HistoryEmpty />
-          </div>
-        ) : (
-          <div className="space-y-4">
+return (
+  <div className="relative min-h-screen overflow-hidden bg-[#0B0B12] py-10">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute top-[-150px] left-[5%] h-[450px] w-[450px] rounded-full bg-purple-600/15 blur-3xl" />
 
-            {bookingHistory.map((booking, index) => (
-              <div
-                key={booking.id}
-                className="
-                  bg-white/5
-                  backdrop-blur-sm
-                  border border-white/10
-                  rounded-2xl
-                  shadow-md
-                  hover:bg-white/10
-                  transition-colors
-                "
-              >
-                <HistoryCard
-                  booking={booking}
-                  index={index}
-                  cancelLoading={cancelLoading}
-                  onDetail={handleDetail}
-                  onCancel={handleCancel}
-                />
-              </div>
-            ))}
+      <div className="absolute bottom-[-100px] right-[5%] h-[500px] w-[500px] rounded-full bg-pink-600/10 blur-3xl" />
 
-          </div>
-        )}
-      </div>
+      <div className="absolute left-1/2 top-[40%] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-indigo-600/10 blur-3xl" />
+
+      <div
+        className="
+          absolute inset-0 opacity-20
+          bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
+          bg-[size:70px_70px]
+        "
+      />
     </div>
-  );
+
+    <div className="relative z-10 mx-auto max-w-7xl px-4">
+      <div
+        className="
+          mb-6
+          rounded-2xl
+          border border-white/10
+          bg-white/[0.03]
+          p-5
+          shadow-xl
+          backdrop-blur-2xl
+        "
+      >
+        <HistoryHeader />
+      </div>
+
+      {loading ? (
+        <div
+          className="
+            rounded-2xl
+            border border-white/10
+            bg-white/[0.03]
+            shadow-xl
+            backdrop-blur-2xl
+          "
+        >
+          <HistoryLoading />
+        </div>
+      ) : bookingHistory.length === 0 ? (
+        <div
+          className="
+            rounded-2xl
+            border border-white/10
+            bg-white/[0.03]
+            shadow-xl
+            backdrop-blur-2xl
+          "
+        >
+          <HistoryEmpty />
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {bookingHistory.map((booking, index) => (
+            <div
+              key={booking.id}
+              className="
+                rounded-2xl
+                border border-white/10
+                bg-white/[0.03]
+                shadow-xl
+                backdrop-blur-2xl
+                transition-all
+                duration-300
+                hover:bg-white/[0.05]
+              "
+            >
+              <HistoryCard
+                booking={booking}
+                index={index}
+                cancelLoading={cancelLoading}
+                onDetail={handleDetail}
+                onCancel={handleCancel}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+);
 }

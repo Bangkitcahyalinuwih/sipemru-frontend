@@ -15,7 +15,6 @@ export function RoomDetailCard({ room, onBooking }) {
         />
         
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
-        
         <div className="absolute top-6 right-6 z-10">
           <span className="px-4 py-2 rounded-full text-xs font-bold bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 backdrop-blur-sm">
             {room.type}
@@ -31,8 +30,6 @@ export function RoomDetailCard({ room, onBooking }) {
 
       <div className="p-8 space-y-8">
         <RoomInfo room={room} />
-
-        {/* Description Section */}
         <div>
           <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
             <span className="w-1 h-5 bg-indigo-500 rounded-full"></span>
@@ -72,7 +69,6 @@ export function RoomDetailCard({ room, onBooking }) {
           )}
         </div>
 
-        {/* Calendar Section */}
         <div>
           <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <span className="w-1 h-5 bg-indigo-500 rounded-full"></span>
@@ -81,7 +77,6 @@ export function RoomDetailCard({ room, onBooking }) {
           <RoomCalendar room={room} />
         </div>
 
-        {/* CTA Button */}
         <div className="pt-4">
           <button
             onClick={onBooking}

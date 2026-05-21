@@ -1,269 +1,143 @@
-import { lazy, Suspense } from "react";
-
-import {
-  LazyMotion,
-  domAnimation,
-  m,
-} from "framer-motion";
-
-import {
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-
+import { memo, useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
+import { RoomDetailCard } from "../components/roomDetaiil";
 
-/*
-  =========================
-  LAZY LOAD COMPONENT
-  =========================
-*/
+const CONTAINER_CLASSES =
+  "relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950";
 
-const RoomDetailCard = lazy(() =>
-  import("../components/roomDetaiil").then(
-    (module) => ({
-      default: module.RoomDetailCard,
-    }),
-  ),
-);
+const CONTENT_CLASSES =
+  "relative z-10 px-6 py-8 md:px-10";
 
-/*
-  =========================
-  ANIMATION
-  =========================
-*/
+const ERROR_CONTAINER_CLASSES =
+  "min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950";
 
-const fadeUp = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-  },
+const ERROR_CARD_CLASSES =
+  "max-w-md rounded-3xl border border-white/10 bg-white/10 p-8 text-center shadow-2xl";
 
-  show: {
-    opacity: 1,
-    y: 0,
+const BUTTON_CLASSES =
+  "rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-500";
 
-    transition: {
-      duration: 0.4,
-    },
-  },
-};
+const RoomNotFound = memo(({ onBack }) => (
+  <div className={ERROR_CONTAINER_CLASSES}>
+    <div className={ERROR_CARD_CLASSES}>
+      <div className="mb-4 text-5xl">🔍</div>
+
+      <h2 className="mb-2 text-2xl font-bold text-white">
+        Room Tidak Ditemukan
+      </h2>
+
+      <p className="mb-6 text-slate-300">
+        Data ruangan tidak tersedia
+      </p>
+
+      <button
+        type="button"
+        onClick={onBack}
+        className={BUTTON_CLASSES}
+      >
+        Kembali
+      </button>
+    </div>
+  </div>
+));
+
+RoomNotFound.displayName = "RoomNotFound";
+
+const BackgroundBlobs = memo(() => (
+  <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div className="absolute -left-20 -top-20 h-[250px] w-[250px] rounded-full bg-purple-500/20 blur-2xl" />
+
+    <div className="absolute bottom-0 right-0 h-[280px] w-[280px] rounded-full bg-pink-500/20 blur-2xl" />
+  </div>
+));
+
+BackgroundBlobs.displayName = "BackgroundBlobs";
 
 export function RoomDetailPage() {
   const { state } = useLocation();
 
   const navigate = useNavigate();
 
-  /*
-    =========================
-    ROOM NOT FOUND
-    =========================
-  */
+  const [allContentLoaded, setAllContentLoaded] =
+    useState(false);
+
+  const handleGoBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
+  const handleBooking = useCallback(() => {
+    navigate("/booking", {
+      state: {
+        roomName: state.name,
+        roomId: state.id,
+      },
+    });
+  }, [navigate, state?.id, state?.name]);
+
+  useEffect(() => {
+    if (!state) return;
+
+    const preloadImages = async () => {
+      await new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(resolve);
+        });
+      });
+
+      if (state.images?.length) {
+        await Promise.all(
+          state.images.map(
+            (src) =>
+              new Promise((resolve) => {
+                const img = new Image();
+
+                img.onload = resolve;
+                img.onerror = resolve;
+                img.src = src;
+              }),
+          ),
+        );
+      }
+
+      setAllContentLoaded(true);
+    };
+
+    preloadImages();
+  }, [state]);
 
   if (!state) {
     return (
-      <div
-        className="
-          min-h-screen
-          flex items-center
-          justify-center
-          bg-gradient-to-br
-          from-slate-950
-          via-indigo-950
-          to-slate-950
-        "
-      >
-        <div
-          className="
-            p-8
-            rounded-3xl
-            bg-white/10
-            border border-white/10
-            shadow-2xl
-            text-center
-            max-w-md
-          "
-        >
-          <div className="text-5xl mb-4">
-            🔍
-          </div>
-
-          <h2
-            className="
-              text-2xl
-              font-bold
-              text-white
-              mb-2
-            "
-          >
-            Room Tidak Ditemukan
-          </h2>
-
-          <p
-            className="
-              text-slate-300
-              mb-6
-            "
-          >
-            Data ruangan tidak tersedia
-          </p>
-
-          <button
-            onClick={() =>
-              navigate(-1)
-            }
-            className="
-              px-6 py-3
-              rounded-xl
-              bg-indigo-600
-              hover:bg-indigo-500
-              transition
-              text-white
-              font-semibold
-            "
-          >
-            Kembali
-          </button>
-        </div>
-      </div>
+      <RoomNotFound
+        onBack={handleGoBack}
+      />
     );
   }
 
   return (
-    <LazyMotion
-      features={domAnimation}
+    <div
+      className={CONTAINER_CLASSES}
+      data-prerendered={
+        allContentLoaded
+      }
     >
-      <div
-        className="
-          relative
-          min-h-screen
-          overflow-hidden
-          bg-gradient-to-br
-          from-slate-950
-          via-indigo-950
-          to-slate-950
-        "
-      >
-        {/* ======================
-            BACKGROUND GLOW
-        ====================== */}
+      <BackgroundBlobs />
 
-        <div
-          className="
-            absolute inset-0
-            -z-10
-            overflow-hidden
-            pointer-events-none
-          "
-        >
-          <div
-            className="
-              absolute
-              -top-20
-              -left-20
-              w-[250px]
-              h-[250px]
-              bg-purple-500/20
-              blur-2xl
-              rounded-full
-            "
-          />
-
-          <div
-            className="
-              absolute
-              bottom-0
-              right-0
-              w-[280px]
-              h-[280px]
-              bg-pink-500/20
-              blur-2xl
-              rounded-full
-            "
+      <div className={CONTENT_CLASSES}>
+        <div className="mb-6">
+          <BackButton
+            onClick={handleGoBack}
           />
         </div>
 
-        {/* ======================
-            CONTENT
-        ====================== */}
-
-        <div
-          className="
-            relative z-10
-            px-6 md:px-10
-            py-8
-          "
-        >
-          {/* BACK BUTTON */}
-
-          <m.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            className="mb-6"
-          >
-            <BackButton
-              onClick={() =>
-                navigate(-1)
-              }
-            />
-          </m.div>
-
-          {/* ROOM DETAIL */}
-
-          <m.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            transition={{
-              delay: 0.1,
-            }}
-          >
-            <Suspense
-              fallback={
-                <div
-                  className="
-                    flex items-center
-                    justify-center
-                    min-h-[300px]
-                  "
-                >
-                  <div
-                    className="
-                      px-6 py-4
-                      rounded-2xl
-                      bg-white/10
-                      border border-white/10
-                      text-white
-                      backdrop-blur-sm
-                    "
-                  >
-                    Loading room detail...
-                  </div>
-                </div>
-              }
-            >
-              <RoomDetailCard
-                room={state}
-                onBooking={() =>
-                  navigate(
-                    "/booking",
-                    {
-                      state: {
-                        roomName:
-                          state.name,
-
-                        roomId:
-                          state.id,
-                      },
-                    },
-                  )
-                }
-              />
-            </Suspense>
-          </m.div>
-        </div>
+        <RoomDetailCard
+          room={state}
+          onBooking={
+            handleBooking
+          }
+          loading="eager"
+        />
       </div>
-    </LazyMotion>
+    </div>
   );
 }

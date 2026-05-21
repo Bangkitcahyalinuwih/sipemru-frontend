@@ -1,9 +1,4 @@
-import {
-  CalendarCheck,
-  Mail,
-  UserCheck,
-  ArrowRight,
-} from "lucide-react";
+import { CalendarCheck, Mail, UserCheck, ArrowRight } from "lucide-react";
 
 import { motion } from "framer-motion";
 
@@ -100,10 +95,7 @@ export const CardPeminjaman = () => {
             </span>
           </div>
           <h2 className="text-4xl md:text-6xl font-bold leading-tight">
-
-            <span className="text-white">
-              Alur Peminjaman
-            </span>
+            <span className="text-white">Alur Peminjaman</span>
 
             <br />
 
@@ -147,7 +139,6 @@ export const CardPeminjaman = () => {
                 p-10
               "
             >
-
               <div
                 className={`
                   absolute inset-0 opacity-0
@@ -160,7 +151,6 @@ export const CardPeminjaman = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent" />
               {index !== steps.length - 1 && (
                 <div className="hidden lg:block absolute top-1/2 -right-8 z-20">
-
                   <div
                     className={`
                       h-[2px] w-16 bg-gradient-to-r

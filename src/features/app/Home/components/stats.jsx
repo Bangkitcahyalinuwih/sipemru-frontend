@@ -1,11 +1,6 @@
 import { motion } from "framer-motion";
 
-import {
-  CalendarCheck,
-  Zap,
-  History,
-  ShieldCheck,
-} from "lucide-react";
+import { CalendarCheck, Zap, History, ShieldCheck } from "lucide-react";
 
 const features = [
   {
@@ -52,7 +47,7 @@ const features = [
 
 export function Stats() {
   return (
-  <section className="relative z-20 px-4 -mt-10">
+    <section className="relative z-20 px-4 -mt-10">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-150px] left-[5%] w-[450px] h-[450px] rounded-full bg-purple-600/15 blur-3xl" />
 
@@ -80,7 +75,6 @@ export function Stats() {
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white py-15">
             Fitur Unggulan{" "}
-
             <span className="bg-gradient-to-r from-purple-300 via-pink-300 to-indigo-300 bg-clip-text text-transparent">
               SiPemRu
             </span>
@@ -133,7 +127,7 @@ export function Stats() {
 
                 <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent" />
 
-                <div className="relative z-10" >
+                <div className="relative z-10">
                   <div
                     className={`
                       mb-6
@@ -143,9 +137,7 @@ export function Stats() {
                       ${feature.iconBg}
                     `}
                   >
-                    <Icon
-                      className={`w-7 h-7 ${feature.iconColor}`}
-                    />
+                    <Icon className={`w-7 h-7 ${feature.iconColor}`} />
                   </div>
 
                   <h3 className="text-2xl font-semibold text-white mb-4">
@@ -156,11 +148,10 @@ export function Stats() {
                     {feature.description}
                   </p>
                 </div>
-
                 <div className="absolute -bottom-16 -right-16 h-40 w-40 rounded-full bg-white/[0.03] blur-3xl" />
-
                 <div className="pointer-events-none absolute inset-0 rounded-[30px] border border-white/5" />
               </motion.div>
+          
             );
           })}
         </div>

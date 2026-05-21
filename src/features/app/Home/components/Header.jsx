@@ -1,18 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 
-import {
-  Settings,
-  User,
-  Menu,
-  X,
-} from "lucide-react";
+import { Settings, User, Menu, X } from "lucide-react";
 
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import LogoutButton from "../../auth/components/Logout";
 
@@ -21,88 +11,54 @@ import { getCurrentUser } from "../../../Admin/Users/service/UserService";
 export function Navbar() {
   const location = useLocation();
 
-  const currentUser =
-    getCurrentUser();
+  const currentUser = getCurrentUser();
 
   const user = currentUser || {
     name: "Guest",
     email: "guest@simaru.app",
   };
-  const [isDropdownOpen, setIsDropdownOpen] =
-    useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const [
-    isMobileMenuOpen,
-    setIsMobileMenuOpen,
-  ] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const [isScrolled, setIsScrolled] =
-    useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const dropdownRef =
-    useRef(null);
+  const dropdownRef = useRef(null);
 
-  const mobileMenuRef =
-    useRef(null);
+  const mobileMenuRef = useRef(null);
 
   const isActive = useCallback(
-    (path) =>
-      location.pathname === path,
-    [location]
+    (path) => location.pathname === path,
+    [location],
   );
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(
-        window.scrollY > 10
-      );
+      setIsScrolled(window.scrollY > 10);
     };
 
-    window.addEventListener(
-      "scroll",
-      handleScroll
-    );
+    window.addEventListener("scroll", handleScroll);
 
-    return () =>
-      window.removeEventListener(
-        "scroll",
-        handleScroll
-      );
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (
-      event
-    ) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(
-          event.target
-        )
-      ) {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
 
       if (
         mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(
-          event.target
-        )
+        !mobileMenuRef.current.contains(event.target)
       ) {
         setIsMobileMenuOpen(false);
       }
     };
 
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
+    document.addEventListener("mousedown", handleClickOutside);
 
-    return () =>
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -120,33 +76,20 @@ export function Navbar() {
       }
     };
 
-    document.addEventListener(
-      "keydown",
-      handleEsc
-    );
+    document.addEventListener("keydown", handleEsc);
 
-    return () =>
-      document.removeEventListener(
-        "keydown",
-        handleEsc
-      );
+    return () => document.removeEventListener("keydown", handleEsc);
   }, []);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
-      document.body.classList.add(
-        "overflow-hidden"
-      );
+      document.body.classList.add("overflow-hidden");
     } else {
-      document.body.classList.remove(
-        "overflow-hidden"
-      );
+      document.body.classList.remove("overflow-hidden");
     }
 
     return () => {
-      document.body.classList.remove(
-        "overflow-hidden"
-      );
+      document.body.classList.remove("overflow-hidden");
     };
   }, [isMobileMenuOpen]);
 
@@ -182,8 +125,8 @@ export function Navbar() {
   );
 
   return (
-<nav
-  className={`
+    <nav
+      className={`
     sticky z-[999]
     w-full
     transition-all duration-300
@@ -194,54 +137,59 @@ export function Navbar() {
     }
     backdrop-blur-2xl
   `}
->
-<div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/10 pointer-events-none" />
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/10 pointer-events-none" />
 
-<div
-  className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none"
-  style={{
-    backgroundImage:
-      "url('https://www.transparenttextures.com/patterns/noise.png')",
-  }}
-/>
-<div className={`pointer-events-none absolute -top-20 left-10 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl ${
-  isScrolled ? "opacity-0" : "opacity-100"
-} transition-opacity duration-300`} />
-<div className={`pointer-events-none absolute top-0 right-10 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl ${
-  isScrolled ? "opacity-0" : "opacity-100"
-} transition-opacity duration-300`} />
+      <div
+        className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none"
+        style={{
+          backgroundImage:
+            "url('https://www.transparenttextures.com/patterns/noise.png')",
+        }}
+      />
+      <div
+        className={`pointer-events-none absolute -top-20 left-10 h-40 w-40 rounded-full bg-purple-500/20 blur-3xl ${
+          isScrolled ? "opacity-0" : "opacity-100"
+        } transition-opacity duration-300`}
+      />
+      <div
+        className={`pointer-events-none absolute top-0 right-10 h-40 w-40 rounded-full bg-pink-500/20 blur-3xl ${
+          isScrolled ? "opacity-0" : "opacity-100"
+        } transition-opacity duration-300`}
+      />
 
-      <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-400/40 to-transparent ${
-        isScrolled ? "opacity-0" : "opacity-100"
-      } transition-opacity duration-300`} />
-      <div className={`pointer-events-none absolute inset-0 overflow-hidden ${isScrolled ? "rounded-2xl" : "rounded-none"}`}>
+      <div
+        className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-400/40 to-transparent ${
+          isScrolled ? "opacity-0" : "opacity-100"
+        } transition-opacity duration-300`}
+      />
+      <div
+        className={`pointer-events-none absolute inset-0 overflow-hidden ${isScrolled ? "rounded-2xl" : "rounded-none"}`}
+      >
         <div className="absolute -top-20 left-0 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
 
         <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-pink-600/10 blur-3xl" />
       </div>
 
       <div className="relative px-6 lg:px-8">
-        <div className={`flex h-16 items-center justify-between ${
-          isScrolled ? "px-2" : ""
-        }`}>
+        <div
+          className={`flex h-16 items-center justify-between ${
+            isScrolled ? "px-2" : ""
+          }`}
+        >
           <Link
             to="/"
             className="flex items-center gap-3 transition hover:opacity-80"
           >
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
-              <span className="text-lg font-bold text-white">
-                R
-              </span>
+              <span className="text-lg font-bold text-white">R</span>
             </div>
 
             <div className="leading-tight">
-              <h3 className="text-base font-bold text-white">
-                Simaru
-              </h3>
+              <h3 className="text-base font-bold text-white">Simaru</h3>
 
               <p className="text-[10px] tracking-[0.2em] text-gray-400">
-                SISTEM MANAJEMEN
-                RUANGAN
+                SISTEM MANAJEMEN RUANGAN
               </p>
             </div>
           </Link>
@@ -252,11 +200,7 @@ export function Navbar() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() =>
-                setIsMobileMenuOpen(
-                  !isMobileMenuOpen
-                )
-              }
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 transition hover:bg-white/10 md:hidden"
             >
               {isMobileMenuOpen ? (
@@ -266,36 +210,20 @@ export function Navbar() {
               )}
             </button>
 
-            <div
-              className="relative"
-              ref={dropdownRef}
-            >
+            <div className="relative" ref={dropdownRef}>
               {currentUser ? (
                 <>
-
-                  <button
-                    onClick={() =>
-                      setIsDropdownOpen(
-                        !isDropdownOpen
-                      )
-                    }
-                  >
+                  <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                     <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-orange-500 to-pink-500 text-white shadow-lg">
                       {user?.avatar ? (
                         <img
-                          src={
-                            user.avatar
-                          }
-                          alt={
-                            user.name
-                          }
+                          src={user.avatar}
+                          alt={user.name}
                           className="h-full w-full object-cover"
                         />
                       ) : (
                         <span className="text-sm font-semibold uppercase">
-                          {user.name?.charAt(
-                            0
-                          )}
+                          {user.name?.charAt(0)}
                         </span>
                       )}
                     </div>
@@ -305,18 +233,11 @@ export function Navbar() {
                     <div className="absolute right-0 mt-3 w-60 rounded-2xl border border-white/10 bg-[#120021]/90 shadow-2xl backdrop-blur-2xl">
                       <div className="border-b border-white/10 px-5 py-4">
                         <p className="text-sm font-semibold text-white">
-                          {
-                            user.name
-                          }
+                          {user.name}
                         </p>
 
-                        <p className="text-xs text-gray-400">
-                          {
-                            user.email
-                          }
-                        </p>
+                        <p className="text-xs text-gray-400">{user.email}</p>
                       </div>
-
 
                       <div className="p-2">
                         <Link
@@ -324,7 +245,6 @@ export function Navbar() {
                           className="flex items-center gap-3 rounded-xl px-3 py-3 text-gray-300 transition hover:bg-white/5"
                         >
                           <User className="h-4 w-4" />
-
                           Profile
                         </Link>
 
@@ -333,7 +253,6 @@ export function Navbar() {
                           className="flex items-center gap-3 rounded-xl px-3 py-3 text-gray-300 transition hover:bg-white/5"
                         >
                           <Settings className="h-4 w-4" />
-
                           Settings
                         </Link>
 
@@ -343,7 +262,6 @@ export function Navbar() {
                   )}
                 </>
               ) : (
-
                 <Link
                   to="/login"
                   className="

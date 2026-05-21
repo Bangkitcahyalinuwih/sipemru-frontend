@@ -16,7 +16,7 @@ const pageVariant = {
     transition: {
       duration: 0.5,
       when: "beforeChildren",
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
     },
   },
 };
@@ -32,15 +32,18 @@ const sectionVariant = {
     y: 0,
 
     transition: {
-      duration: 0.5,
+      duration: 0.6,
+      ease: "easeOut",
     },
   },
 };
 
 export function RoomListPages() {
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] =
+    useState([]);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] =
+    useState("");
 
   const [loading, setLoading] =
     useState(true);
@@ -89,28 +92,30 @@ export function RoomListPages() {
   );
 
   return (
-    <motion.div
+    <motion.section
       variants={pageVariant}
       initial="hidden"
       animate="show"
       className="
         relative
-        min-h-screen
-        overflow-x-hidden
-        bg-[#070014]
+        overflow-hidden
         text-white
+        pt-28
+        pb-20
       "
     >
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+      {/* Background Glow */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+
         <div
           className="
             absolute
-            top-[-150px]
+            top-[-200px]
             left-[5%]
-            w-[500px]
-            h-[500px]
+            w-[550px]
+            h-[550px]
             rounded-full
-            bg-purple-600/20
+            bg-purple-600/15
             blur-3xl
           "
         />
@@ -118,10 +123,10 @@ export function RoomListPages() {
         <div
           className="
             absolute
-            bottom-[-200px]
-            right-[10%]
-            w-[600px]
-            h-[600px]
+            bottom-[-250px]
+            right-[5%]
+            w-[650px]
+            h-[650px]
             rounded-full
             bg-pink-600/10
             blur-3xl
@@ -132,27 +137,41 @@ export function RoomListPages() {
           className="
             absolute
             top-[30%]
-            left-[45%]
-            w-[400px]
-            h-[400px]
+            left-1/2
+            -translate-x-1/2
+            w-[500px]
+            h-[500px]
             rounded-full
-            bg-cyan-500/10
+            bg-indigo-600/10
             blur-3xl
+          "
+        />
+
+        <div
+          className="
+            absolute inset-0
+            opacity-[0.03]
+            bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)]
+            bg-[size:70px_70px]
           "
         />
       </div>
 
-      <motion.div
-        variants={sectionVariant}
+      <div
         className="
           relative z-10
           max-w-7xl
           mx-auto
           px-4
-          py-20
+          sm:px-6
+          lg:px-8
         "
       >
-        <div className="mb-10">
+        {/* HEADER */}
+        <motion.div
+          variants={sectionVariant}
+          className="mb-14"
+        >
           <div
             className="
               inline-flex
@@ -161,11 +180,11 @@ export function RoomListPages() {
               px-4 py-2
               rounded-full
               border border-white/10
-              bg-white/5
+              bg-white/[0.03]
               backdrop-blur-xl
               text-sm
               text-purple-300
-              mb-5
+              mb-6
             "
           >
             Smart Room Booking
@@ -175,70 +194,112 @@ export function RoomListPages() {
             className="
               text-4xl
               md:text-5xl
+              lg:text-6xl
               font-bold
               tracking-tight
+              leading-tight
             "
           >
-            Daftar Ruangan
+            <span className="text-white">
+              Daftar
+            </span>
+
+            <span
+              className="
+                block
+                bg-gradient-to-r
+                from-purple-300
+                via-pink-300
+                to-indigo-300
+                bg-clip-text
+                text-transparent
+              "
+            >
+              Ruangan Kampus
+            </span>
           </h1>
 
           <p
             className="
+              mt-5
               text-gray-400
               text-sm
               md:text-base
-              mt-3
+              leading-relaxed
               max-w-2xl
             "
           >
-            Pilih ruangan sesuai
-            kebutuhan kegiatan,
-            seminar, workshop,
-            praktikum, dan acara
-            kampus lainnya.
+            Temukan ruangan terbaik untuk
+            seminar, praktikum, rapat,
+            workshop, dan berbagai kegiatan
+            kampus lainnya dengan sistem
+            reservasi modern dan real-time.
           </p>
-        </div>
-
-        <motion.div
-          variants={sectionVariant}
-          className="mb-10"
-        >
-          <input
-            type="text"
-            placeholder="Cari ruangan berdasarkan nama, kode, atau tipe..."
-            value={search}
-            onChange={(e) =>
-              setSearch(
-                e.target.value
-              )
-            }
-            className="
-              w-full
-              md:w-[420px]
-              px-5 py-3.5
-              rounded-2xl
-              border border-white/10
-              bg-white/5
-              backdrop-blur-2xl
-              text-white
-              placeholder:text-gray-500
-              outline-none
-              transition-all
-              focus:border-purple-500/40
-              focus:ring-2
-              focus:ring-purple-500/20
-            "
-          />
         </motion.div>
 
+        {/* SEARCH */}
+        <motion.div
+          variants={sectionVariant}
+          className="mb-14"
+        >
+          <div
+            className="
+              relative
+              w-full
+              md:w-[450px]
+              py-0.5
+              -mt-20
+              mb-28
+            "
+          >
+            <input
+              type="text"
+              placeholder="Cari ruangan..."
+              value={search}
+              onChange={(e) =>
+                setSearch(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+                px-5 py-4
+                rounded-2xl
+                border border-white/10
+                bg-white/[0.03]
+                backdrop-blur-2xl
+                text-white
+                placeholder:text-gray-500
+                outline-none
+                transition-all
+                focus:border-purple-500/30
+                focus:ring-2
+                focus:ring-purple-500/10
+                mt-8
+                
+              "
+            />
+
+            <div
+              className="
+                absolute inset-0
+                rounded-2xl
+                pointer-events-none
+                border border-white/5
+              "
+            />
+          </div>
+        </motion.div>
+
+        {/* CONTENT */}
         {loading ? (
           <motion.div
             variants={sectionVariant}
             className="
-              h-[300px]
-              rounded-3xl
+              h-[320px]
+              rounded-[32px]
               border border-white/10
-              bg-white/5
+              bg-white/[0.03]
               backdrop-blur-2xl
               flex items-center justify-center
             "
@@ -252,10 +313,10 @@ export function RoomListPages() {
           <motion.div
             variants={sectionVariant}
             className="
-              h-[300px]
-              rounded-3xl
+              h-[320px]
+              rounded-[32px]
               border border-white/10
-              bg-white/5
+              bg-white/[0.03]
               backdrop-blur-2xl
               flex items-center justify-center
             "
@@ -273,8 +334,8 @@ export function RoomListPages() {
             />
           </motion.div>
         )}
-      </motion.div>
-    </motion.div>
+      </div>
+    </motion.section>
   );
 }
 

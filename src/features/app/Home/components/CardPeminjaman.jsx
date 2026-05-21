@@ -69,7 +69,7 @@ export const CardPeminjaman = () => {
   };
 
   return (
-    <section className="relative overflow-hidden py-32">
+    <section className="relative overflow-hidden py-32 -mt-30">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-150px] left-[5%] w-[450px] h-[450px] rounded-full bg-purple-600/15 blur-3xl" />
         <div className="absolute bottom-[-100px] right-[5%] w-[500px] h-[500px] rounded-full bg-pink-600/10 blur-3xl" />

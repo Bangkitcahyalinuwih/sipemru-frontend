@@ -21,7 +21,7 @@ const pageVariant = {
     transition: {
       duration: 0.6,
       when: "beforeChildren",
-      staggerChildren: 0.15,
+      staggerChildren: 0.12,
     },
   },
 };
@@ -37,7 +37,7 @@ const sectionVariant = {
     y: 0,
 
     transition: {
-      duration: 0.6,
+      duration: 0.7,
       ease: "easeOut",
     },
   },
@@ -74,42 +74,69 @@ export function Home() {
       animate="show"
       className="
         relative
-        min-h-screen
-        text-white
-        overflow-x-hidden
+        overflow-hidden
         bg-[#070014]
-        pb-20
+        text-white
       "
     >
-      <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+      {/* GLOBAL BACKGROUND */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+
+        {/* Blob 1 */}
         <div
           className="
             absolute
-            top-[-120px]
+            top-[-180px]
             left-[5%]
-            w-[500px]
-            h-[500px]
+            w-[600px]
+            h-[600px]
+            rounded-full
             bg-purple-600/20
             blur-3xl
-            rounded-full
           "
         />
 
+        {/* Blob 2 */}
+        <div
+          className="
+            absolute
+            top-[35%]
+            right-[-150px]
+            w-[600px]
+            h-[600px]
+            rounded-full
+            bg-pink-600/10
+            blur-3xl
+          "
+        />
+
+        {/* Blob 3 */}
         <div
           className="
             absolute
             bottom-[-200px]
-            right-[10%]
-            w-[600px]
-            h-[600px]
-            bg-pink-600/10
-            blur-3xl
+            left-1/3
+            w-[700px]
+            h-[700px]
             rounded-full
+            bg-indigo-600/10
+            blur-3xl
+          "
+        />
+
+        {/* Grid */}
+        <div
+          className="
+            absolute inset-0
+            opacity-[0.03]
+            bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)]
+            bg-[size:70px_70px]
           "
         />
       </div>
 
-      <motion.div
+      {/* HERO */}
+      <motion.section
         variants={sectionVariant}
         initial="hidden"
         whileInView="show"
@@ -117,37 +144,58 @@ export function Home() {
         className="relative z-10"
       >
         <Hero />
-      </motion.div>
+      </motion.section>
 
-      <motion.div
+      {/* STATS */}
+      <motion.section
         variants={sectionVariant}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative z-10 mt-28 px-1.5 mb-10 "
+        className="
+          relative
+          z-10
+          pt-8
+          pb-16
+          px-4
+        "
       >
         <Stats />
-      </motion.div>
+      </motion.section>
 
-      <motion.div
+      {/* ROOM LIST */}
+      <motion.section
         variants={sectionVariant}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative z-10 mb-10 mt-6 p-14"
+        className="
+          relative
+          z-10
+          px-6
+          lg:px-10
+          pt-6
+          pb-20
+        "
       >
         <RoomList rooms={rooms} />
-      </motion.div>
+      </motion.section>
 
-      <motion.div
+      {/* CARD PEMINJAMAN */}
+      <motion.section
         variants={sectionVariant}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative z-10"
+        className="
+          relative
+          z-10
+          pt-10
+          pb-20
+        "
       >
         <CardPeminjaman />
-      </motion.div>
+      </motion.section>
     </motion.div>
   );
 }

@@ -20,6 +20,8 @@ const dayMap = {
 export default function RoomCalendar({ room }) {
   const [schedules, setSchedules] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
   useEffect(() => {
     if (room?.id) {
       fetchCalendarData();
@@ -175,185 +177,152 @@ export default function RoomCalendar({ room }) {
             }}
             eventClick={(info) => {
               const props = info.event.extendedProps;
-              if (props.type === "schedule") {
-                alert(`
-                    JADWAL KULIAH
-
-                    Mata Kuliah:
-                    ${info.event.title}
-
-                    Kelas:
-                    ${props.kelas}
-
-                    Dosen:
-                    ${props.lecturer}
-
-                    Prodi:
-                    ${props.prodi}
-
-                    Semester:
-                    ${props.semester}
-                `);
-
-                return;
-              }
-              if (props.type === "booking") {
-                alert(`
-                    BOOKING RUANGAN
-
-                    Kegiatan:
-                    ${info.event.title}
-
-                    PIC:
-                    ${props.pic}
-
-                    Organisasi:
-                    ${props.organization}
-
-                    Peserta:
-                    ${props.peserta}
-
-                    Status:
-                    ${props.status}
-                `);
-              }
+              setSelectedEvent({ event: info.event, props });
             }}
           />
         </div>
+
+        {/* Info Panel */}
+        {selectedEvent && (
+          <div className="mt-6 rounded-2xl border border-white/40 bg-white/60 backdrop-blur-md p-6 shadow-lg">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-xl font-bold text-black">
+                {selectedEvent.props.type === "schedule" ? "JADWAL KULIAH" : "BOOKING RUANGAN"}
+              </h3>
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="text-gray-600 hover:text-black transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {selectedEvent.props.type === "schedule" ? (
+              <div className="space-y-3 text-black">
+                <div>
+                  <p className="text-sm text-gray-700 font-medium">Mata Kuliah</p>
+                  <p className="text-base font-semibold">{selectedEvent.event.title}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-700 font-medium">Kelas</p>
+                    <p className="text-base font-semibold">{selectedEvent.props.kelas}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-700 font-medium">Semester</p>
+                    <p className="text-base font-semibold">{selectedEvent.props.semester}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-700 font-medium">Dosen</p>
+                  <p className="text-base font-semibold">{selectedEvent.props.lecturer}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-700 font-medium">Prodi</p>
+                  <p className="text-base font-semibold">{selectedEvent.props.prodi}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3 text-black">
+                <div>
+                  <p className="text-sm text-gray-700 font-medium">Kegiatan</p>
+                  <p className="text-base font-semibold">{selectedEvent.event.title}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-700 font-medium">PIC</p>
+                    <p className="text-base font-semibold">{selectedEvent.props.pic}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-700 font-medium">Peserta</p>
+                    <p className="text-base font-semibold">{selectedEvent.props.peserta} orang</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-700 font-medium">Organisasi</p>
+                  <p className="text-base font-semibold">{selectedEvent.props.organization}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-700 font-medium">Status</p>
+                  <p className="text-base font-semibold capitalize">{selectedEvent.props.status}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <style>{`
         .fc {
           background: transparent;
           font-family: 'Inter', sans-serif;
-          color: #1f2937;
+          color: #000 !important;
         }
 
         .fc-theme-standard td,
         .fc-theme-standard th,
         .fc-theme-standard .fc-scrollgrid {
-          border-color: rgba(
-            255,
-            255,
-            255,
-            0.2
-          );
+          border-color: rgba(255, 255, 255, 0.2);
         }
 
         .fc-scrollgrid {
           border-radius: 16px;
           overflow: hidden;
-          border: 1px solid
-            rgba(
-              255,
-              255,
-              255,
-              0.3
-            );
+          border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .fc-col-header-cell {
-          background: rgba(
-            255,
-            255,
-            255,
-            0.4
-          );
-
+          background: rgba(255, 255, 255, 0.4);
           backdrop-filter: blur(8px);
-
           padding: 16px 0;
-
-          border-bottom: 1px solid
-            rgba(
-              255,
-              255,
-              255,
-              0.3
-            );
+          border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .fc-col-header-cell-cushion {
           color: #374151;
-
           font-weight: 700;
-
           text-transform: uppercase;
-
           font-size: 0.75rem;
-
           letter-spacing: 0.05em;
-
           text-decoration: none;
         }
 
         .fc-daygrid-day {
           background: transparent;
-
           transition: all 0.2s ease;
         }
 
         .fc-daygrid-day:hover {
-          background: rgba(
-            255,
-            255,
-            255,
-            0.3
-          );
+          background: rgba(255, 255, 255, 0.3);
         }
 
         .fc-day-today {
-          background: rgba(
-            99,
-            102,
-            241,
-            0.15
-          ) !important;
+          background: rgba(99, 102, 241, 0.15) !important;
         }
 
-        .fc-day-today
-          .fc-daygrid-day-number {
+        .fc-day-today .fc-daygrid-day-number {
           background: #6366f1;
-
           color: white !important;
-
           border-radius: 50%;
-
           width: 28px;
           height: 28px;
-
           display: flex;
-
           align-items: center;
-
           justify-content: center;
-
           margin: 4px;
-
-          box-shadow:
-            0 4px 12px
-            rgba(
-              99,
-              102,
-              241,
-              0.4
-            );
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
         }
 
         .fc-daygrid-day-number {
           color: #4b5563;
-
           font-weight: 600;
-
           margin: 8px;
-
           width: 24px;
           height: 24px;
-
           display: flex;
-
           align-items: center;
-
           justify-content: center;
         }
 
@@ -363,146 +332,78 @@ export default function RoomCalendar({ room }) {
 
         .fc-toolbar-title {
           color: #111827;
-
           font-size: 1.25rem !important;
-
           font-weight: 800;
         }
 
         .fc-button {
-          background: rgba(
-            255,
-            255,
-            255,
-            0.5
-          ) !important;
-
-          border: 1px solid
-            rgba(
-              255,
-              255,
-              255,
-              0.5
-            ) !important;
-
+          background: rgba(255, 255, 255, 0.5) !important;
+          border: 1px solid rgba(255, 255, 255, 0.5) !important;
           color: #374151 !important;
-
           font-weight: 600;
-
           border-radius: 12px !important;
-
           padding: 8px 16px !important;
-
           backdrop-filter: blur(4px);
-
           transition: all 0.2s;
-
-          box-shadow:
-            0 2px 4px
-            rgba(0,0,0,0.05);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .fc-button:hover {
-          background: rgba(
-            255,
-            255,
-            255,
-            0.8
-          ) !important;
-
+          background: rgba(255, 255, 255, 0.8) !important;
           transform: translateY(-1px);
-
-          box-shadow:
-            0 4px 6px
-            rgba(0,0,0,0.1);
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .fc-button-active {
-          background: linear-gradient(
-            135deg,
-            #6366f1,
-            #8b5cf6
-          ) !important;
-
+          background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
           color: white !important;
-
-          border-color:
-            transparent !important;
-
-          box-shadow:
-            0 4px 12px
-            rgba(
-              99,
-              102,
-              241,
-              0.3
-            );
+          border-color: transparent !important;
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
         .fc-event {
           border: none !important;
-
           border-radius: 10px !important;
-
-          padding: 4px 8px !important;
-
-          font-weight: 600;
-
-          box-shadow:
-            0 4px 10px
-            rgba(0,0,0,0.1);
-
+          padding: 6px 10px !important;
+          font-weight: 700;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
           cursor: pointer;
-
-          transition:
-            transform 0.1s;
+          transition: transform 0.1s;
+          min-height: 24px !important;
         }
 
         .fc-event:hover {
           transform: scale(1.03);
-
           z-index: 50;
         }
 
         .fc-event-title {
-          font-size: 11px;
-
-          font-weight: 600;
-
-          color: white;
+          font-size: 13px !important;
+          font-weight: 700 !important;
+          color: #000000 !important;
+          line-height: 1.3 !important;
+          text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
         }
 
         .fc-event-time {
-          color: rgba(
-            255,
-            255,
-            255,
-            0.9
-          );
-
-          font-size: 10px;
+          color: #000000 !important;
+          font-size: 11px !important;
+          font-weight: 600 !important;
+          text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
         }
 
         .fc-timegrid-slot-label {
           color: #9ca3af;
-
           font-size: 0.75rem;
         }
 
         .fc-timegrid-slot {
           height: 48px !important;
-
-          border-color:
-            rgba(0,0,0,0.03);
+          border-color: rgba(0,0,0,0.03);
         }
 
         .fc-timegrid-col.fc-day-today {
-          background: rgba(
-            255,
-            255,
-            255,
-            0.2
-          );
+          background: rgba(255, 255, 255, 0.2);
         }
 
         .fc-scroller::-webkit-scrollbar {
@@ -511,13 +412,7 @@ export default function RoomCalendar({ room }) {
         }
 
         .fc-scroller::-webkit-scrollbar-thumb {
-          background: rgba(
-            0,
-            0,
-            0,
-            0.1
-          );
-
+          background: rgba(0, 0, 0, 0.1);
           border-radius: 4px;
         }
       `}</style>

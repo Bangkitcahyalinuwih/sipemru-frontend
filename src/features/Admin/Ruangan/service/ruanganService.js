@@ -14,7 +14,7 @@ let dummyRuangan = [
     approval_type: "auto",
     description: "Lab untuk praktikum komputer mahasiswa.",
     facilities: ["AC", "Proyektor", "WiFi"],
-    foto: "https://via.placeholder.com/60",
+    foto: "/fotolab.png",
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ let dummyRuangan = [
     approval_type: "manual",
     description: "Digunakan untuk seminar dan acara besar.",
     facilities: ["Sound System", "Stage", "AC"],
-    foto: null,
+    foto: "/aulapnm.jpg",
   },
   {
     id: 3,
@@ -38,7 +38,7 @@ let dummyRuangan = [
     approval_type: "manual",
     description: "Digunakan untuk seminar dan acara besar.",
     facilities: ["Sound System", "Stage", "AC"],
-    foto: null,
+    foto: "/ruangkelas.jpg",
   },
   {
     id: 4,
@@ -50,7 +50,7 @@ let dummyRuangan = [
     approval_type: "manual",
     description: "Digunakan untuk seminar dan acara besar.",
     facilities: ["Sound System", "Stage", "AC"],
-    foto: null,
+    foto: "/meetroom.webp",
   },
 ];
 

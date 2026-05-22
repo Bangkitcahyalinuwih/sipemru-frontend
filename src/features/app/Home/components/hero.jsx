@@ -141,7 +141,7 @@ export function Hero() {
             transition={{ delay: 0.3 }}
             className="mt-8 grid grid-cols-3 gap-3"
           >
-            {[{ icon: Calendar, label: "Real-time" }, { icon: Clock, label: "24/7" }, { icon: MapPin, label: "Semua Ruangan" }].map((item, index) => (
+            {[{ icon: Calendar, label: "Booking Real-time" }, { icon: Clock, label: "Booking Kapan Saja" }, { icon: MapPin, label: "Multi Ruangan" }].map((item, index) => (
               <div key={index} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-xl">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.03] border border-white/10">
                   <item.icon className="h-4 w-4 text-purple-400" />

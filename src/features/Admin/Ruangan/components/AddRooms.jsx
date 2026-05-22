@@ -1,14 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Upload } from "lucide-react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { createRuangan } from "../service/ruanganService";
+import { getBuildings } from "../../Building/Service/BuildingService";
 
-const buildings = [
-  { id: 1, name: "Gedung A" },
-  { id: 2, name: "Gedung B" },
-  { id: 3, name: "Gedung C + D" },
-];
 
 const initialState = {
   building_id: "",
@@ -27,6 +23,9 @@ const AddRooms = () => {
   const [extraDesc, setExtraDesc] = useState("");
   const [preview, setPreview] = useState(null);
 
+  const [buildings, setBuildings] = useState([]);
+  const [loadingBuildings, setLoadingBuildings] = useState(true);
+
   const navigate = useNavigate();
 
   const inputClass =
@@ -44,9 +43,28 @@ const AddRooms = () => {
     }));
   };
 
+  useEffect(() => {
+    const fetchBuildings = async () => {
+      try {
+        setLoadingBuildings(true);
+        const data = await getBuildings();
+        setBuildings(data);
+      } catch (error) {
+        console.error("Gagal load buildings:", error);
+      } finally {
+        setLoadingBuildings(false);
+      }
+    };
+
+    fetchBuildings();
+  }, []);
+
   const facilitiesArray = useMemo(() => {
     return form.facilities
-      ? form.facilities.split(",").map((i) => i.trim()).filter(Boolean)
+      ? form.facilities
+          .split(",")
+          .map((i) => i.trim())
+          .filter(Boolean)
       : [];
   }, [form.facilities]);
 
@@ -64,7 +82,7 @@ const AddRooms = () => {
 
   const selectedBuilding = useMemo(() => {
     return buildings.find((b) => b.id === Number(form.building_id));
-  }, [form.building_id]);
+  }, [form.building_id, buildings]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -140,16 +158,19 @@ const AddRooms = () => {
             isi data dengan lengkap
           </p>
         </div>
+
         <form onSubmit={handleSubmit} className="p-6 space-y-5 capitalize">
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
             <select
               value={form.building_id}
               onChange={(e) => setField("building_id", e.target.value)}
               className={inputClass}
+              disabled={loadingBuildings}
             >
-              <option value="">pilih gedung</option>
+              <option value="">
+                {loadingBuildings ? "memuat gedung..." : "pilih gedung"}
+              </option>
+
               {buildings.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.name}
@@ -257,7 +278,6 @@ const AddRooms = () => {
           >
             simpan ruangan
           </button>
-
         </form>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+// import { exportDashboardExcel } from "./exportExcel";
 import {
   Calendar,
   Users,
@@ -45,6 +46,7 @@ import {
 } from "recharts";
 import { getBookings } from "../../Admin/Booking/service/BookingService";
 import { getUsers } from "../../Admin/Users/service/UserService";
+import { exportDashboardExcel } from "../../../store/exportExcel";
 
 export default function ModernAdminDashboard() {
   const [bookings, setBookings] = useState([]);
@@ -222,12 +224,18 @@ export default function ModernAdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
       <div className="max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        <HeroHeader 
-          currentTime={currentTime}
-          onRefresh={fetchData}
-          refreshing={refreshing}
-          todayCount={analytics.today}
-        />
+<HeroHeader
+  currentTime={currentTime}
+  onRefresh={fetchData}
+  refreshing={refreshing}
+  todayCount={analytics.today}
+  onExport={() =>
+    exportDashboardExcel({
+      analytics,
+      bookings,
+    })
+  }
+/>
 
         <FilterSection
           searchTerm={searchTerm}
@@ -308,7 +316,11 @@ function LoadingState() {
   );
 }
 
-function HeroHeader({ currentTime, onRefresh, refreshing, todayCount }) {
+function HeroHeader({   currentTime,
+  onRefresh,
+  refreshing,
+  todayCount,
+  onExport, }) {
   const greeting = () => {
     const hour = currentTime.getHours();
     if (hour < 12) return "Good Morning";
@@ -366,14 +378,15 @@ function HeroHeader({ currentTime, onRefresh, refreshing, todayCount }) {
             <span className="font-medium text-slate-700">Refresh</span>
           </motion.button>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transition-all"
-          >
-            <Download className="w-4 h-4" />
-            <span className="font-medium">Export</span>
-          </motion.button>
+<motion.button
+  whileHover={{ scale: 1.02 }}
+  whileTap={{ scale: 0.98 }}
+  onClick={onExport}
+  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transition-all"
+>
+  <Download className="w-4 h-4" />
+  <span className="font-medium">Export Excel</span>
+</motion.button>
         </div>
       </div>
     </motion.div>

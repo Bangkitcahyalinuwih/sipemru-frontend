@@ -182,7 +182,6 @@ export default function RoomCalendar({ room }) {
           />
         </div>
 
-        {/* Info Panel */}
         {selectedEvent && (
           <div className="mt-6 rounded-2xl border border-white/40 bg-white/60 backdrop-blur-md p-6 shadow-lg">
             <div className="flex justify-between items-start mb-4">

@@ -27,7 +27,7 @@ export default function Header({ collapsed, setCollapsed, title }) {
 
   const LogOut = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    window.location.href = "admin/login";
   };
 
   return (

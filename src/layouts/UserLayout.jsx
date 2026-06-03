@@ -3,15 +3,37 @@ import { lazy, Suspense } from "react";
 
 import { Navbar } from "../features/app/Home/components/Header";
 
-const Home = lazy(() => import("../features/app/Home/Pages/Home").then(m => ({ default: m.Home })));
-const History = lazy(() => import("../features/app/Home/Pages/History").then(m => ({ default: m.History })));
-const Booking = lazy(() => import("../features/app/Home/Pages/Booking").then(m => ({ default: m.Booking })));
+const Home = lazy(() =>
+  import("../features/app/Home/Pages/Home").then((m) => ({ default: m.Home })),
+);
+const History = lazy(() =>
+  import("../features/app/Home/Pages/History").then((m) => ({
+    default: m.History,
+  })),
+);
+const Booking = lazy(() =>
+  import("../features/app/Home/Pages/Booking").then((m) => ({
+    default: m.Booking,
+  })),
+);
 const RoomListPages = lazy(() => import("../features/app/Home/Pages/RoomList"));
-const RoomDetailPage = lazy(() => import("../features/app/Home/Pages/roomDetail").then(m => ({ default: m.RoomDetailPage })));
-const HistoryDetailPage = lazy(() => import("../features/app/Home/Pages/HistoryDetailPages").then(m => ({ default: m.HistoryDetailPage })));
-const RegisterPage = lazy(() => import("../features/app/auth/pages/RegisterPages"));
+const RoomDetailPage = lazy(() =>
+  import("../features/app/Home/Pages/roomDetail").then((m) => ({
+    default: m.RoomDetailPage,
+  })),
+);
+const HistoryDetailPage = lazy(() =>
+  import("../features/app/Home/Pages/HistoryDetailPages").then((m) => ({
+    default: m.HistoryDetailPage,
+  })),
+);
+const RegisterPage = lazy(
+  () => import("../features/app/auth/pages/RegisterPages"),
+);
 const LoginPage = lazy(() => import("../features/app/auth/pages/LoginPages"));
-const ProfilePages = lazy(() => import("../features/app/Home/Pages/ProfilePages"));
+const ProfilePages = lazy(
+  () => import("../features/app/Home/Pages/ProfilePages"),
+);
 
 import { getCurrentUser } from "../features/Admin/Users/service/UserService";
 
@@ -163,16 +185,51 @@ function LayoutWrapper() {
 export function UserLayout() {
   return (
     <Routes>
-      <Route path="/profile" element={<Suspense fallback={<PageLoader />}><ProfilePages /></Suspense>} />
+      <Route
+        path="/profile"
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <ProfilePages />
+          </Suspense>
+        }
+      />
 
-      <Route path="/login" element={<Suspense fallback={<PageLoader />}><LoginPage /></Suspense>} />
+      <Route
+        path="/login"
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <LoginPage />
+          </Suspense>
+        }
+      />
 
-      <Route path="/register" element={<Suspense fallback={<PageLoader />}><RegisterPage /></Suspense>} />
+      <Route
+        path="/register"
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <RegisterPage />
+          </Suspense>
+        }
+      />
 
       <Route element={<LayoutWrapper />}>
-        <Route path="/" element={<Suspense fallback={<PageLoader />}><Home /></Suspense>} />
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <Home />
+            </Suspense>
+          }
+        />
 
-        <Route path="/roomlist" element={<Suspense fallback={<PageLoader />}><RoomListPages /></Suspense>} />
+        <Route
+          path="/roomlist"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <RoomListPages />
+            </Suspense>
+          }
+        />
 
         <Route
           path="/booking"

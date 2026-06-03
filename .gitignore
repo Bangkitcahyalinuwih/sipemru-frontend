@@ -8,12 +8,15 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Dependencies
-node_modules
+node_modules/
 
 # Build output
-dist
-dist-ssr
-build
+dist/
+dist-ssr/
+build/
+
+# Coverage
+coverage/
 
 # Environment files
 .env
@@ -25,29 +28,37 @@ build
 # Local files
 *.local
 
+# Cache
+.cache/
+.parcel-cache/
+.vite/
+
+# Vite
+vite.svg
+
+# Temporary files
+tmp/
+temp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 
-.idea
-.DS_Store
-
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# Coverage
-coverage
+# Operating System
+.DS_Store
+Thumbs.db
 
-# Cache
-.cache
-.parcel-cache
+# Optimization reports
+OPTIMIZATION_REPORT.md
+PERFORMANCE_OPTIMIZATION.md
 
-# Vite
-vite.svg
-
-# Temporary files
-tmp
-temp
+# Local verification scripts
+verify-optimization.bat
+verify-optimization.sh

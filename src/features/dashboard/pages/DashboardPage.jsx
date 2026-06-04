@@ -47,10 +47,11 @@ import {
 import { getBookings } from "../../Admin/Booking/service/BookingService";
 // import { getUsers } from "../../Admin/Users/service/UserService";
 import { exportDashboardExcel } from "../../../store/exportExcel";
+import { getCurrentUser } from "../../Admin/Users/service/UserService";
 
 export default function ModernAdminDashboard() {
+  const currentUser = getCurrentUser();
   const [bookings, setBookings] = useState([]);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -69,11 +70,11 @@ export default function ModernAdminDashboard() {
     try {
       setRefreshing(true);
       const [bookingData, userData] = await Promise.all([
-        getBookings(),
-        getUsers(),
+        getBookings(),  
+        // getUsers(),
       ]);
       setBookings(bookingData);
-      setUsers(userData);
+      // setUsers(userData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -207,7 +208,7 @@ export default function ModernAdminDashboard() {
       thisWeek,
       weeklyChange,
       approvalRate,
-      userCount: users.length,
+
       topRooms,
       topOrgs,
       trendData,
@@ -215,7 +216,7 @@ export default function ModernAdminDashboard() {
       roomData,
       orgData,
     };
-  }, [filteredBookings, bookings, users]);
+  }, [filteredBookings, bookings]);
 
   if (loading) {
     return <LoadingState />;
@@ -225,16 +226,12 @@ export default function ModernAdminDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
       <div className="max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 <HeroHeader
+  currentUser={currentUser}        // ← tambahkan ini
   currentTime={currentTime}
   onRefresh={fetchData}
   refreshing={refreshing}
   todayCount={analytics.today}
-  onExport={() =>
-    exportDashboardExcel({
-      analytics,
-      bookings,
-    })
-  }
+  onExport={() => exportDashboardExcel({ analytics, bookings })}
 />
 
         <FilterSection
@@ -316,17 +313,17 @@ function LoadingState() {
   );
 }
 
-function HeroHeader({   currentTime,
-  onRefresh,
-  refreshing,
-  todayCount,
-  onExport, }) {
+function HeroHeader({ currentUser, currentTime, onRefresh, refreshing, todayCount, onExport }) {
   const greeting = () => {
     const hour = currentTime.getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 18) return "Good Afternoon";
-    return "Good Evening";
+    if (hour < 12) return "Selamat Pagi";
+    if (hour < 18) return "Selamat Siang";
+    return "Selamat Malam";
   };
+
+  const displayName = currentUser?.name || "Admin";
+  const displayRole = currentUser?.role === "admin" ? "Administrator" : currentUser?.role || "User";
+
 
   return (
     <motion.div
@@ -342,14 +339,11 @@ function HeroHeader({   currentTime,
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">
-                {greeting()}, Admin 👋
+                {greeting()}, {displayName} 👋
               </h1>
               <p className="text-sm text-slate-500">
-                {currentTime.toLocaleDateString("id-ID", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+                {displayRole} · {currentTime.toLocaleDateString("id-ID", {
+                  weekday: "long", year: "numeric", month: "long", day: "numeric",
                 })}
               </p>
             </div>
@@ -525,13 +519,13 @@ function KpiSection({ analytics, selectedCard, setSelectedCard, setStatusFilter 
       gradient: "from-rose-500 to-rose-700",
       status: "rejected",
     },
-    {
-      id: "users",
-      label: "Active Users",
-      value: analytics.userCount,
-      icon: Users,
-      gradient: "from-indigo-500 to-indigo-700",
-    },
+{
+  id: "today",
+  label: "Hari Ini",
+  value: analytics.today,
+  icon: Calendar,
+  gradient: "from-indigo-500 to-indigo-700",
+},
   ];
 
   return (

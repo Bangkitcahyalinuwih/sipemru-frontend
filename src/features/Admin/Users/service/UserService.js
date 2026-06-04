@@ -1,3 +1,4 @@
+import { TrendingUp } from "lucide-react";
 import api from "../../../../api/api";
 
 const USE_API = false;

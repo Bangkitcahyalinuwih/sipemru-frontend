@@ -71,7 +71,7 @@ export const getBookings = async () => {
       return [...dummyBookings];
     }
 
-    const res = await api.get(API_URL);
+    const res = await api.get(`/admin${API_URL}`);
 
     return res.data;
   } catch (error) {

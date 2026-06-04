@@ -1,195 +1,88 @@
 import api from "../../../../api/api";
 
-const API_URL = "/users";
 const USE_API = false;
 
-const STORAGE_KEY = "dummy_users";
 const AUTH_KEY = "user";
+const TOKEN_KEY = "token";
 
 const initialUsers = [
   {
     id: 10,
-    name: "Septian Angga",
-    email: "septian@gmail.com",
+    name: "Admin",
+    email: "admin@gmail.com",
     password: "123456",
     role: "admin",
-    nim: "12345678",
-    jurusan: "Informatika",
-    phone: "08123456789",
-    email_verified_at: "2025-01-01",
   },
-{
-  id: 1,
-  name: "Budi Santoso",
-  email: "budi@gmail.com",
-  password: "123456",
-  role: "mahasiswa",
-  nim: "254311014",
-  jurusan: "Sistem Informasi",
-  phone: "08987654321",
-  email_verified_at: null,
-
-  token:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy.mahasiswa.token",
-}
+  {
+    id: 1,
+    name: "Budi Santoso",
+    email: "budi@gmail.com",
+    password: "123456",
+    role: "mahasiswa",
+  },
 ];
 
 const loadUsers = () => {
-  const stored =
-    localStorage.getItem(STORAGE_KEY);
-
-  return stored
-    ? JSON.parse(stored)
-    : initialUsers;
+  const stored = localStorage.getItem("dummy_users");
+  return stored ? JSON.parse(stored) : initialUsers;
 };
 
 let dummyUsers = loadUsers();
 
 const saveUsers = () => {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(dummyUsers)
-  );
+  localStorage.setItem("dummy_users", JSON.stringify(dummyUsers));
 };
 
-export const getUsers = async () => {
-  try {
-    if (!USE_API) {
-      return [...dummyUsers];
-    }
-
-    const res = await api.get(API_URL);
-
-    return res.data;
-  } catch (error) {
-    console.error(
-      "Gagal mengambil user:",
-      error
+/* LOGIN */
+export const loginUser = async (email, password) => {
+  if (!USE_API) {
+    const user = dummyUsers.find(
+      (u) => u.email === email && u.password === password
     );
 
-    return [];
+    if (!user) throw new Error("Email atau password salah");
+
+    localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+    localStorage.setItem(TOKEN_KEY, "dummy-token");
+
+    return user;
   }
+
+  const res = await api.post("/login", { email, password });
+
+  localStorage.setItem(AUTH_KEY, JSON.stringify(res.data.user));
+  localStorage.setItem(TOKEN_KEY, res.data.token);
+
+  return res.data.user;
 };
 
-export const getUserById = async (id) => {
-  try {
-    if (!USE_API) {
-      return (
-        dummyUsers.find(
-          (item) =>
-            Number(item.id) === Number(id)
-        ) || null
-      );
-    }
+/* REGISTER */
+export const registerUser = async (data) => {
+  if (!USE_API) {
+    const newUser = {
+      id: Date.now(),
+      role: "mahasiswa",
+      ...data,
+    };
 
-    const res = await api.get(
-      `${API_URL}/${id}`
-    );
+    dummyUsers.push(newUser);
+    saveUsers();
 
-    return res.data;
-  } catch (error) {
-    console.error(
-      "Gagal mengambil detail user:",
-      error
-    );
-
-    return null;
+    return newUser;
   }
+
+  const res = await api.post("/register", data);
+  return res.data;
 };
 
-/* ================= LOGIN ================= */
-
-export const loginUser = async (
-  email,
-  password
-) => {
-  try {
-    if (!USE_API) {
-      const user = dummyUsers.find(
-        (item) =>
-          item.email === email &&
-          item.password === password
-      );
-
-      if (!user) {
-        throw new Error(
-          "Email atau password salah"
-        );
-      }
-
-      localStorage.setItem(
-        AUTH_KEY,
-        JSON.stringify(user)
-      );
-
-      return user;
-    }
-
-    const res = await api.post(
-      "/login",
-      {
-        email,
-        password,
-      }
-    );
-
-    localStorage.setItem(
-      AUTH_KEY,
-      JSON.stringify(res.data.user)
-    );
-
-    return res.data.user;
-  } catch (error) {
-    console.error("Login gagal:", error);
-
-    throw error;
-  }
-};
-
-export const getCurrentUser = () => {
-  const user =
-    localStorage.getItem(AUTH_KEY);
-
-  return user ? JSON.parse(user) : null;
-};
-
-/* ================= LOGOUT ================= */
-
+/* LOGOUT */
 export const logoutUser = () => {
   localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(TOKEN_KEY);
 };
 
-/* ================= CREATE USER ================= */
-
-export const createUser = async (
-  data
-) => {
-  try {
-    if (!USE_API) {
-      const newUser = {
-        id: Date.now(),
-        ...data,
-      };
-
-      dummyUsers.push(newUser);
-
-      saveUsers();
-
-      return newUser;
-    }
-
-    const res = await api.post(
-      API_URL,
-      data
-    );
-
-    return res.data;
-  } catch (error) {
-    console.error(
-      "Gagal membuat user:",
-      error
-    );
-
-    throw error;
-  }
+/* ME */
+export const getCurrentUser = () => {
+  const user = localStorage.getItem(AUTH_KEY);
+  return user ? JSON.parse(user) : null;
 };

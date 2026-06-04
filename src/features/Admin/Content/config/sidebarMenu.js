@@ -19,11 +19,6 @@ export const sidebarMenu = [
     icon: LayoutDashboard,
   },
   {
-    key: "users",
-    label: "Users",
-    icon: Users,
-  },
-  {
     key:"building",
     label:"Gedung",
     icon: Home,

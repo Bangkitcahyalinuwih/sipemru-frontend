@@ -1,7 +1,11 @@
 import axios from "axios";
 
 const requestCache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
+
+export const clearApiCache = () => {
+  requestCache.clear();
+};
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -14,25 +18,33 @@ const api = axios.create({
   timeout: 10000,
 });
 
+// REQUEST INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
-    const token =
-      localStorage.getItem(
-        "token"
-      );
+    const token = localStorage.getItem("token");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    if (config.method === 'get') {
-      const cacheKey = config.url;
-      const cachedData = requestCache.get(cacheKey);
-      
-      if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
+    if (config.method?.toLowerCase() === "get") {
+      const cacheKey = `${config.url}${JSON.stringify(
+        config.params || {}
+      )}`;
+
+      const cachedData =
+        requestCache.get(cacheKey);
+
+      if (
+        cachedData &&
+        Date.now() - cachedData.timestamp <
+          CACHE_DURATION
+      ) {
         return Promise.reject({
           config,
-          response: { data: cachedData.data },
+          response: {
+            data: cachedData.data,
+          },
           isFromCache: true,
         });
       }
@@ -41,21 +53,26 @@ api.interceptors.request.use(
     return config;
   },
 
-  (error) => {
-    return Promise.reject(
-      error
-    );
-  }
+  (error) => Promise.reject(error)
 );
 
+// RESPONSE INTERCEPTOR
 api.interceptors.response.use(
   (response) => {
-    if (response.config.method === 'get') {
-      requestCache.set(response.config.url, {
+    if (
+      response.config.method?.toLowerCase() ===
+      "get"
+    ) {
+      const cacheKey = `${response.config.url}${JSON.stringify(
+        response.config.params || {}
+      )}`;
+
+      requestCache.set(cacheKey, {
         data: response.data,
         timestamp: Date.now(),
       });
     }
+
     return response;
   },
 
@@ -64,7 +81,9 @@ api.interceptors.response.use(
       return Promise.resolve({
         data: error.response.data,
         status: 200,
-        statusText: 'OK (cached)',
+        statusText: "OK (cached)",
+        headers: {},
+        config: error.config,
       });
     }
 
@@ -80,7 +99,6 @@ api.interceptors.response.use(
         "user"
       );
 
-
       if (
         window.location.pathname !==
         "/login"
@@ -90,9 +108,7 @@ api.interceptors.response.use(
       }
     }
 
-    return Promise.reject(
-      error
-    );
+    return Promise.reject(error);
   }
 );
 

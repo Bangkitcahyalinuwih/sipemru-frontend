@@ -1,7 +1,7 @@
-import api from "../../../../api/api";
+import api, { clearApiCache} from "../../../../api/api";
 
-const API_URL = "/rooms";
 const USE_API = false;
+const API_URL = "/rooms";
 
 let dummyRuangan = [
   {
@@ -32,24 +32,24 @@ let dummyRuangan = [
     id: 3,
     code: "R003",
     name: "Ruang Kelas 1",
-    type: "classroom",
+    type: "kelas",
     capacity: 50,
     floor: 1,
     approval_type: "manual",
-    description: "Digunakan untuk seminar dan acara besar.",
-    facilities: ["Sound System", "Stage", "AC"],
+    description: "Ruang kelas reguler.",
+    facilities: ["Proyektor", "AC"],
     foto: "/ruangkelas.jpg",
   },
   {
     id: 4,
     code: "R004",
     name: "Ruang Rapat 1",
-    type: "meeting_room",
+    type: "rapat",
     capacity: 20,
     floor: 1,
     approval_type: "manual",
-    description: "Digunakan untuk seminar dan acara besar.",
-    facilities: ["Sound System", "Stage", "AC"],
+    description: "Ruang rapat dosen dan staf.",
+    facilities: ["TV", "AC"],
     foto: "/meetroom.webp",
   },
 ];
@@ -61,11 +61,26 @@ export const getRuangan = async () => {
     }
 
     const res = await api.get(API_URL);
-
-    return res.data;
+    return res.data.data || [];
   } catch (error) {
     console.error("Gagal ambil data ruangan:", error);
     return [];
+  }
+};
+
+export const getRuanganById = async (id) => {
+  try {
+    if (!USE_API) {
+      return dummyRuangan.find(
+        (item) => item.id === Number(id)
+      );
+    }
+
+    const res = await api.get(`${API_URL}/${id}`);
+    return res.data.room || null;
+  } catch (error) {
+    console.error("Gagal ambil detail ruangan:", error);
+    return null;
   }
 };
 
@@ -74,35 +89,88 @@ export const createRuangan = async (formData) => {
     if (!USE_API) {
       const newData = {
         id: Date.now(),
-        building_id: formData.get("building_id"),
-        building_name: formData.get("building_name"),
         code: formData.get("code"),
         name: formData.get("name"),
         type: formData.get("type"),
-        capacity: formData.get("capacity"),
-        floor: formData.get("floor"),
+        capacity: Number(formData.get("capacity")),
+        floor: Number(formData.get("floor")),
         approval_type: formData.get("approval_type"),
         description: formData.get("description"),
-        facilities: JSON.parse(formData.get("facilities")),
-        foto: formData.get("foto")
-          ? URL.createObjectURL(formData.get("foto"))
+        facilities: JSON.parse(
+          formData.get("facilities") || "[]"
+        ),
+        foto: formData.get("photo")
+          ? URL.createObjectURL(formData.get("photo"))
           : null,
       };
 
       dummyRuangan.push(newData);
-
       return newData;
     }
 
-    const res = await api.post(API_URL, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+const res = await api.post(
+  `/admin${API_URL}`,
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }
+);
 
-    return res.data;
+clearApiCache();
+
+return res.data.room;
   } catch (error) {
     console.error("Gagal tambah ruangan:", error);
+    throw error;
+  }
+};
+
+export const updateRuangan = async (id, formData) => {
+  try {
+    if (!USE_API) {
+      dummyRuangan = dummyRuangan.map((item) =>
+        item.id === Number(id)
+          ? {
+              ...item,
+              code: formData.get("code"),
+              name: formData.get("name"),
+              type: formData.get("type"),
+              capacity: Number(formData.get("capacity")),
+              floor: Number(formData.get("floor")),
+              approval_type: formData.get("approval_type"),
+              description: formData.get("description"),
+              facilities: JSON.parse(
+                formData.get("facilities") || "[]"
+              ),
+              foto: formData.get("photo")
+                ? URL.createObjectURL(
+                    formData.get("photo")
+                  )
+                : item.foto,
+            }
+          : item
+      );
+
+      return true;
+    }
+
+const res = await api.post(
+  `/admin${API_URL}/${id}?_method=PUT`,
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }
+);
+
+clearApiCache();
+
+return res.data.room;
+  } catch (error) {
+    console.error("Gagal update ruangan:", error);
     throw error;
   }
 };
@@ -116,77 +184,40 @@ export const deleteRuangan = async (id) => {
 
       return true;
     }
+await api.delete(
+  `/admin${API_URL}/${id}`
+);
 
-    await api.delete(`${API_URL}/${id}`);
+clearApiCache();
 
-    return true;
+return true;
   } catch (error) {
     console.error("Gagal hapus ruangan:", error);
     return false;
   }
 };
 
-
-export const getRuanganById = async (id) => {
-  try {
-    if (!USE_API) {
-      return dummyRuangan.find(
-        (item) => item.id === Number(id)
-      );
-    }
-
-    const res = await api.get(`${API_URL}/${id}`);
-
-    return res.data;
-  } catch (error) {
-    console.error("Gagal ambil detail ruangan:", error);
-    return null;
-  }
-};
-
-
-export const updateRuangan = async (id, formData) => {
+export const deleteFotoRuangan = async (id) => {
   try {
     if (!USE_API) {
       dummyRuangan = dummyRuangan.map((item) =>
         item.id === Number(id)
-          ? {
-              ...item,
-              building_id: formData.get("building_id"),
-              building_name: formData.get("building_name"),
-              code: formData.get("code"),
-              name: formData.get("name"),
-              type: formData.get("type"),
-              capacity: formData.get("capacity"),
-              floor: formData.get("floor"),
-              approval_type: formData.get("approval_type"),
-              description: formData.get("description"),
-              facilities: JSON.parse(
-                formData.get("facilities")
-              ),
-              foto: formData.get("foto")
-                ? URL.createObjectURL(formData.get("foto"))
-                : item.foto,
-            }
+          ? { ...item, foto: null }
           : item
       );
 
       return true;
     }
 
-    await api.post(
-      `${API_URL}/${id}?_method=PUT`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+const res = await api.delete(
+  `/admin${API_URL}/${id}/photo`
+);
 
-    return true;
+clearApiCache();
+
+return res.data;
   } catch (error) {
-    console.error("Gagal update ruangan:", error);
-    return false;
+    console.error("Gagal hapus foto ruangan:", error);
+    throw error;
   }
 };

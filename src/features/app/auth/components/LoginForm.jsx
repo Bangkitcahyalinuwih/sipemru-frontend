@@ -11,6 +11,7 @@ import {
 
 import Swal from "sweetalert2";
 
+// Import loginUser dan logoutUser dari UserService / AuthService yang sudah connect ke API
 import {
   loginUser,
   logoutUser,
@@ -25,7 +26,6 @@ const LoginForm = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
@@ -42,36 +42,41 @@ const LoginForm = () => {
     setError("");
 
     try {
+      // 1. Menembak API Login ke Backend Laravel
       const user = await loginUser(form.email, form.password);
 
-      if (user.role !== "mahasiswa") {
+      // 2. Validasi: Pastikan data user membawa field 'role' dari database
+      if (!user || !user.role) {
         logoutUser();
-
-        Swal.fire({
-          icon: "error",
-          title: "Akses Ditolak",
-          text: "Akses hanya untuk mahasiswa",
-          background: "#0f172a",
-          color: "#fff",
-          confirmButtonColor: "#06b6d4",
-        });
-
-        return;
+        throw new Error("Akun tidak dikenali atau tidak memiliki hak akses.");
       }
 
+      // Normalisasi teks role agar tidak sensitif huruf besar/kecil (misal: "Admin" jadi "admin")
+      const userRole = user.role.toLowerCase();
+
+      // 3. Tampilkan Notifikasi Sukses
       Swal.fire({
         icon: "success",
         title: "Login Berhasil",
-        text: `Selamat datang ${user.name}`,
-        timer: 1800,
+        text: `Selamat datang ${user.name} (${user.role})`,
+        timer: 1500,
         showConfirmButton: false,
         background: "#0f172a",
         color: "#fff",
       });
 
+      // 4. MULTI-ROLE FIKS LOGIKA: Pisah halaman redirect berdasarkan role
       setTimeout(() => {
-        navigate("/");
-      }, 1800);
+        if (userRole === "admin") {
+          navigate("/admin"); // Jika role-nya admin, arahkan ke localhost/admin
+        } else if (userRole === "mahasiswa") {
+          navigate("/"); // Jika role-nya mahasiswa, arahkan ke beranda biasa
+        } else {
+          // Jika ada role lain selain admin & mahasiswa
+          navigate("/"); 
+        }
+      }, 1500);
+
     } catch (err) {
       const message = err.message || "Login gagal";
 
@@ -94,13 +99,14 @@ const LoginForm = () => {
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#020617] px-4 py-8">
       <div className="absolute inset-0">
         <div className="absolute left-[-120px] top-[-120px] h-80 w-80 rounded-full bg-cyan-500/20 blur-[120px]" />
-
         <div className="absolute bottom-[-120px] right-[-100px] h-96 w-96 rounded-full bg-blue-600/20 blur-[140px]" />
-
         <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-[120px]" />
       </div>
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      
       <div className="relative z-10 grid w-full max-w-4xl overflow-hidden rounded-[28px] border border-white/10 bg-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.37)] backdrop-blur-2xl lg:grid-cols-2">
+        
+        {/* SISI KIRI: Banner Informasi */}
         <div className="relative hidden overflow-hidden border-r border-white/10 p-8 text-white lg:flex lg:flex-col lg:justify-between">
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-blue-500/10 to-indigo-500/10" />
           <div className="relative z-10">
@@ -110,9 +116,9 @@ const LoginForm = () => {
             </div>
 
             <h1 className="mt-8 text-5xl font-black leading-[1.05] tracking-tight">
-              Login
+              Portal
               <br />
-              Mahasiswa
+              Sistem Login
             </h1>
 
             <p className="mt-5 max-w-sm text-base leading-relaxed text-slate-300">
@@ -123,55 +129,47 @@ const LoginForm = () => {
             <div className="mt-8 flex items-center gap-4">
               <div className="flex -space-x-3">
                 <div className="h-12 w-12 rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-xl" />
-
                 <div className="h-12 w-12 rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-xl" />
-
                 <div className="h-12 w-12 rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-xl" />
               </div>
-
               <div>
                 <h3 className="font-semibold">Secure Access</h3>
-
                 <p className="text-sm text-slate-300">Modern Campus System</p>
               </div>
             </div>
           </div>
+          
           <div className="relative z-10 mt-8 grid grid-cols-3 gap-3">
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
               <h3 className="text-xl font-bold">24/7</h3>
-
               <p className="mt-1 text-xs text-slate-300">Access</p>
             </div>
-
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
               <h3 className="text-xl font-bold">Secure</h3>
-
               <p className="mt-1 text-xs text-slate-300">Login</p>
             </div>
-
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
               <h3 className="text-xl font-bold">Fast</h3>
-
               <p className="mt-1 text-xs text-slate-300">System</p>
             </div>
           </div>
         </div>
 
+        {/* SISI KANAN: Form Input */}
         <div className="relative p-6 sm:p-8 lg:p-9">
           <div className="absolute inset-0 bg-white/[0.02]" />
           <div className="relative z-10">
             <div className="mb-7">
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300 backdrop-blur-xl">
                 <ShieldCheck size={15} />
-                Secure Login
+                Multi-role Gateway
               </div>
 
               <h2 className="mt-4 text-3xl font-black tracking-tight text-white">
                 Selamat Datang
               </h2>
-
               <p className="mt-2 text-sm text-slate-400">
-                Login menggunakan akun mahasiswa
+                Masuk menggunakan akun Mahasiswa atau Admin
               </p>
             </div>
 
@@ -180,13 +178,11 @@ const LoginForm = () => {
                 <label className="mb-2 block text-sm font-medium text-slate-300">
                   Email
                 </label>
-
                 <div className="relative">
                   <Mail
                     size={17}
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                   />
-
                   <input
                     type="email"
                     name="email"
@@ -203,13 +199,11 @@ const LoginForm = () => {
                 <label className="mb-2 block text-sm font-medium text-slate-300">
                   Password
                 </label>
-
                 <div className="relative">
                   <Lock
                     size={17}
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                   />
-
                   <input
                     type="password"
                     name="password"
@@ -228,10 +222,8 @@ const LoginForm = () => {
                 className="group relative mt-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500 to-blue-600 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.01] hover:shadow-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span className="absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
                 <span className="relative flex items-center gap-2 text-sm">
                   {loading ? "Loading..." : "Login Sekarang"}
-
                   {!loading && (
                     <ArrowRight
                       size={17}
@@ -253,6 +245,7 @@ const LoginForm = () => {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

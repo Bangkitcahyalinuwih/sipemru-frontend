@@ -1,7 +1,7 @@
 import api from "../../../../api/api";
 
 const API_URL = "/buildings";
-const USE_API = false;
+const USE_API = true; // Set true untuk mengambil data asli dari database backend Laragon/Ngrok
 
 let dummyBuildings = [
   {
@@ -33,6 +33,7 @@ let dummyBuildings = [
   },
 ];
 
+// 1. AMBIL SEMUA DATA GEDUNG
 export const getBuildings = async () => {
   try {
     if (!USE_API) {
@@ -41,13 +42,15 @@ export const getBuildings = async () => {
 
     const res = await api.get(API_URL);
 
-    return res.data;
+    // FIX: Mengambil array dari res.data.data jika dibungkus Laravel, atau res.data jika array mentah
+    return res.data.data || res.data;
   } catch (error) {
     console.error("Gagal mengambil data gedung:", error);
-    return [];
+    return []; // Mengembalikan array kosong agar filter tidak crash jika API error
   }
 };
 
+// 2. AMBIL DETAIL SATU GEDUNG BY ID
 export const getBuildingById = async (id) => {
   try {
     if (!USE_API) {
@@ -56,17 +59,17 @@ export const getBuildingById = async (id) => {
       );
     }
 
-    const res = await api.get(
-      `${API_URL}/${id}`
-    );
+    const res = await api.get(`${API_URL}/${id}`);
 
-    return res.data;
+    // FIX: Menyesuaikan data tunggal hasil dari backend
+    return res.data.data || res.data;
   } catch (error) {
     console.error("Gagal mengambil detail gedung:", error);
     return null;
   }
 };
 
+// 3. TAMBAH DATA GEDUNG BARU
 export const createBuilding = async (data) => {
   try {
     if (!USE_API) {
@@ -74,47 +77,32 @@ export const createBuilding = async (data) => {
         id: Date.now(),
         ...data,
       };
-
       dummyBuildings.push(newData);
-
       return newData;
     }
 
-    const res = await api.post(
-      `/admin${API_URL}`,
-      data
-    );
+    // Mengirim ke endpoint POST /api/admin/buildings
+    const res = await api.post(`/admin${API_URL}`, data);
 
-    return res.data;
+    return res.data.data || res.data;
   } catch (error) {
     console.error("Gagal menambahkan gedung:", error);
     throw error;
   }
 };
 
-export const updateBuilding = async (
-  id,
-  data
-) => {
+// 4. UPDATE DATA GEDUNG BY ID
+export const updateBuilding = async (id, data) => {
   try {
     if (!USE_API) {
-      dummyBuildings = dummyBuildings.map(
-        (item) =>
-          item.id === Number(id)
-            ? {
-                ...item,
-                ...data,
-              }
-            : item
+      dummyBuildings = dummyBuildings.map((item) =>
+        item.id === Number(id) ? { ...item, ...data } : item
       );
-
       return true;
     }
 
-    await api.put(
-      `/admin${API_URL}/${id}`,
-      data
-    );
+    // Mengirim ke endpoint PUT /api/admin/buildings/{id}
+    await api.put(`/admin${API_URL}/${id}`, data);
 
     return true;
   } catch (error) {
@@ -123,20 +111,18 @@ export const updateBuilding = async (
   }
 };
 
+// 5. HAPUS DATA GEDUNG BY ID
 export const deleteBuilding = async (id) => {
   try {
     if (!USE_API) {
       dummyBuildings = dummyBuildings.filter(
-        (item) =>
-          item.id !== Number(id)
+        (item) => item.id !== Number(id)
       );
-
       return true;
     }
 
-    await api.delete(
-      `/admin${API_URL}/${id}`
-    );
+    // Mengirim ke endpoint DELETE /api/admin/buildings/{id}
+    await api.delete(`/admin${API_URL}/${id}`);
 
     return true;
   } catch (error) {

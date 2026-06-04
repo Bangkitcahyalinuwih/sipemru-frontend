@@ -1,6 +1,5 @@
 import {
   CheckCircle,
-  icons,
   Pencil,
   Search,
   Trash2,
@@ -24,9 +23,10 @@ const TablesBuilding = () => {
   const fetchBuildings = async () => {
     try {
       setLoading(true);
-
       const data = await getBuildings();
-
+      
+      // TIPS: Jika data dari API dibungkus objek (ex: data.data), sesuaikan di sini:
+      // setBuildings(data.data || data);
       setBuildings(data);
     } catch (error) {
       console.error(error);
@@ -35,11 +35,18 @@ const TablesBuilding = () => {
     }
   };
 
+  // --- BAGIAN YANG DIPERBAIKI ---
   const filteredBuildings = useMemo(() => {
+    // Memastikan data buildings ada dan benar-benar berbentuk Array sebelum memanggil .filter()
+    if (!buildings || !Array.isArray(buildings)) {
+      return [];
+    }
+
     return buildings.filter((item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()),
+      item?.name?.toLowerCase().includes(search.toLowerCase())
     );
   }, [buildings, search]);
+  // ------------------------------
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -57,7 +64,6 @@ const TablesBuilding = () => {
 
     if (success) {
       Swal.fire("Berhasil", "Gedung berhasil dihapus", "success");
-
       fetchBuildings();
     } else {
       Swal.fire("Gagal", "Gedung gagal dihapus", "error");
@@ -89,7 +95,6 @@ const TablesBuilding = () => {
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                   size={18}
                 />
-
                 <input
                   type="text"
                   placeholder="Cari Gedung..."
@@ -109,7 +114,7 @@ const TablesBuilding = () => {
                   <th className="px-5 py-4 font-semibold">Nama Gedung</th>
                   <th className="px-5 py-4 font-semibold">Kampus</th>
                   <th className="px-5 py-4 font-semibold">Alamat</th>
-                  <th className="px-5 py-4 font-semibold">Total Lantai</th>
+                  <th className="px-5 py-4 font-semibold text-center">Total Lantai</th>
                   <th className="px-5 py-4 font-semibold">Deskripsi</th>
                   <th className="px-5 py-4 font-semibold">Status</th>
                   <th className="px-5 py-4 font-semibold text-center">Aksi</th>
@@ -118,13 +123,14 @@ const TablesBuilding = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="7" className="text-center py-10 text-gray-500">
+                    {/* Diubah menjadi colSpan="8" karena ada 8 kolom di standard th */}
+                    <td colSpan="8" className="text-center py-10 text-gray-500">
                       Loading...
                     </td>
                   </tr>
                 ) : filteredBuildings.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="text-center py-10 text-gray-500">
+                    <td colSpan="8" className="text-center py-10 text-gray-500">
                       Data gedung kosong
                     </td>
                   </tr>

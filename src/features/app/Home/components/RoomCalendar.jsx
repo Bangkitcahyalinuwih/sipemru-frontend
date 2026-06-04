@@ -7,6 +7,8 @@ import idLocale from "@fullcalendar/core/locales/id";
 import { getSchedulesByRoomId } from "../../../Admin/Schedule/service/ScheduleService";
 import { getBookings } from "../../../Admin/Booking/service/BookingService";
 
+const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
 const dayMap = {
   sunday: 0,
   monday: 1,
@@ -23,24 +25,34 @@ export default function RoomCalendar({ room }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
-    if (room?.id) {
-      fetchCalendarData();
-    }
-  }, [room?.id]);
+  if (room?.id) {
+    fetchCalendarData();
+  }
+}, [room?.id]);
 
-  const fetchCalendarData = async () => {
-    try {
-      const scheduleData = await getSchedulesByRoomId(room.id);
-      const bookingData = await getBookings();
-      const filteredBookings = bookingData.filter(
-        (item) => item.room_id === room.id && item.status === "approved",
-      );
-      setSchedules(scheduleData);
-      setBookings(filteredBookings);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const fetchCalendarData = async () => {
+  console.log("=== FETCH CALENDAR, room.id:", room?.id);
+  try {
+    const scheduleData = await getSchedulesByRoomId(room.id);
+    console.log("=== SCHEDULE DATA:", scheduleData);
+    console.log("=== SCHEDULE LENGTH:", scheduleData?.length);
+
+    // Fetch bookings
+    const allBookings = await getBookings();
+    console.log("=== BOOKINGS DATA:", allBookings);
+
+    const filteredBookings = (allBookings || []).filter(
+      (item) => item.room_id === room.id && item.status === "approved"
+    );
+
+    setSchedules(Array.isArray(scheduleData) ? scheduleData : []);
+    setBookings(filteredBookings);
+  } catch (error) {
+    console.error("fetchCalendarData error:", error);
+    setSchedules([]);
+    setBookings([]);
+  }
+};
 
   const scheduleEvents = schedules.map((item) => ({
     id: `schedule-${item.id}`,

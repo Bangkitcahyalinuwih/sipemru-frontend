@@ -2,378 +2,134 @@ import api from "../../../../api/api";
 
 const API_URL = "/bookings";
 
-const USE_API = false;
-
-const STORAGE_KEY = "dummy_bookings";
-
-const initialDummyBookings = [
-  {
-    id: 1,
-    user_id: 1,
-    room_id: 1,
-    room_name: "Lab Komputer 1",
-    purpose: "Praktikum Pemrograman Web",
-    organization: "Teknik Informatika",
-    jumlah_peserta: 35,
-    jenis_peminjaman: "internal",
-    pic_name: "Septian",
-    pic_phone: "081234567890",
-    booking_date: "2026-05-10",
-    start_time: "08:00",
-    end_time: "10:00",
-    status: "approved",
-  },
-
-  {
-    id: 2,
-    user_id: 2,
-    room_id: 2,
-    room_name: "Aula Utama",
-    purpose: "Seminar Teknologi AI",
-    organization: "BEM Kampus",
-    jumlah_peserta: 150,
-    jenis_peminjaman: "external",
-    pic_name: "Angga",
-    pic_phone: "089876543210",
-    booking_date: "2026-05-12",
-    start_time: "13:00",
-    end_time: "16:00",
-    status: "pending",
-  },
-];
-
-const loadBookings = () => {
-  const stored = localStorage.getItem(
-    STORAGE_KEY
-  );
-
-  return stored
-    ? JSON.parse(stored)
-    : initialDummyBookings;
-};
-
-let dummyBookings = loadBookings();
-
-const saveBookings = () => {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(dummyBookings)
-  );
-};
-
+// ======================================
+// ADMIN - GET ALL BOOKINGS
+// ======================================
 export const getBookings = async () => {
   try {
-    if (!USE_API) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 500)
-      );
-
-      return [...dummyBookings];
-    }
-
     const res = await api.get(`/admin${API_URL}`);
 
-    return res.data;
-  } catch (error) {
-    console.error(
-      "Gagal ambil bookings:",
-      error
-    );
+    const data = res.data;
 
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.bookings)) return data.bookings;
+
+    return [];
+  } catch (error) {
+    console.error("Gagal ambil bookings:", error);
     return [];
   }
 };
 
-export const getBookingById = async (id) => {
-  try {
-    if (!USE_API) {
-      return (
-        dummyBookings.find(
-          (item) =>
-            item.id === Number(id)
-        ) || null
-      );
-    }
-
-    const res = await api.get(
-      `${API_URL}/${id}`
-    );
-
-    return res.data;
-  } catch (error) {
-    console.error(
-      "Gagal ambil booking:",
-      error
-    );
-
-    return null;
-  }
-};
-
-export const createBooking = async (
-  data
-) => {
-  try {
-    if (!USE_API) {
-      const newData = {
-        id: Date.now(),
-        status: "pending",
-        created_at:
-          new Date().toISOString(),
-        ...data,
-      };
-
-      dummyBookings.unshift(newData);
-
-      saveBookings();
-
-      return newData;
-    }
-
-    const res = await api.post(
-      API_URL,
-      data
-    );
-
-    return res.data;
-  } catch (error) {
-    console.error(
-      "Gagal tambah booking:",
-      error
-    );
-
-    throw error;
-  }
-};
-
-export const updateBooking = async (
-  id,
-  data
-) => {
-  try {
-    if (!USE_API) {
-      dummyBookings =
-        dummyBookings.map((item) =>
-          item.id === Number(id)
-            ? {
-                ...item,
-                ...data,
-              }
-            : item
-        );
-
-      saveBookings();
-
-      return true;
-    }
-
-    await api.put(
-      `${API_URL}/${id}`,
-      data
-    );
-
-    return true;
-  } catch (error) {
-    console.error(
-      "Gagal update booking:",
-      error
-    );
-
-    return false;
-  }
-};
-
-export const deleteBooking = async (
-  id
-) => {
-  try {
-    if (!USE_API) {
-      dummyBookings =
-        dummyBookings.filter(
-          (item) =>
-            item.id !== Number(id)
-        );
-
-      saveBookings();
-
-      return true;
-    }
-
-    await api.delete(
-      `${API_URL}/${id}`
-    );
-
-    return true;
-  } catch (error) {
-    console.error(
-      "Gagal hapus booking:",
-      error
-    );
-
-    return false;
-  }
-};
-
-
-export const cancelBooking = async (
-  id
-) => {
-  try {
-    if (!USE_API) {
-      dummyBookings =
-        dummyBookings.map((item) =>
-          item.id === Number(id)
-            ? {
-                ...item,
-                status: "cancelled",
-              }
-            : item
-        );
-
-      saveBookings();
-
-      return true;
-    }
-
-    await api.delete(
-      `${API_URL}/${id}/cancel`
-    );
-
-    return true;
-  } catch (error) {
-    console.error(
-      "Gagal cancel booking:",
-      error
-    );
-
-    return false;
-  }
-};
-
+// ======================================
+// USER - GET MY BOOKINGS
+// ======================================
 export const getMyBookings = async () => {
   try {
-    if (!USE_API) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 300)
-      );
+    const res = await api.get(`${API_URL}/my`);
 
-      return [...dummyBookings];
-    }
+    const data = res.data;
 
-    const res = await api.get(
-      `${API_URL}/my`
-    );
-
-    return res.data.bookings || [];
+    return data?.bookings ?? data?.data ?? [];
   } catch (error) {
-    console.error(
-      "Gagal ambil bookings saya:",
-      error
-    );
-
+    console.error("Gagal ambil my bookings:", error);
     return [];
   }
 };
 
-export const approveBooking = async (id) => {
+// ======================================
+// USER - CREATE BOOKING
+// ======================================
+export const createBooking = async (payload) => {
   try {
-    if (!USE_API) {
-      dummyBookings = dummyBookings.map(
-        (item) =>
-          item.id === Number(id)
-            ? { ...item, status: "approved" }
-            : item
-      );
-
-      saveBookings();
-      return true;
-    }
-
-    await api.post(
-      `/admin${API_URL}/${id}/approve`
-    );
-
-    return true;
-  } catch (error) {
-    console.error(
-      "Gagal approve booking:",
-      error
-    );
-
-    return false;
-  }
-};
-
-export const rejectBooking = async (id) => {
-  try {
-    if (!USE_API) {
-      dummyBookings = dummyBookings.map(
-        (item) =>
-          item.id === Number(id)
-            ? { ...item, status: "rejected" }
-            : item
-      );
-
-      saveBookings();
-      return true;
-    }
-
-    await api.post(
-      `/admin${API_URL}/${id}/reject`
-    );
-
-    return true;
-  } catch (error) {
-    console.error(
-      "Gagal reject booking:",
-      error
-    );
-
-    return false;
-  }
-};
-
-export const checkAvailability = async (
-  data
-) => {
-  try {
-    if (!USE_API) {
-      return { available: true, message: "Ruangan tersedia" };
-    }
-
-    const res = await api.post(
-      `${API_URL}/check-availability`,
-      data
-    );
-
+    const res = await api.post(API_URL, payload);
     return res.data;
   } catch (error) {
-    console.error(
-      "Gagal check ketersediaan:",
-      error
-    );
+  console.log("🔥 FULL ERROR RESPONSE:");
+  console.log(error.response?.data);
+console.log("🔥 ERRORS DETAIL:", JSON.stringify(error.response?.data?.errors, null, 2));
+  console.log("🔥 STATUS:", error.response?.status);
+  console.log("🔥 HEADERS:", error.response?.headers);
 
+  throw error;
+}
+};
+
+// ======================================
+// USER - CANCEL BOOKING
+// ======================================
+export const cancelBooking = async (id) => {
+  try {
+    await api.delete(`${API_URL}/${id}/cancel`);
+    return true;
+  } catch (error) {
+    console.error("Gagal cancel booking:", error);
+    return false;
+  }
+};
+
+// ======================================
+// USER - CHECK AVAILABILITY
+// ======================================
+export const checkAvailability = async (payload) => {
+  try {
+    const res = await api.post(`${API_URL}/check-availability`, payload);
+    return res.data;
+  } catch (error) {
+    console.error("Gagal check availability:", error);
     throw error;
   }
 };
 
+// ======================================
+// QR - VERIFY BOOKING
+// ======================================
 export const verifyQr = async (token) => {
   try {
-    if (!USE_API) {
-      return { success: true, booking: dummyBookings[0] };
-    }
-
-    const res = await api.get(
-      `/qr/verify/${token}`
-    );
-
+    const res = await api.get(`/qr/verify/${token}`);
     return res.data;
   } catch (error) {
-    console.error(
-      "Gagal verify QR:",
-      error
-    );
-
+    console.error("Gagal verify QR:", error);
     throw error;
+  }
+};
+
+// ======================================
+// ADMIN - APPROVE BOOKING
+// ======================================
+export const approveBooking = async (id) => {
+  try {
+    await api.post(`/admin${API_URL}/${id}/approve`);
+    return true;
+  } catch (error) {
+    console.error("Gagal approve booking:", error);
+    return false;
+  }
+};
+
+// ======================================
+// ADMIN - REJECT BOOKING
+// ======================================
+export const rejectBooking = async (id) => {
+  try {
+    await api.post(`/admin${API_URL}/${id}/reject`);
+    return true;
+  } catch (error) {
+    console.error("Gagal reject booking:", error);
+    return false;
+  }
+};
+
+// ======================================
+// ADMIN - DELETE BOOKING
+// ======================================
+export const deleteBooking = async (id) => {
+  try {
+    await api.delete(`/admin${API_URL}/${id}`);
+    return true;
+  } catch (error) {
+    console.error("Gagal delete booking:", error);
+    return false;
   }
 };

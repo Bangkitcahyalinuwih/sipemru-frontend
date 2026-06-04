@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
-import { BookingForm } from "../components/BookingForm";
+//  BENAR: Ditambahkan kurung kurawal karena di BookingForm.jsx kita menggunakan 'export function BookingForm'
+import { BookingForm } from "../components/BookingForm"; 
 import { motion } from "framer-motion";
 
 export function Booking() {

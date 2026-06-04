@@ -17,8 +17,6 @@ import { HistoryLoading } from "../components/History/HistoryLoading";
 import { HistoryEmpty } from "../components/History/HistoryEmpty";
 import { HistoryCard } from "../components/History/HistoryCard";
 
-import { useRealtimeBookings } from "../hook/useRealtimeBookings";
-
 export function History() {
   const navigate = useNavigate();
 
@@ -57,10 +55,7 @@ export function History() {
     fetchBookings();
   }, [fetchBookings]);
 
-  useRealtimeBookings({
-    currentUser,
-    setBookingHistory,
-  });
+  // ✅ Pemanggilan useRealtimeBookings sudah dihapus dari sini
 
   const handleCancel = async (id) => {
     try {
@@ -96,91 +91,88 @@ export function History() {
     });
   };
 
-return (
-  <div className="relative min-h-screen overflow-hidden bg-[#0B0B12] py-10">
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute top-[-150px] left-[5%] h-[450px] w-[450px] rounded-full bg-purple-600/15 blur-3xl" />
-
-      <div className="absolute bottom-[-100px] right-[5%] h-[500px] w-[500px] rounded-full bg-pink-600/10 blur-3xl" />
-
-      <div className="absolute left-1/2 top-[40%] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-indigo-600/10 blur-3xl" />
-
-      <div
-        className="
-          absolute inset-0 opacity-20
-          bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
-          bg-[size:70px_70px]
-        "
-      />
-    </div>
-
-    <div className="relative z-10 mx-auto max-w-7xl px-4">
-      <div
-        className="
-          mb-6
-          rounded-2xl
-          border border-white/10
-          bg-white/[0.03]
-          p-5
-          shadow-xl
-          backdrop-blur-2xl
-        "
-      >
-        <HistoryHeader />
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#0B0B12] py-10">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute top-[-150px] left-[5%] h-[450px] w-[450px] rounded-full bg-purple-600/15 blur-3xl" />
+        <div className="absolute bottom-[-100px] right-[5%] h-[500px] w-[500px] rounded-full bg-pink-600/10 blur-3xl" />
+        <div className="absolute left-1/2 top-[40%] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-indigo-600/10 blur-3xl" />
+        <div
+          className="
+            absolute inset-0 opacity-20
+            bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
+            bg-[size:70px_70px]
+          "
+        />
       </div>
 
-      {loading ? (
+      <div className="relative z-10 mx-auto max-w-7xl px-4">
         <div
           className="
+            mb-6
             rounded-2xl
             border border-white/10
             bg-white/[0.03]
+            p-5
             shadow-xl
             backdrop-blur-2xl
           "
         >
-          <HistoryLoading />
+          <HistoryHeader />
         </div>
-      ) : bookingHistory.length === 0 ? (
-        <div
-          className="
-            rounded-2xl
-            border border-white/10
-            bg-white/[0.03]
-            shadow-xl
-            backdrop-blur-2xl
-          "
-        >
-          <HistoryEmpty />
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {bookingHistory.map((booking, index) => (
-            <div
-              key={booking.id}
-              className="
-                rounded-2xl
-                border border-white/10
-                bg-white/[0.03]
-                shadow-xl
-                backdrop-blur-2xl
-                transition-all
-                duration-300
-                hover:bg-white/[0.05]
-              "
-            >
-              <HistoryCard
-                booking={booking}
-                index={index}
-                cancelLoading={cancelLoading}
-                onDetail={handleDetail}
-                onCancel={handleCancel}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+
+        {loading ? (
+          <div
+            className="
+              rounded-2xl
+              border border-white/10
+              bg-white/[0.03]
+              shadow-xl
+              backdrop-blur-2xl
+            "
+          >
+            <HistoryLoading />
+          </div>
+        ) : bookingHistory.length === 0 ? (
+          <div
+            className="
+              rounded-2xl
+              border border-white/10
+              bg-white/[0.03]
+              shadow-xl
+              backdrop-blur-2xl
+            "
+          >
+            <HistoryEmpty />
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {bookingHistory.map((booking, index) => (
+              <div
+                key={booking.id}
+                className="
+                  rounded-2xl
+                  border border-white/10
+                  bg-white/[0.03]
+                  shadow-xl
+                  backdrop-blur-2xl
+                  transition-all
+                  duration-300
+                  hover:bg-white/[0.05]
+                "
+              >
+                <HistoryCard
+                  booking={booking}
+                  index={index}
+                  cancelLoading={cancelLoading}
+                  onDetail={handleDetail}
+                  onCancel={handleCancel}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 }

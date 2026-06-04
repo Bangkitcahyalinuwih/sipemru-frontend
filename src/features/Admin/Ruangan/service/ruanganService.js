@@ -1,6 +1,6 @@
 import api, { clearApiCache} from "../../../../api/api";
 
-const USE_API = false;
+const USE_API = true;
 const API_URL = "/rooms";
 
 let dummyRuangan = [
@@ -56,17 +56,16 @@ let dummyRuangan = [
 
 export const getRuangan = async () => {
   try {
-    if (!USE_API) {
-      return [...dummyRuangan];
-    }
-
     const res = await api.get(API_URL);
+
+    // backend kamu: data + summary
     return res.data.data || [];
   } catch (error) {
-    console.error("Gagal ambil data ruangan:", error);
+    console.error(error);
     return [];
   }
 };
+
 
 export const getRuanganById = async (id) => {
   try {

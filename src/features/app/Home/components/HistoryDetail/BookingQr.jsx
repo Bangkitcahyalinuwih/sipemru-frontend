@@ -6,7 +6,14 @@ import {
 } from "lucide-react";
 
 export function BookingQR({ booking }) {
-  if (!booking?.qr_code) {
+  // 1. Ambil VITE_API_URL dari .env dan potong teks '/api' di ujungnya jika ada
+  const apiUrl = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+  const BACKEND_URL = apiUrl.replace(/\/api$/, ""); 
+
+  // 2. Cek apakah QR Code siap ditampilkan
+  const hasQrCode = booking?.status === "approved" && booking?.qr_ticket;
+
+  if (!hasQrCode) {
     return (
       <div
         className="
@@ -20,7 +27,6 @@ export function BookingQR({ booking }) {
           shadow-[0_8px_32px_rgba(31,38,135,0.12)]
         "
       >
-        {/* Glow */}
         <div
           className="
             absolute inset-0
@@ -32,12 +38,7 @@ export function BookingQR({ booking }) {
           "
         />
 
-        <div
-          className="
-            relative z-10
-            flex flex-col items-center
-          "
-        >
+        <div className="relative z-10 flex flex-col items-center">
           <div
             className="
               w-24 h-24
@@ -49,10 +50,7 @@ export function BookingQR({ booking }) {
               mb-6
             "
           >
-            <QrCode
-              size={42}
-              className="text-white/70"
-            />
+            <QrCode size={42} className="text-white/70" />
           </div>
 
           <h3 className="text-2xl font-bold text-white">
@@ -60,13 +58,17 @@ export function BookingQR({ booking }) {
           </h3>
 
           <p className="text-white/60 mt-3 max-w-xs leading-relaxed">
-            QR booking akan muncul setelah admin
-            menyetujui peminjaman ruangan.
+            {booking?.status === "cancelled" 
+              ? "Peminjaman ini telah dibatalkan." 
+              : "QR booking akan muncul setelah admin menyetujui peminjaman ruangan."}
           </p>
         </div>
       </div>
     );
   }
+
+  // 3. Gabungkan URL utama dengan path gambar dari Laravel
+  const qrFullUrl = `${BACKEND_URL}/storage/${booking.qr_ticket.qr_image_path}`;
 
   return (
     <div
@@ -80,7 +82,6 @@ export function BookingQR({ booking }) {
         p-8
       "
     >
-      {/* Background Glow */}
       <div
         className="
           absolute inset-0
@@ -92,26 +93,8 @@ export function BookingQR({ booking }) {
         "
       />
 
-      {/* Blur Orbs */}
-      <div
-        className="
-          absolute -top-20 -right-20
-          w-52 h-52
-          bg-cyan-400/20
-          rounded-full
-          blur-3xl
-        "
-      />
-
-      <div
-        className="
-          absolute -bottom-24 -left-24
-          w-60 h-60
-          bg-indigo-500/20
-          rounded-full
-          blur-3xl
-        "
-      />
+      <div className="absolute -top-20 -right-20 w-52 h-52 bg-cyan-400/20 rounded-full blur-3xl" />
+      <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl" />
 
       <div className="relative z-10">
         {/* Header */}
@@ -130,21 +113,13 @@ export function BookingQR({ booking }) {
               mb-5
             "
           >
-            <ShieldCheck size={16} />
+            <ShieldCheck size={16} className="text-emerald-400" />
             QR Booking Active
           </div>
 
-          <h2
-            className="
-              text-3xl
-              font-bold
-              text-white
-              tracking-tight
-            "
-          >
+          <h2 className="text-3xl font-bold text-white tracking-tight">
             Scan QR Code
           </h2>
-
           <p className="text-white/60 mt-3 text-sm">
             Tunjukkan QR kepada admin ruangan
           </p>
@@ -163,38 +138,19 @@ export function BookingQR({ booking }) {
               shadow-[0_8px_32px_rgba(255,255,255,0.08)]
             "
           >
-            {/* Sparkle */}
-            <div
-              className="
-                absolute top-4 right-4
-                w-9 h-9
-                rounded-full
-                bg-white/20
-                flex items-center justify-center
-              "
-            >
-              <Sparkles
-                size={16}
-                className="text-white"
-              />
+            <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
+              <Sparkles size={16} className="text-white" />
             </div>
 
-            {/* QR */}
-            <div
-              className="
-                rounded-3xl
-                overflow-hidden
-                bg-white
-                p-4
-              "
-            >
+            <div className="rounded-3xl overflow-hidden bg-white p-4">
               <img
-                src={booking.qr_code}
+                src={qrFullUrl}
                 alt="QR Booking"
-                className="
-                  w-64 h-64
-                  object-contain
-                "
+                className="w-64 h-64 object-contain"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://placehold.co/250x250/ffffff/000000?text=QR+Code+Error";
+                }}
               />
             </div>
           </div>
@@ -202,28 +158,19 @@ export function BookingQR({ booking }) {
 
         {/* Booking Code */}
         <div className="mt-8 text-center">
-          <p className="text-white/50 text-sm">
-            Booking ID
-          </p>
-
-          <h3
-            className="
-              text-2xl
-              font-bold
-              text-white
-              tracking-[0.3em]
-              mt-2
-            "
-          >
+          <p className="text-white/50 text-sm">Booking ID</p>
+          <h3 className="text-2xl font-bold text-white tracking-[0.3em] mt-2">
             #{booking.id}
           </h3>
         </div>
 
-        {/* Download */}
+        {/* Download Button */}
         <div className="mt-8 flex justify-center">
           <a
-            href={booking.qr_code}
-            download
+            href={qrFullUrl}
+            download={`QR_Booking_${booking.id}.svg`}
+            target="_blank"
+            rel="noreferrer"
             className="
               inline-flex items-center gap-3
               px-6 py-3.5
@@ -244,20 +191,9 @@ export function BookingQR({ booking }) {
         </div>
 
         {/* Footer Note */}
-        <div
-          className="
-            mt-8
-            rounded-2xl
-            border border-white/10
-            bg-white/5
-            backdrop-blur-xl
-            p-4
-            text-center
-          "
-        >
+        <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-4 text-center">
           <p className="text-sm text-white/60 leading-relaxed">
-            QR ini bersifat unik dan hanya berlaku
-            untuk satu booking ruangan.
+            QR ini bersifat unik dan hanya berlaku untuk satu booking ruangan.
           </p>
         </div>
       </div>

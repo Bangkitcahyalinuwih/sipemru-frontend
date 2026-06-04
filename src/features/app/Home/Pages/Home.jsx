@@ -47,25 +47,20 @@ export function Home() {
   const [rooms, setRooms] =
     useState([]);
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const data =
-          await getRuangan();
+ useEffect(() => {
+  const fetchRooms = async () => {
+    try {
+      const data = await getRuangan();
 
-        setRooms(data || []);
-      } catch (error) {
-        console.error(
-          "Error fetch ruangan:",
-          error
-        );
+      setRooms((data || []).slice(0, 4)); // 👈 BATASI 4 SAJA
+    } catch (error) {
+      console.error("Error fetch ruangan:", error);
+      setRooms([]);
+    }
+  };
 
-        setRooms([]);
-      }
-    };
-
-    fetchRooms();
-  }, []);
+  fetchRooms();
+}, []);
 
   return (
     <motion.div

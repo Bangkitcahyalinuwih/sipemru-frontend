@@ -156,8 +156,8 @@ export const updateRuangan = async (id, formData) => {
       return true;
     }
 
-const res = await api.post(
-  `/admin${API_URL}/${id}?_method=PUT`,
+const res = await api.put(
+  `/admin${API_URL}/${id}`,
   formData,
   {
     headers: {

@@ -235,7 +235,7 @@ export const cancelBooking = async (
       return true;
     }
 
-    await api.patch(
+    await api.delete(
       `${API_URL}/${id}/cancel`
     );
 
@@ -247,5 +247,133 @@ export const cancelBooking = async (
     );
 
     return false;
+  }
+};
+
+export const getMyBookings = async () => {
+  try {
+    if (!USE_API) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, 300)
+      );
+
+      return [...dummyBookings];
+    }
+
+    const res = await api.get(
+      `${API_URL}/my`
+    );
+
+    return res.data.bookings || [];
+  } catch (error) {
+    console.error(
+      "Gagal ambil bookings saya:",
+      error
+    );
+
+    return [];
+  }
+};
+
+export const approveBooking = async (id) => {
+  try {
+    if (!USE_API) {
+      dummyBookings = dummyBookings.map(
+        (item) =>
+          item.id === Number(id)
+            ? { ...item, status: "approved" }
+            : item
+      );
+
+      saveBookings();
+      return true;
+    }
+
+    await api.post(
+      `/admin${API_URL}/${id}/approve`
+    );
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Gagal approve booking:",
+      error
+    );
+
+    return false;
+  }
+};
+
+export const rejectBooking = async (id) => {
+  try {
+    if (!USE_API) {
+      dummyBookings = dummyBookings.map(
+        (item) =>
+          item.id === Number(id)
+            ? { ...item, status: "rejected" }
+            : item
+      );
+
+      saveBookings();
+      return true;
+    }
+
+    await api.post(
+      `/admin${API_URL}/${id}/reject`
+    );
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Gagal reject booking:",
+      error
+    );
+
+    return false;
+  }
+};
+
+export const checkAvailability = async (
+  data
+) => {
+  try {
+    if (!USE_API) {
+      return { available: true, message: "Ruangan tersedia" };
+    }
+
+    const res = await api.post(
+      `${API_URL}/check-availability`,
+      data
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error(
+      "Gagal check ketersediaan:",
+      error
+    );
+
+    throw error;
+  }
+};
+
+export const verifyQr = async (token) => {
+  try {
+    if (!USE_API) {
+      return { success: true, booking: dummyBookings[0] };
+    }
+
+    const res = await api.get(
+      `/qr/verify/${token}`
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error(
+      "Gagal verify QR:",
+      error
+    );
+
+    throw error;
   }
 };

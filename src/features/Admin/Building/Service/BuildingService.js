@@ -81,7 +81,7 @@ export const createBuilding = async (data) => {
     }
 
     const res = await api.post(
-      API_URL,
+      `/admin${API_URL}`,
       data
     );
 
@@ -112,7 +112,7 @@ export const updateBuilding = async (
     }
 
     await api.put(
-      `${API_URL}/${id}`,
+      `/admin${API_URL}/${id}`,
       data
     );
 
@@ -135,7 +135,7 @@ export const deleteBuilding = async (id) => {
     }
 
     await api.delete(
-      `${API_URL}/${id}`
+      `/admin${API_URL}/${id}`
     );
 
     return true;

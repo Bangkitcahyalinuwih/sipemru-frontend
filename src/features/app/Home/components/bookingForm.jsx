@@ -18,40 +18,44 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import { createBooking } from "../../../Admin/Booking/service/BookingService";
 
-const Input = ({ icon: Icon, ...props }) => (
-  <div className="relative">
-    <Icon
-      className="
-        absolute
-        left-4
-        top-1/2
-        -translate-y-1/2
-        w-4
-        h-4
-        text-white/70
-      "
-    />
+const Input = ({ icon: Icon, error, ...props }) => (
+  <div className="relative space-y-1">
+    <div className="relative">
+      <Icon
+        className="
+          absolute
+          left-4
+          top-1/2
+          -translate-y-1/2
+          w-4
+          h-4
+          text-white/70
+        "
+      />
 
-    <input
-      {...props}
-      className="
-        w-full
-        pl-11
-        pr-4
-        py-3
-        rounded-2xl
-        bg-white/10
-        backdrop-blur-xl
-        border
-        border-white/20
-        text-white
-        placeholder:text-white/60
-        focus:outline-none
-        focus:ring-2
-        focus:ring-cyan-400
-        transition-all
-      "
-    />
+      <input
+        {...props}
+        className={`
+          w-full
+          pl-11
+          pr-4
+          py-3
+          rounded-2xl
+          bg-white/10
+          backdrop-blur-xl
+          border
+          ${error ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"}
+          text-white
+          placeholder:text-white/60
+          focus:outline-none
+          focus:ring-2
+          transition-all
+        `}
+      />
+    </div>
+    {error && (
+      <p className="text-red-400 text-xs pl-2 font-medium animate-pulse">{error}</p>
+    )}
   </div>
 );
 
@@ -181,7 +185,6 @@ const SuccessOverlay = ({ onComplete }) => {
   );
 };
 
-//  BENAR: Diubah menjadi standard function declaration agar ter-eksport sempurna
 export function BookingForm() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -203,6 +206,14 @@ export function BookingForm() {
     jenisPeminjaman: "",
   });
 
+  const [errors, setErrors] = useState({
+    date: "",
+    startTime: "",
+    endTime: "",
+  });
+
+  const todayString = new Date().toISOString().split("T")[0];
+
   useEffect(() => {
     if (roomName || roomId) {
       setFormData((prev) => ({
@@ -213,6 +224,10 @@ export function BookingForm() {
     }
   }, [roomName, roomId]);
 
+  useEffect(() => {
+    validateTiming();
+  }, [formData.date, formData.startTime, formData.endTime]);
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -220,26 +235,66 @@ export function BookingForm() {
     }));
   };
 
+  const validateTiming = () => {
+    let tempErrors = { date: "", startTime: "", endTime: "" };
+    let isValid = true;
+
+    if (!formData.date) return isValid;
+
+    const now = new Date();
+    const selectedDate = new Date(formData.date);
+
+    const todayDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const selectedDateOnly = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+    if (selectedDateOnly < todayDateOnly) {
+      tempErrors.date = "Tanggal sudah terlewat / kedaluwarsa!";
+      isValid = false;
+    }
+    if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
+      tempErrors.endTime = "Jam selesai harus lebih lambat dari jam mulai!";
+      isValid = false;
+    }
+    if (selectedDateOnly.getTime() === todayDateOnly.getTime() && formData.startTime) {
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      const [startHour, startMinute] = formData.startTime.split(":").map(Number);
+
+      if (startHour < currentHour || (startHour === currentHour && startMinute < currentMinute)) {
+        tempErrors.startTime = "Waktu mulai sudah terlewat untuk hari ini!";
+        isValid = false;
+      }
+    }
+
+    setErrors(tempErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const { name, organization, participants, phone, date, startTime, endTime, purpose } = formData;
-    if (!name || !organization || !participants || !phone || !date || 
-        !startTime || !endTime || !purpose || !formData.jenisPeminjaman) {
+
+    if (!name || !organization || !participants || !phone || !date ||
+      !startTime || !endTime || !purpose || !formData.jenisPeminjaman) {
       toast.error("Mohon lengkapi semua field!");
       return;
     }
 
+    if (!validateTiming()) {
+      toast.error("Gagal memproses. Terdapat ketidaksinkronan pada tanggal atau jam!");
+      return;
+    }
+
     const payload = {
-      room_id:            Number(roomId),
-      purpose:          purpose.trim(),
-      organization:     organization.trim(),
-      booking_date:     date,
-      start_time:       startTime?.slice(0, 5),
-      end_time:         endTime?.slice(0, 5),
-      jumlah_peserta:   Number(participants),
-      pic_name:         name.trim(),
-      pic_phone:        phone.trim(),
+      room_id: Number(roomId),
+      purpose: purpose.trim(),
+      organization: organization.trim(),
+      booking_date: date,
+      start_time: startTime?.slice(0, 5),
+      end_time: endTime?.slice(0, 5),
+      jumlah_peserta: Number(participants),
+      pic_name: name.trim(),
+      pic_phone: phone.trim(),
       jenis_peminjaman: formData.jenisPeminjaman,
     };
 
@@ -269,7 +324,7 @@ export function BookingForm() {
         {isSubmitting && !showSuccess && <LoadingOverlay />}
         {showSuccess && <SuccessOverlay onComplete={handleSuccessComplete} />}
       </AnimatePresence>
-      
+
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl" />
@@ -296,7 +351,7 @@ export function BookingForm() {
                 Isi data peminjaman ruangan dengan lengkap
               </p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-8 space-y-5">
               <Input
                 icon={User}
@@ -305,13 +360,13 @@ export function BookingForm() {
                 value={formData.name}
                 onChange={handleChange}
               />
-              
+
               <div className="relative">
                 <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 w-4 h-4" />
                 <input
-                  value={roomName}       
+                  value={roomName}
                   disabled
-                  className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/5 text-white/50 cursor-not-allowed"
+                  className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/5 text-white/50 cursor-not-allowed border border-white/10"
                 />
               </div>
 
@@ -331,21 +386,21 @@ export function BookingForm() {
                   value={formData.jenisPeminjaman}
                   onChange={handleChange}
                   className="
-                    w-full pl-11 pr-4 py-3 rounded-2xl
-                    bg-white/10 backdrop-blur-xl
-                    border border-white/20
-                    text-white
-                    [color-scheme:dark]
-                    focus:outline-none focus:ring-2 focus:ring-cyan-400
-                    transition-all appearance-none cursor-pointer
-                  "
+      w-full pl-11 pr-4 py-3 rounded-2xl
+      bg-white/10 backdrop-blur-xl
+      border border-white/20
+      text-white
+      focus:outline-none focus:ring-2 focus:ring-cyan-400
+      transition-all appearance-none cursor-pointer
+    "
                 >
-                  <option value="" disabled>Jenis Peminjaman</option>
-                  <option value="kegiatan_mahasiswa">Kegiatan Mahasiswa</option>
-                  <option value="seminar">Seminar</option>
-                  <option value="rapat">Rapat</option>
-                  <option value="praktikum_tambahan">Praktikum Tambahan</option>
-                  <option value="lainnya">Lainnya</option>
+                  {/* 🌟 Solusi: Memberikan class background gelap dan teks putih pada tag option */}
+                  <option value="" disabled className="bg-slate-900 text-white/60">Jenis Peminjaman</option>
+                  <option value="kegiatan_mahasiswa" className="bg-slate-900 text-white">Kegiatan Mahasiswa</option>
+                  <option value="seminar" className="bg-slate-900 text-white">Seminar</option>
+                  <option value="rapat" className="bg-slate-900 text-white">Rapat</option>
+                  <option value="praktikum_tambahan" className="bg-slate-900 text-white">Praktikum Tambahan</option>
+                  <option value="lainnya" className="bg-slate-900 text-white">Lainnya</option>
                 </select>
               </div>
 
@@ -368,59 +423,68 @@ export function BookingForm() {
                 />
               </div>
 
-              <div className="relative group">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
-                <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  className="
-                    w-full pl-11 pr-4 py-3 rounded-2xl
-                    bg-white/10 backdrop-blur-xl
-                    border border-white/20
-                    text-white [color-scheme:dark]
-                    focus:outline-none focus:ring-2 focus:ring-cyan-400
-                    hover:border-cyan-400/40 transition-all
-                  "
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Input Tanggal dengan deteksi error */}
+              <div className="space-y-1">
                 <div className="relative group">
-                  <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
+                  <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
                   <input
-                    type="time"
-                    name="startTime"
-                    value={formData.startTime}
+                    type="date"
+                    name="date"
+                    min={todayString}
+                    value={formData.date}
                     onChange={handleChange}
-                    className="
+                    className={`
                       w-full pl-11 pr-4 py-3 rounded-2xl
                       bg-white/10 backdrop-blur-xl
-                      border border-white/20
                       text-white [color-scheme:dark]
-                      focus:outline-none focus:ring-2 focus:ring-cyan-400
-                      hover:border-cyan-400/40 transition-all
-                    "
+                      focus:outline-none focus:ring-2 transition-all
+                      border ${errors.date ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"}
+                    `}
                   />
                 </div>
+                {errors.date && <p className="text-red-400 text-xs pl-2 font-medium">{errors.date}</p>}
+              </div>
 
-                <div className="relative group">
-                  <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
-                  <input
-                    type="time"
-                    name="endTime"
-                    value={formData.endTime}
-                    onChange={handleChange}
-                    className="
-                      w-full pl-11 pr-4 py-3 rounded-2xl
-                      bg-white/10 backdrop-blur-xl
-                      border border-white/20
-                      text-white [color-scheme:dark]
-                      focus:outline-none focus:ring-2 focus:ring-cyan-400
-                      hover:border-cyan-400/40 transition-all
-                    "
-                  />
+              {/* Input Jam dengan deteksi error */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <div className="relative group">
+                    <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
+                    <input
+                      type="time"
+                      name="startTime"
+                      value={formData.startTime}
+                      onChange={handleChange}
+                      className={`
+                        w-full pl-11 pr-4 py-3 rounded-2xl
+                        bg-white/10 backdrop-blur-xl
+                        text-white [color-scheme:dark]
+                        focus:outline-none focus:ring-2 transition-all
+                        border ${errors.startTime ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"}
+                      `}
+                    />
+                  </div>
+                  {errors.startTime && <p className="text-red-400 text-xs pl-2 font-medium">{errors.startTime}</p>}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="relative group">
+                    <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
+                    <input
+                      type="time"
+                      name="endTime"
+                      value={formData.endTime}
+                      onChange={handleChange}
+                      className={`
+                        w-full pl-11 pr-4 py-3 rounded-2xl
+                        bg-white/10 backdrop-blur-xl
+                        text-white [color-scheme:dark]
+                        focus:outline-none focus:ring-2 transition-all
+                        border ${errors.endTime ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"}
+                      `}
+                    />
+                  </div>
+                  {errors.endTime && <p className="text-red-400 text-xs pl-2 font-medium">{errors.endTime}</p>}
                 </div>
               </div>
 
@@ -445,12 +509,12 @@ export function BookingForm() {
                 whileTap={{ scale: 0.98 }}
                 whileHover={{ scale: 1.01 }}
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !!errors.date || !!errors.startTime || !!errors.endTime}
                 className="
                   w-full py-3 rounded-2xl font-semibold text-white
                   bg-gradient-to-r from-cyan-500 to-indigo-600
                   hover:opacity-90 transition-all shadow-lg shadow-cyan-500/20
-                  disabled:opacity-60 disabled:cursor-not-allowed
+                  disabled:opacity-40 disabled:cursor-not-allowed
                   flex items-center justify-center gap-2
                 "
               >

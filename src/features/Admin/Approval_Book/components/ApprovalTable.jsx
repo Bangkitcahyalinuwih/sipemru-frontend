@@ -8,9 +8,10 @@ import {
   Building2,
   CalendarDays,
   Clock3,
-  Users,
 } from "lucide-react";
-import { getBookings, updateBooking } from "../../Booking/service/BookingService";
+
+// ✅ PERBAIKAN: Impor fungsi approveBooking dan rejectBooking yang sesuai dengan isi service
+import { getBookings, approveBooking, rejectBooking } from "../../Booking/service/BookingService";
 
 const ApprovalBooking = () => {
   const [bookings, setBookings] = useState([]);
@@ -51,9 +52,12 @@ const ApprovalBooking = () => {
     });
   }, [pendingBookings, search]);
 
+  // ✅ PERBAIKAN: Logika penanganan aksi approve/reject secara dinamis
   const handleUpdateStatus = async (id, status) => {
+    const isApprove = status === "approved";
+
     const confirm = await Swal.fire({
-      title: status === "approved" ? "Approve booking?" : "Reject booking?",
+      title: isApprove ? "Approve booking?" : "Reject booking?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Ya",
@@ -62,12 +66,17 @@ const ApprovalBooking = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      await updateBooking(id, { status });
+      // Panggil fungsi yang tepat berdasarkan parameter status
+      const success = isApprove ? await approveBooking(id) : await rejectBooking(id);
 
-      Swal.fire("Berhasil", `Booking ${status}`, "success");
-      fetchData();
+      if (success) {
+        Swal.fire("Berhasil", `Booking berhasil di-${status}`, "success");
+        fetchData(); // Muat ulang data tabel agar status yang berubah langsung hilang dari list pending
+      } else {
+        Swal.fire("Gagal", `Gagal mengubah status menjadi ${status}`, "error");
+      }
     } catch (error) {
-      Swal.fire("Error", "Gagal update status", "error");
+      Swal.fire("Error", "Terjadi kesalahan pada sistem", "error");
     }
   };
 
@@ -105,7 +114,6 @@ const ApprovalBooking = () => {
           {/* TABLE */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-
               <thead className="bg-gray-50 text-gray-600">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold">Room</th>
@@ -118,7 +126,6 @@ const ApprovalBooking = () => {
               </thead>
 
               <tbody>
-
                 {/* LOADING */}
                 {loading ? (
                   <tr>
@@ -138,25 +145,20 @@ const ApprovalBooking = () => {
                       key={item.id}
                       className="border-t border-gray-100 hover:bg-gray-50 transition"
                     >
-
                       {/* ROOM */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-
                           <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
                             <Building2 size={18} className="text-blue-600" />
                           </div>
-
                           <div>
                             <p className="font-medium text-gray-800">
                               {item.room_name}
                             </p>
-
                             <p className="text-xs text-gray-500">
                               {item.purpose}
                             </p>
                           </div>
-
                         </div>
                       </td>
 
@@ -190,39 +192,28 @@ const ApprovalBooking = () => {
                       {/* ACTION */}
                       <td className="px-6 py-4">
                         <div className="flex justify-center gap-2">
-
                           <button
-                            onClick={() =>
-                              handleUpdateStatus(item.id, "approved")
-                            }
+                            onClick={() => handleUpdateStatus(item.id, "approved")}
                             className="p-2 rounded-xl bg-green-100 text-green-600 hover:bg-green-200 transition"
                           >
                             <CheckCircle size={18} />
                           </button>
 
                           <button
-                            onClick={() =>
-                              handleUpdateStatus(item.id, "rejected")
-                            }
+                            onClick={() => handleUpdateStatus(item.id, "rejected")}
                             className="p-2 rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition"
                           >
                             <XCircle size={18} />
                           </button>
-
                         </div>
                       </td>
-
                     </tr>
                   ))
                 )}
-
               </tbody>
-
             </table>
           </div>
-
         </div>
-
       </div>
     </div>
   );

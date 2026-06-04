@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 
-import { getBookings, updateBooking } from "../../Booking/service/BookingService";
+// ✅ UBAH DISINI: Ganti updateBooking menjadi approveBooking dan rejectBooking
+import { getBookings, approveBooking, rejectBooking } from "../../Booking/service/BookingService";
 import ApprovalHeader from "../components/ApprovalHeader";
 import ApprovalSearch from "../components/ApprovalSearch";
 import ApprovalTable from "../components/ApprovalTable";
-
-
 
 const ApprovalBooking = () => {
   const [bookings, setBookings] = useState([]);
@@ -46,9 +45,12 @@ const ApprovalBooking = () => {
     });
   }, [pendingBookings, search]);
 
+  // ✅ UBAH DISINI: Sesuaikan fungsi handleUpdateStatus
   const handleUpdateStatus = async (id, status) => {
+    const isApprove = status === "approved";
+    
     const confirm = await Swal.fire({
-      title: status === "approved" ? "Approve booking?" : "Reject booking?",
+      title: isApprove ? "Approve booking?" : "Reject booking?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Ya",
@@ -57,30 +59,30 @@ const ApprovalBooking = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      await updateBooking(id, { status });
+      // Jalankan fungsi service yang sesuai berdasarkan parameter status
+      const success = isApprove ? await approveBooking(id) : await rejectBooking(id);
 
-      Swal.fire("Success", `Booking ${status}`, "success");
-      fetchData();
+      if (success) {
+        Swal.fire("Success", `Booking berhasil di-${status}`, "success");
+        fetchData();
+      } else {
+        Swal.fire("Error", `Gagal melakukan ${status} booking`, "error");
+      }
     } catch {
-      Swal.fire("Error", "Gagal update status", "error");
+      Swal.fire("Error", "Terjadi kesalahan sistem", "error");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-
       <div className="max-w-7xl mx-auto space-y-6">
-
         <ApprovalHeader count={filtered.length} />
-
         <ApprovalSearch search={search} setSearch={setSearch} />
-
         <ApprovalTable
           loading={loading}
           data={filtered}
           onUpdateStatus={handleUpdateStatus}
         />
-
       </div>
     </div>
   );

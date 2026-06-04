@@ -30,7 +30,7 @@ export const sidebarMenu = [
   },
   {
     key: "schedule",
-    label: "Jadwal Peminjaman",
+    label: "Jadwal Perkuliahan",
     icon: CalendarDays,
   },
   {

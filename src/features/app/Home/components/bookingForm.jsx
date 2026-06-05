@@ -10,6 +10,8 @@ import {
   Phone,
   CheckCircle2,
   Loader2,
+  AlertTriangle, // Icon tambahan untuk pop-up error
+  XCircle,
 } from "lucide-react";
 
 import { useState, useEffect } from "react";
@@ -17,41 +19,16 @@ import { toast } from "sonner";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createBooking } from "../../../Admin/Booking/service/BookingService";
 
-
-
+// --- KOMPONEN INPUT ---
 const Input = ({ icon: Icon, error, ...props }) => (
   <div className="relative space-y-1">
     <div className="relative">
-      <Icon
-        className="
-          absolute
-          left-4
-          top-1/2
-          -translate-y-1/2
-          w-4
-          h-4
-          text-white/70
-        "
-      />
-
+      <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70" />
       <input
         {...props}
-        className={`
-          w-full
-          pl-11
-          pr-4
-          py-3
-          rounded-2xl
-          bg-white/10
-          backdrop-blur-xl
-          border
-          ${error ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"}
-          text-white
-          placeholder:text-white/60
-          focus:outline-none
-          focus:ring-2
-          transition-all
-        `}
+        className={`w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border ${
+          error ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"
+        } text-white placeholder:text-white/60 focus:outline-none focus:ring-2 transition-all`}
       />
     </div>
     {error && (
@@ -60,69 +37,37 @@ const Input = ({ icon: Icon, error, ...props }) => (
   </div>
 );
 
+// --- KOMPONEN OVERLAY MEMPROSES ---
 const LoadingOverlay = () => (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
-    className="
-      fixed
-      inset-0
-      z-50
-      flex
-      items-center
-      justify-center
-      bg-black/60
-      backdrop-blur-sm
-    "
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
   >
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
-      className="
-        bg-gradient-to-br
-        from-slate-900
-        to-indigo-950
-        p-8
-        rounded-3xl
-        border
-        border-white/20
-        shadow-2xl
-        text-center
-      "
+      className="bg-gradient-to-br from-slate-900 to-indigo-950 p-8 rounded-3xl border border-white/20 shadow-2xl text-center"
     >
       <motion.div
         animate={{ rotate: 360 }}
-        transition={{
-          duration: 1,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="
-          w-16
-          h-16
-          mx-auto
-          mb-4
-          rounded-full
-          border-4
-          border-cyan-500/30
-          border-t-cyan-500
-        "
+        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-cyan-500/30 border-t-cyan-500"
       />
-
       <p className="text-white text-lg font-semibold">Memproses Booking...</p>
       <p className="text-white/60 text-sm mt-2">Mohon tunggu sebentar</p>
     </motion.div>
   </motion.div>
 );
 
+// --- KOMPONEN OVERLAY BERHASIL ---
 const SuccessOverlay = ({ onComplete }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
     }, 2000);
-
     return () => clearTimeout(timer);
   }, [onComplete]);
 
@@ -131,61 +76,63 @@ const SuccessOverlay = ({ onComplete }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="
-        fixed
-        inset-0
-        z-50
-        flex
-        items-center
-        justify-center
-        bg-black/60
-        backdrop-blur-sm
-      "
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
     >
       <motion.div
         initial={{ scale: 0.5, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.8, opacity: 0 }}
-        transition={{
-          type: "spring",
-          duration: 0.6,
-        }}
-        className="
-          bg-gradient-to-br
-          from-slate-900
-          to-indigo-950
-          p-10
-          rounded-3xl
-          border
-          border-white/20
-          shadow-2xl
-          text-center
-          relative
-          overflow-hidden
-        "
+        transition={{ type: "spring", duration: 0.6 }}
+        className="bg-gradient-to-br from-slate-900 to-indigo-950 p-10 rounded-3xl border border-white/20 shadow-2xl text-center relative overflow-hidden"
       >
-        <CheckCircle2
-          className="
-            w-20
-            h-20
-            mx-auto
-            text-green-400
-          "
-        />
-
+        <CheckCircle2 className="w-20 h-20 mx-auto text-green-400" />
         <div className="mt-6">
-          <h3 className="text-white text-2xl font-bold mb-2">
-            Booking Berhasil!
-          </h3>
-          <p className="text-white/70 text-sm">
-            Data peminjaman ruangan telah tersimpan
-          </p>
+          <h3 className="text-white text-2xl font-bold mb-2">Booking Berhasil!</h3>
+          <p className="text-white/70 text-sm">Data peminjaman ruangan telah tersimpan</p>
         </div>
       </motion.div>
     </motion.div>
   );
 };
 
+// --- 🔥 KOMPONEN BARU: OVERLAY ERROR TABRAKAN JADWAL (CONFLICT) ---
+const ConflictOverlay = ({ onClose, message }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ scale: 0.6, opacity: 0, y: 30 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.6, opacity: 0, y: 30 }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        className="bg-gradient-to-br from-slate-900 to-red-950/40 p-8 rounded-3xl border border-red-500/30 shadow-2xl max-w-md w-full text-center relative mx-4"
+      >
+        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+          <AlertTriangle className="w-12 h-12 text-red-400" />
+        </div>
+        
+        <h3 className="text-white text-2xl font-bold mb-3">Jadwal Bertabrakan!</h3>
+        
+        <p className="text-red-200/80 text-sm leading-relaxed mb-6 bg-red-950/40 border border-red-500/20 px-4 py-3 rounded-xl">
+          {message || "Ruangan ini sudah di-booking oleh organisasi lain pada tanggal dan jam yang Anda pilih."}
+        </p>
+
+        <button
+          onClick={onClose}
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-semibold transition shadow-lg shadow-red-500/20 text-sm"
+        >
+          Atur Ulang Waktu & Tanggal
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+// --- INDUK KOMPONEN UTAMA ---
 export function BookingForm() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -194,6 +141,8 @@ export function BookingForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showConflict, setShowConflict] = useState(false); // State pelacak pop-up error tabrakan
+  const [conflictMessage, setConflictMessage] = useState(""); // Menyimpan pesan detail dari backend
 
   const [formData, setFormData] = useState({
     name: "",
@@ -247,6 +196,7 @@ export function BookingForm() {
 
     const todayDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const selectedDateOnly = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+    
     if (selectedDateOnly < todayDateOnly) {
       tempErrors.date = "Tanggal sudah terlewat / kedaluwarsa!";
       isValid = false;
@@ -299,15 +249,23 @@ export function BookingForm() {
       jenis_peminjaman: formData.jenisPeminjaman,
     };
 
-    console.log("PAYLOAD FINAL:", payload);
-
     try {
       setIsSubmitting(true);
       await createBooking(payload);
       setShowSuccess(true);
     } catch (error) {
       console.error("ERRORS:", JSON.stringify(error.response?.data?.errors, null, 2));
-      toast.error(error.response?.data?.message || "Gagal membuat booking");
+      
+      const serverMessage = error.response?.data?.message || "";
+      
+      // 🔥 DETEKSI ERROR TABRAKAN JADWAL DARI SERVER
+      // Silakan sesuaikan keyword status code (misal 409 atau 422) atau potongan teks message dari backend-mu
+      if (error.response?.status === 409 || error.response?.status === 422 || serverMessage.toLowerCase().includes("tabrakan") || serverMessage.toLowerCase().includes("already booked") || serverMessage.toLowerCase().includes("konflik")) {
+        setConflictMessage(serverMessage || "Ruangan sudah terisi pada jam tersebut. Silakan pilih alternatif jam atau hari lain.");
+        setShowConflict(true);
+      } else {
+        toast.error(serverMessage || "Gagal membuat booking");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -321,9 +279,17 @@ export function BookingForm() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 px-4 py-10">
+      
+      {/* MANAGEMENT POP-UP ROUTER */}
       <AnimatePresence>
         {isSubmitting && !showSuccess && <LoadingOverlay />}
         {showSuccess && <SuccessOverlay onComplete={handleSuccessComplete} />}
+        {showConflict && (
+          <ConflictOverlay 
+            message={conflictMessage} 
+            onClose={() => setShowConflict(false)} 
+          />
+        )}
       </AnimatePresence>
 
       <div className="absolute inset-0 overflow-hidden">
@@ -386,16 +352,8 @@ export function BookingForm() {
                   name="jenisPeminjaman"
                   value={formData.jenisPeminjaman}
                   onChange={handleChange}
-                  className="
-      w-full pl-11 pr-4 py-3 rounded-2xl
-      bg-white/10 backdrop-blur-xl
-      border border-white/20
-      text-white
-      focus:outline-none focus:ring-2 focus:ring-cyan-400
-      transition-all appearance-none cursor-pointer
-    "
+                  className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all appearance-none cursor-pointer"
                 >
-                  {/* 🌟 Solusi: Memberikan class background gelap dan teks putih pada tag option */}
                   <option value="" disabled className="bg-slate-900 text-white/60">Jenis Peminjaman</option>
                   <option value="kegiatan_mahasiswa" className="bg-slate-900 text-white">Kegiatan Mahasiswa</option>
                   <option value="seminar" className="bg-slate-900 text-white">Seminar</option>
@@ -424,7 +382,7 @@ export function BookingForm() {
                 />
               </div>
 
-              {/* Input Tanggal dengan deteksi error */}
+              {/* Input Tanggal */}
               <div className="space-y-1">
                 <div className="relative group">
                   <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
@@ -434,19 +392,15 @@ export function BookingForm() {
                     min={todayString}
                     value={formData.date}
                     onChange={handleChange}
-                    className={`
-                      w-full pl-11 pr-4 py-3 rounded-2xl
-                      bg-white/10 backdrop-blur-xl
-                      text-white [color-scheme:dark]
-                      focus:outline-none focus:ring-2 transition-all
-                      border ${errors.date ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"}
-                    `}
+                    className={`w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl text-white [color-scheme:dark] focus:outline-none focus:ring-2 transition-all border ${
+                      errors.date ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"
+                    }`}
                   />
                 </div>
                 {errors.date && <p className="text-red-400 text-xs pl-2 font-medium">{errors.date}</p>}
               </div>
 
-              {/* Input Jam dengan deteksi error */}
+              {/* Input Jam */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <div className="relative group">
@@ -456,13 +410,9 @@ export function BookingForm() {
                       name="startTime"
                       value={formData.startTime}
                       onChange={handleChange}
-                      className={`
-                        w-full pl-11 pr-4 py-3 rounded-2xl
-                        bg-white/10 backdrop-blur-xl
-                        text-white [color-scheme:dark]
-                        focus:outline-none focus:ring-2 transition-all
-                        border ${errors.startTime ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"}
-                      `}
+                      className={`w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl text-white [color-scheme:dark] focus:outline-none focus:ring-2 transition-all border ${
+                        errors.startTime ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"
+                      }`}
                     />
                   </div>
                   {errors.startTime && <p className="text-red-400 text-xs pl-2 font-medium">{errors.startTime}</p>}
@@ -476,13 +426,9 @@ export function BookingForm() {
                       name="endTime"
                       value={formData.endTime}
                       onChange={handleChange}
-                      className={`
-                        w-full pl-11 pr-4 py-3 rounded-2xl
-                        bg-white/10 backdrop-blur-xl
-                        text-white [color-scheme:dark]
-                        focus:outline-none focus:ring-2 transition-all
-                        border ${errors.endTime ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"}
-                      `}
+                      className={`w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl text-white [color-scheme:dark] focus:outline-none focus:ring-2 transition-all border ${
+                        errors.endTime ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"
+                      }`}
                     />
                   </div>
                   {errors.endTime && <p className="text-red-400 text-xs pl-2 font-medium">{errors.endTime}</p>}
@@ -496,13 +442,7 @@ export function BookingForm() {
                   placeholder="Keperluan peminjaman"
                   value={formData.purpose}
                   onChange={handleChange}
-                  className="
-                    w-full pl-11 pr-4 py-3 rounded-2xl h-32 resize-none
-                    bg-white/10 backdrop-blur-xl
-                    border border-white/20
-                    text-white placeholder:text-white/60
-                    focus:outline-none focus:ring-2 focus:ring-cyan-400
-                  "
+                  className="w-full pl-11 pr-4 py-3 rounded-2xl h-32 resize-none bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                 />
               </div>
 
@@ -511,13 +451,7 @@ export function BookingForm() {
                 whileHover={{ scale: 1.01 }}
                 type="submit"
                 disabled={isSubmitting || !!errors.date || !!errors.startTime || !!errors.endTime}
-                className="
-                  w-full py-3 rounded-2xl font-semibold text-white
-                  bg-gradient-to-r from-cyan-500 to-indigo-600
-                  hover:opacity-90 transition-all shadow-lg shadow-cyan-500/20
-                  disabled:opacity-40 disabled:cursor-not-allowed
-                  flex items-center justify-center gap-2
-                "
+                className="w-full py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-cyan-500 to-indigo-600 hover:opacity-90 transition-all shadow-lg shadow-cyan-500/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>

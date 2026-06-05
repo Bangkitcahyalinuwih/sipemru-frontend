@@ -41,11 +41,11 @@ export const sidebarMenu = [
   {
     section: "Kelola Ruangan",
   },
-  {
-    key: "ruangan",
-    label: "Kelola Ruangan",
-    icon: Home,
-  },
+  // {
+  //   key: "ruangan",
+  //   label: "Kelola Ruangan",
+  //   icon: Home,
+  // },
   {
     key: "approval",
     label: "Kelola Booking",

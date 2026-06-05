@@ -2,9 +2,6 @@ import api from "../../../../api/api";
 
 const API_URL = "/bookings";
 
-// ======================================
-// ADMIN - GET ALL BOOKINGS
-// ======================================
 export const getBookings = async () => {
   try {
     const res = await api.get(`/admin${API_URL}`);
@@ -22,9 +19,6 @@ export const getBookings = async () => {
   }
 };
 
-// ======================================
-// USER - GET MY BOOKINGS
-// ======================================
 export const getMyBookings = async () => {
   try {
     const res = await api.get(`${API_URL}/my`);
@@ -38,9 +32,6 @@ export const getMyBookings = async () => {
   }
 };
 
-// ======================================
-// USER - CREATE BOOKING
-// ======================================
 export const createBooking = async (payload) => {
   try {
     const res = await api.post(API_URL, payload);
@@ -56,9 +47,6 @@ console.log("🔥 ERRORS DETAIL:", JSON.stringify(error.response?.data?.errors, 
 }
 };
 
-// ======================================
-// USER - CANCEL BOOKING
-// ======================================
 export const cancelBooking = async (id) => {
   try {
     await api.delete(`${API_URL}/${id}/cancel`);
@@ -69,9 +57,6 @@ export const cancelBooking = async (id) => {
   }
 };
 
-// ======================================
-// USER - CHECK AVAILABILITY
-// ======================================
 export const checkAvailability = async (payload) => {
   try {
     const res = await api.post(`${API_URL}/check-availability`, payload);
@@ -82,9 +67,6 @@ export const checkAvailability = async (payload) => {
   }
 };
 
-// ======================================
-// QR - VERIFY BOOKING
-// ======================================
 export const verifyQr = async (token) => {
   try {
     const res = await api.get(`/qr/verify/${token}`);
@@ -95,9 +77,6 @@ export const verifyQr = async (token) => {
   }
 };
 
-// ======================================
-// ADMIN - APPROVE BOOKING
-// ======================================
 export const approveBooking = async (id) => {
   try {
     await api.post(`/admin${API_URL}/${id}/approve`);
@@ -108,9 +87,6 @@ export const approveBooking = async (id) => {
   }
 };
 
-// ======================================
-// ADMIN - REJECT BOOKING
-// ======================================
 export const rejectBooking = async (id) => {
   try {
     await api.post(`/admin${API_URL}/${id}/reject`);
@@ -121,9 +97,6 @@ export const rejectBooking = async (id) => {
   }
 };
 
-// ======================================
-// ADMIN - DELETE BOOKING
-// ======================================
 export const deleteBooking = async (id) => {
   try {
     await api.delete(`/admin${API_URL}/${id}`);

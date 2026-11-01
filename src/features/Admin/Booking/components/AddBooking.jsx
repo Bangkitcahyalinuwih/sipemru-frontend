@@ -49,16 +49,8 @@ const AddBooking = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !form.room_id ||
-      !form.purpose ||
-      !form.booking_date
-    ) {
-      return Swal.fire(
-        "Error",
-        "Lengkapi data booking",
-        "error"
-      );
+    if (!form.room_id || !form.purpose || !form.booking_date) {
+      return Swal.fire("Error", "Lengkapi data booking", "error");
     }
 
     console.log(form);
@@ -77,23 +69,16 @@ const AddBooking = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6 text-white">
-          <h1 className="text-2xl font-bold">
-            Tambah Booking
-          </h1>
+          <h1 className="text-2xl font-bold">Tambah Booking</h1>
 
           <p className="text-blue-100 text-sm mt-1">
             Isi data peminjaman ruangan dengan lengkap
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="p-8 space-y-6"
-        >
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
             <div className="relative">
               <User
                 size={18}
@@ -104,9 +89,7 @@ const AddBooking = () => {
                 type="number"
                 placeholder="User ID"
                 value={form.user_id}
-                onChange={(e) =>
-                  setField("user_id", e.target.value)
-                }
+                onChange={(e) => setField("user_id", e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -119,9 +102,7 @@ const AddBooking = () => {
 
               <select
                 value={form.room_id}
-                onChange={(e) =>
-                  setField("room_id", e.target.value)
-                }
+                onChange={(e) => setField("room_id", e.target.value)}
                 className={inputClass}
               >
                 <option value="">Pilih Ruangan</option>
@@ -143,9 +124,7 @@ const AddBooking = () => {
               <textarea
                 placeholder="Tujuan Peminjaman"
                 value={form.purpose}
-                onChange={(e) =>
-                  setField("purpose", e.target.value)
-                }
+                onChange={(e) => setField("purpose", e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition min-h-[110px]"
               />
             </div>
@@ -159,9 +138,7 @@ const AddBooking = () => {
               <input
                 placeholder="Organisasi"
                 value={form.organization}
-                onChange={(e) =>
-                  setField("organization", e.target.value)
-                }
+                onChange={(e) => setField("organization", e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -176,12 +153,7 @@ const AddBooking = () => {
                 type="number"
                 placeholder="Jumlah Peserta"
                 value={form.jumlah_peserta}
-                onChange={(e) =>
-                  setField(
-                    "jumlah_peserta",
-                    e.target.value
-                  )
-                }
+                onChange={(e) => setField("jumlah_peserta", e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -194,21 +166,12 @@ const AddBooking = () => {
 
               <select
                 value={form.jenis_peminjaman}
-                onChange={(e) =>
-                  setField(
-                    "jenis_peminjaman",
-                    e.target.value
-                  )
-                }
+                onChange={(e) => setField("jenis_peminjaman", e.target.value)}
                 className={inputClass}
               >
-                <option value="internal">
-                  Internal
-                </option>
+                <option value="internal">Internal</option>
 
-                <option value="external">
-                  External
-                </option>
+                <option value="external">External</option>
               </select>
             </div>
 
@@ -221,9 +184,7 @@ const AddBooking = () => {
               <input
                 placeholder="Nama PIC"
                 value={form.pic_name}
-                onChange={(e) =>
-                  setField("pic_name", e.target.value)
-                }
+                onChange={(e) => setField("pic_name", e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -237,9 +198,7 @@ const AddBooking = () => {
               <input
                 placeholder="No HP PIC"
                 value={form.pic_phone}
-                onChange={(e) =>
-                  setField("pic_phone", e.target.value)
-                }
+                onChange={(e) => setField("pic_phone", e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -253,12 +212,7 @@ const AddBooking = () => {
               <input
                 type="date"
                 value={form.booking_date}
-                onChange={(e) =>
-                  setField(
-                    "booking_date",
-                    e.target.value
-                  )
-                }
+                onChange={(e) => setField("booking_date", e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -272,9 +226,7 @@ const AddBooking = () => {
               <input
                 type="time"
                 value={form.start_time}
-                onChange={(e) =>
-                  setField("start_time", e.target.value)
-                }
+                onChange={(e) => setField("start_time", e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -288,9 +240,7 @@ const AddBooking = () => {
               <input
                 type="time"
                 value={form.end_time}
-                onChange={(e) =>
-                  setField("end_time", e.target.value)
-                }
+                onChange={(e) => setField("end_time", e.target.value)}
                 className={inputClass}
               />
             </div>

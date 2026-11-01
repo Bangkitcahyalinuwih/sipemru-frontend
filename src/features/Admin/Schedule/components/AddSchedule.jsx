@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 import { createSchedule } from "../service/ScheduleService";
-import { getRuangan } from "../../Ruangan/service/RuanganService";
+import { getRuangan } from "../../Ruangan/service/ruanganService";
 
 // ================= FIXED OUTSIDE COMPONENT ================= 
 const InputWrapper = React.memo(({ icon: Icon, children, label, className = "" }) => (

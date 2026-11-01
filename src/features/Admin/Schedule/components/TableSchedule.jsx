@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Search, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import Swal from "sweetalert2";
 import { getSchedules, deleteSchedule } from "../service/ScheduleService";
-import { getRuangan } from "../../Ruangan/service/RuanganService";
+import { getRuangan } from "../../Ruangan/service/ruanganService";
 import { useNavigate } from "react-router-dom";
 
 const TablesSchedule = () => {

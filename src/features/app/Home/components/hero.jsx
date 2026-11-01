@@ -84,12 +84,6 @@ export function Hero() {
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#0B0B12]">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-150px] left-[5%] h-[450px] w-[450px] rounded-full bg-purple-600/15 blur-3xl" />
-
-        <div className="absolute bottom-[-100px] right-[5%] h-[500px] w-[500px] rounded-full bg-pink-600/10 blur-3xl" />
-
-        <div className="absolute left-1/2 top-[40%] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-indigo-600/10 blur-3xl" />
-
         <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:70px_70px]" />
       </div>
 
@@ -178,25 +172,17 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] py-3 backdrop-blur-2xl"
+            className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] py-3"
           >
-            <div className="absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-[#0B0B12] to-transparent" />
-
-            <div className="absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-[#0B0B12] to-transparent" />
-
-            <motion.div
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-              className="flex w-max gap-10 px-6"
-            >
-              {[" 120+ Ruangan Tersedia", " Booking Real-time", " Auditorium & Lab Lengkap", " Approval Otomatis", " Akses 24/7", " Seminar & Praktikum", " 120+ Ruangan Tersedia", " Booking Real-time", " Auditorium & Lab Lengkap", " Approval Otomatis", " Akses 24/7", " Seminar & Praktikum"].map((item, index) => (
-                <div key={index} className="flex items-center gap-2 whitespace-nowrap">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 px-6">
+              {["120+ Ruangan Tersedia", "Booking Real-time", "Auditorium & Lab Lengkap", "Approval Otomatis", "Akses 24/7", "Seminar & Praktikum"].map((item) => (
+                <div key={item} className="flex items-center gap-2 whitespace-nowrap">
                   <div className="h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.8)]" />
 
                   <span className="text-xs text-gray-300">{item}</span>
                 </div>
               ))}
-            </motion.div>
+            </div>
           </motion.div>
         </div>
 
@@ -207,9 +193,7 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            className="relative w-full max-w-[400px] overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.45)]"
+            className="relative w-full max-w-[400px] overflow-hidden rounded-[32px] border border-white/10 bg-[#151020] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.45)]"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-indigo-500/10" />
 
@@ -229,7 +213,7 @@ export function Hero() {
               </div>
             </div>
 
-            <div className="relative mt-5 rounded-[28px] border border-white/10 bg-black/20 p-5 backdrop-blur-xl">
+            <div className="relative mt-5 rounded-[28px] border border-white/10 bg-black/30 p-5">
               <div className="mb-5 flex items-start justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-white">Booking Calendar</h3>

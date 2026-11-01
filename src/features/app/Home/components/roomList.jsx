@@ -29,20 +29,13 @@ export function RoomList({ rooms = [] }) {
 
   return (
     <section className="relative overflow-hidden -mt-24 py-10">
-      {/* background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-150px] left-[5%] w-[450px] h-[450px] rounded-full bg-purple-600/15 blur-3xl" />
-        <div className="absolute bottom-[-100px] right-[5%] w-[500px] h-[500px] rounded-full bg-pink-600/10 blur-3xl" />
-        <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-3xl" />
-      </div>
-
       <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {rooms.map((room) => (
           <motion.div
             key={room.id}
             whileHover={{ y: -10, scale: 1.02 }}
             transition={{ type: "spring", stiffness: 220 }}
-            className="group relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-2xl min-h-[520px] shadow-2xl"
+            className="group relative overflow-hidden rounded-[32px] border border-white/10 bg-[#151020] min-h-[520px] shadow-2xl"
           >
             {/* image */}
               <div className="relative h-52 overflow-hidden">
@@ -55,6 +48,8 @@ export function RoomList({ rooms = [] }) {
                       : "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800"
                   }
                   alt={room?.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-110 transition"
                 />
 

@@ -48,23 +48,6 @@ const features = [
 export function Stats() {
   return (
     <section className="relative z-20 px-4 -mt-10">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-150px] left-[5%] w-[450px] h-[450px] rounded-full bg-purple-600/15 blur-3xl" />
-
-        <div className="absolute bottom-[-100px] right-[5%] w-[500px] h-[500px] rounded-full bg-pink-600/10 blur-3xl" />
-
-        <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-3xl" />
-
-        <div
-          className="
-            absolute inset-0
-            bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
-            bg-[size:70px_70px]
-            opacity-20
-          "
-        />
-      </div>
-
       <div className="relative max-w-7xl mx-auto px-6 py-20">
         <motion.div
           className="text-center mb-20"
@@ -111,7 +94,6 @@ export function Stats() {
                   rounded-[30px]
                   border border-white/10
                   bg-white/[0.03]
-                  backdrop-blur-2xl
                   p-8
                   min-h-[250px]
                 "

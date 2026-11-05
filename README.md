@@ -49,11 +49,15 @@ cd sipemru-frontend
 npm ci
 ```
 
-Create a `.env` file in the project root and configure the backend connection as described below.
+Copy the example environment file and adjust the values to match your local backend:
+
+```bash
+cp .env.example .env
+```
 
 ## Configuration
 
-The frontend reads the following Vite environment variables:
+The frontend reads the following Vite environment variables, which are listed in `.env.example`:
 
 | Variable | Purpose |
 | --- | --- |
@@ -63,7 +67,7 @@ The frontend reads the following Vite environment variables:
 | `VITE_REVERB_PORT` | Reverb WebSocket port. |
 | `VITE_REVERB_SCHEME` | Connection scheme; use `http` or `https` to match the server setup. |
 
-Example local configuration (adjust it to match your backend):
+Update these example values to match your backend:
 
 ```dotenv
 VITE_API_URL=http://localhost:8000/api

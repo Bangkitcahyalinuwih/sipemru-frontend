@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { RoomList } from "../components/roomList";
 
 import { getRuangan } from "../../../Admin/Ruangan/service/ruanganService";
+import { useRealtimeRooms } from "../hook/useRealtimeRooms";
 
 const pageVariant = {
   hidden: {
@@ -47,6 +48,8 @@ export function RoomListPages() {
 
   const [loading, setLoading] =
     useState(true);
+
+  useRealtimeRooms({ setRooms });
 
   useEffect(() => {
     const fetchRooms = async () => {

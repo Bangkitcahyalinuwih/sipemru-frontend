@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Mail,
@@ -9,13 +9,17 @@ import {
   GraduationCap,
 } from "lucide-react";
 
-import Swal from "sweetalert2";
-
-// Import loginUser dan logoutUser dari UserService / AuthService yang sudah connect ke API
 import {
   loginUser,
   logoutUser,
 } from "../../../Admin/Users/service/UserService";
+
+const emptyErrors = {
+  email: "",
+  password: "",
+  general: "",
+  canReset: false,
+};
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -26,7 +30,10 @@ const LoginForm = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState(emptyErrors);
+
+  // Link reset membawa email yang sedang diketik di form
+  const resetLink = `/forgot-password?email=${encodeURIComponent(form.email)}`;
 
   const handleChange = (e) => {
     setForm({
@@ -39,56 +46,33 @@ const LoginForm = () => {
     e.preventDefault();
 
     setLoading(true);
-    setError("");
+    setFieldErrors(emptyErrors);
 
     try {
-      // 1. Menembak API Login ke Backend Laravel
       const user = await loginUser(form.email, form.password);
 
-      // 2. Validasi: Pastikan data user membawa field 'role' dari database
       if (!user || !user.role) {
         logoutUser();
-        throw new Error("Akun tidak dikenali atau tidak memiliki hak akses.");
+        setFieldErrors({
+          ...emptyErrors,
+          general: "Akun tidak dikenali atau tidak memiliki hak akses.",
+        });
+        return;
       }
 
-      // Normalisasi teks role agar tidak sensitif huruf besar/kecil (misal: "Admin" jadi "admin")
       const userRole = user.role.toLowerCase();
 
-      // 3. Tampilkan Notifikasi Sukses
-      Swal.fire({
-        icon: "success",
-        title: "Login Berhasil",
-        text: `Selamat datang ${user.name} (${user.role})`,
-        timer: 1500,
-        showConfirmButton: false,
-        background: "#0f172a",
-        color: "#fff",
-      });
-
-      // 4. MULTI-ROLE FIKS LOGIKA: Pisah halaman redirect berdasarkan role
-      setTimeout(() => {
-        if (userRole === "admin") {
-          navigate("/admin"); // Jika role-nya admin, arahkan ke localhost/admin
-        } else if (userRole === "mahasiswa") {
-          navigate("/"); // Jika role-nya mahasiswa, arahkan ke beranda biasa
-        } else {
-          // Jika ada role lain selain admin & mahasiswa
-          navigate("/"); 
-        }
-      }, 1500);
-
+      if (userRole === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
-      const message = err.message || "Login gagal";
-
-      setError(message);
-
-      Swal.fire({
-        icon: "error",
-        title: "Login Gagal",
-        text: message,
-        background: "#0f172a",
-        color: "#fff",
-        confirmButtonColor: "#ef4444",
+      setFieldErrors({
+        email: err.field === "email" ? err.message : "",
+        password: err.field === "password" ? err.message : "",
+        general: err.field ? "" : err.message || "Login gagal",
+        canReset: err.status === 401 || err.status === 400,
       });
     } finally {
       setLoading(false);
@@ -103,9 +87,8 @@ const LoginForm = () => {
         <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-[120px]" />
       </div>
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
-      
+
       <div className="relative z-10 grid w-full max-w-4xl overflow-hidden rounded-[28px] border border-white/10 bg-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.37)] backdrop-blur-2xl lg:grid-cols-2">
-        
         {/* SISI KIRI: Banner Informasi */}
         <div className="relative hidden overflow-hidden border-r border-white/10 p-8 text-white lg:flex lg:flex-col lg:justify-between">
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-blue-500/10 to-indigo-500/10" />
@@ -138,7 +121,7 @@ const LoginForm = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="relative z-10 mt-8 grid grid-cols-3 gap-3">
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
               <h3 className="text-xl font-bold">24/7</h3>
@@ -174,6 +157,7 @@ const LoginForm = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
                   Email
@@ -189,12 +173,31 @@ const LoginForm = () => {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="email@gmail.com"
-                    className="w-full rounded-xl border border-white/10 bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 backdrop-blur-xl outline-none transition-all focus:border-cyan-400/50 focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/10"
+                    className={`w-full rounded-xl border bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 backdrop-blur-xl outline-none transition-all focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/10 ${
+                      fieldErrors.email
+                        ? "border-red-500/60"
+                        : "border-white/10 focus:border-cyan-400/50"
+                    }`}
                     required
                   />
                 </div>
+
+                {fieldErrors.email && (
+                  <p className="mt-1.5 text-xs text-red-400">
+                    {fieldErrors.email}
+                    {fieldErrors.canReset && (
+                      <>
+                        {" "}
+                        <Link to={resetLink} className="font-semibold underline">
+                          Reset password
+                        </Link>
+                      </>
+                    )}
+                  </p>
+                )}
               </div>
 
+              {/* Password */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
                   Password
@@ -210,11 +213,39 @@ const LoginForm = () => {
                     value={form.password}
                     onChange={handleChange}
                     placeholder="Masukkan password"
-                    className="w-full rounded-xl border border-white/10 bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 backdrop-blur-xl outline-none transition-all focus:border-cyan-400/50 focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/10"
+                    className={`w-full rounded-xl border bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 backdrop-blur-xl outline-none transition-all focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/10 ${
+                      fieldErrors.password
+                        ? "border-red-500/60"
+                        : "border-white/10 focus:border-cyan-400/50"
+                    }`}
                     required
                   />
                 </div>
+
+                {fieldErrors.password && (
+                  <p className="mt-1.5 text-xs text-red-400">
+                    {fieldErrors.password}{" "}
+                    <Link to={resetLink} className="font-semibold underline">
+                      Reset password
+                    </Link>
+                  </p>
+                )}
               </div>
+
+              {/* Error umum */}
+              {fieldErrors.general && (
+                <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">
+                  {fieldErrors.general}
+                  {fieldErrors.canReset && (
+                    <>
+                      {" "}
+                      <Link to={resetLink} className="font-semibold underline">
+                        Reset password
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -237,6 +268,7 @@ const LoginForm = () => {
             <div className="mt-6 text-center text-sm text-slate-400">
               Belum punya akun?
               <button
+                type="button"
                 onClick={() => navigate("/register")}
                 className="ml-2 font-semibold text-cyan-300 transition hover:text-cyan-200"
               >
@@ -245,7 +277,6 @@ const LoginForm = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

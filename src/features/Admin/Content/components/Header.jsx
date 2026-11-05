@@ -29,7 +29,7 @@ export default function Header({ collapsed, setCollapsed, title }) {
 
   const handleLogOut = () => {
     logoutUser(); 
-    window.location.href = "/admin/login"; 
+    window.location.href = "/login"; 
   };
 
   return (

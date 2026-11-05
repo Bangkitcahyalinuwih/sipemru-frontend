@@ -10,14 +10,28 @@ import {
   Phone,
   CheckCircle2,
   Loader2,
-  AlertTriangle, // Icon tambahan untuk pop-up error
-  XCircle,
+  AlertTriangle,
 } from "lucide-react";
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useNavigate, useLocation } from "react-router-dom";
-import { createBooking } from "../../../Admin/Booking/service/BookingService";
+
+import {
+  createBooking,
+  checkAvailabilitySilent,
+} from "../../../Admin/Booking/service/BookingService";
+
+// Tanggal lokal (bukan UTC) format YYYY-MM-DD
+const getLocalDateString = (d = new Date()) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+const MINUTES = Array.from({ length: 60 }, (_, i) =>
+  String(i).padStart(2, "0")
+);
 
 // --- KOMPONEN INPUT ---
 const Input = ({ icon: Icon, error, ...props }) => (
@@ -27,17 +41,81 @@ const Input = ({ icon: Icon, error, ...props }) => (
       <input
         {...props}
         className={`w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border ${
-          error ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"
+          error
+            ? "border-red-500 focus:ring-red-500"
+            : "border-white/20 focus:ring-cyan-400"
         } text-white placeholder:text-white/60 focus:outline-none focus:ring-2 transition-all`}
       />
     </div>
     {error && (
-      <p className="text-red-400 text-xs pl-2 font-medium animate-pulse">{error}</p>
+      <p className="text-red-400 text-xs pl-2 font-medium animate-pulse">
+        {error}
+      </p>
     )}
   </div>
 );
 
-// --- KOMPONEN OVERLAY MEMPROSES ---
+// --- INPUT JAM 24 JAM (tanpa AM/PM) ---
+const TimeInput = ({ id, name, value, onChange, error }) => {
+  const [hour, minute] = value ? value.split(":") : ["", ""];
+
+  const update = (newHour, newMinute) => {
+    if (!newHour && !newMinute) {
+      onChange({ target: { name, value: "" } });
+      return;
+    }
+    onChange({
+      target: { name, value: `${newHour || "00"}:${newMinute || "00"}` },
+    });
+  };
+
+  const selectClass = `w-full py-3 rounded-2xl bg-white/10 backdrop-blur-xl text-white focus:outline-none focus:ring-2 transition-all border appearance-none cursor-pointer text-center ${
+    error
+      ? "border-red-500 focus:ring-red-500"
+      : "border-white/20 focus:ring-cyan-400"
+  }`;
+
+  return (
+    <div className="relative group flex items-center gap-2">
+      <Clock className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition z-10" />
+
+      <select
+        id={id}
+        value={hour}
+        onChange={(e) => update(e.target.value, minute)}
+        className={`${selectClass} pl-9 pr-2`}
+      >
+        <option value="" disabled className="bg-slate-900 text-white/60">
+          Jam
+        </option>
+        {HOURS.map((h) => (
+          <option key={h} value={h} className="bg-slate-900 text-white">
+            {h}
+          </option>
+        ))}
+      </select>
+
+      <span className="text-white/70 font-semibold">:</span>
+
+      <select
+        value={minute}
+        onChange={(e) => update(hour, e.target.value)}
+        className={`${selectClass} px-2`}
+      >
+        <option value="" disabled className="bg-slate-900 text-white/60">
+          Menit
+        </option>
+        {MINUTES.map((m) => (
+          <option key={m} value={m} className="bg-slate-900 text-white">
+            {m}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+// --- OVERLAY MEMPROSES ---
 const LoadingOverlay = () => (
   <motion.div
     initial={{ opacity: 0 }}
@@ -62,7 +140,7 @@ const LoadingOverlay = () => (
   </motion.div>
 );
 
-// --- KOMPONEN OVERLAY BERHASIL ---
+// --- OVERLAY BERHASIL ---
 const SuccessOverlay = ({ onComplete }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -87,52 +165,58 @@ const SuccessOverlay = ({ onComplete }) => {
       >
         <CheckCircle2 className="w-20 h-20 mx-auto text-green-400" />
         <div className="mt-6">
-          <h3 className="text-white text-2xl font-bold mb-2">Booking Berhasil!</h3>
-          <p className="text-white/70 text-sm">Data peminjaman ruangan telah tersimpan</p>
+          <h3 className="text-white text-2xl font-bold mb-2">
+            Booking Berhasil!
+          </h3>
+          <p className="text-white/70 text-sm">
+            Data peminjaman ruangan telah tersimpan
+          </p>
         </div>
       </motion.div>
     </motion.div>
   );
 };
 
-// --- 🔥 KOMPONEN BARU: OVERLAY ERROR TABRAKAN JADWAL (CONFLICT) ---
-const ConflictOverlay = ({ onClose, message }) => {
-  return (
+// --- OVERLAY JADWAL BENTROK ---
+const ConflictOverlay = ({ onClose, message }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+  >
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      initial={{ scale: 0.6, opacity: 0, y: 30 }}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+      exit={{ scale: 0.6, opacity: 0, y: 30 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      className="bg-gradient-to-br from-slate-900 to-red-950/40 p-8 rounded-3xl border border-red-500/30 shadow-2xl max-w-md w-full text-center relative mx-4"
     >
-      <motion.div
-        initial={{ scale: 0.6, opacity: 0, y: 30 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.6, opacity: 0, y: 30 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
-        className="bg-gradient-to-br from-slate-900 to-red-950/40 p-8 rounded-3xl border border-red-500/30 shadow-2xl max-w-md w-full text-center relative mx-4"
+      <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+        <AlertTriangle className="w-12 h-12 text-red-400" />
+      </div>
+
+      <h3 className="text-white text-2xl font-bold mb-3">
+        Jadwal Bertabrakan!
+      </h3>
+
+      <p className="text-red-200/80 text-sm leading-relaxed mb-6 bg-red-950/40 border border-red-500/20 px-4 py-3 rounded-xl">
+        {message ||
+          "Ruangan ini sudah di-booking oleh organisasi lain pada tanggal dan jam yang Anda pilih."}
+      </p>
+
+      <button
+        type="button"
+        onClick={onClose}
+        className="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-semibold transition shadow-lg shadow-red-500/20 text-sm"
       >
-        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
-          <AlertTriangle className="w-12 h-12 text-red-400" />
-        </div>
-        
-        <h3 className="text-white text-2xl font-bold mb-3">Jadwal Bertabrakan!</h3>
-        
-        <p className="text-red-200/80 text-sm leading-relaxed mb-6 bg-red-950/40 border border-red-500/20 px-4 py-3 rounded-xl">
-          {message || "Ruangan ini sudah di-booking oleh organisasi lain pada tanggal dan jam yang Anda pilih."}
-        </p>
-
-        <button
-          onClick={onClose}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-semibold transition shadow-lg shadow-red-500/20 text-sm"
-        >
-          Atur Ulang Waktu & Tanggal
-        </button>
-      </motion.div>
+        Atur Ulang Waktu & Tanggal
+      </button>
     </motion.div>
-  );
-};
+  </motion.div>
+);
 
-// --- INDUK KOMPONEN UTAMA ---
+// --- KOMPONEN UTAMA ---
 export function BookingForm() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -141,8 +225,11 @@ export function BookingForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showConflict, setShowConflict] = useState(false); // State pelacak pop-up error tabrakan
-  const [conflictMessage, setConflictMessage] = useState(""); // Menyimpan pesan detail dari backend
+  const [showConflict, setShowConflict] = useState(false);
+  const [conflictMessage, setConflictMessage] = useState("");
+
+  const [availability, setAvailability] = useState(null); // {available, message} | null
+  const [checking, setChecking] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -162,21 +249,51 @@ export function BookingForm() {
     endTime: "",
   });
 
-  const todayString = new Date().toISOString().split("T")[0];
-
-  useEffect(() => {
-    if (roomName || roomId) {
-      setFormData((prev) => ({
-        ...prev,
-        room: roomName,
-        room_id: roomId,
-      }));
-    }
-  }, [roomName, roomId]);
+  const todayString = getLocalDateString();
 
   useEffect(() => {
     validateTiming();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.date, formData.startTime, formData.endTime]);
+
+  // Cek ketersediaan (jadwal kuliah + booking lain) lewat backend
+  useEffect(() => {
+    const { date, startTime, endTime } = formData;
+    setAvailability(null);
+
+    if (!roomId || !date || !startTime || !endTime) return;
+    if (errors.date || errors.startTime || errors.endTime) return;
+
+    let cancelled = false;
+    setChecking(true);
+
+    const timer = setTimeout(async () => {
+      const result = await checkAvailabilitySilent({
+        room_id: Number(roomId),
+        booking_date: date,
+        start_time: startTime.slice(0, 5),
+        end_time: endTime.slice(0, 5),
+      });
+      if (cancelled) return;
+      setAvailability(result);
+      setChecking(false);
+    }, 500);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+      setChecking(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    roomId,
+    formData.date,
+    formData.startTime,
+    formData.endTime,
+    errors.date,
+    errors.startTime,
+    errors.endTime,
+  ]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -186,31 +303,53 @@ export function BookingForm() {
   };
 
   const validateTiming = () => {
-    let tempErrors = { date: "", startTime: "", endTime: "" };
+    const tempErrors = { date: "", startTime: "", endTime: "" };
     let isValid = true;
 
-    if (!formData.date) return isValid;
+    if (!formData.date) {
+      setErrors(tempErrors);
+      return isValid;
+    }
 
     const now = new Date();
-    const selectedDate = new Date(formData.date);
+    const todayDateOnly = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
 
-    const todayDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const selectedDateOnly = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-    
+    // Parse tanggal sebagai lokal (new Date("YYYY-MM-DD") dibaca UTC)
+    const [y, m, d] = formData.date.split("-").map(Number);
+    const selectedDateOnly = new Date(y, m - 1, d);
+
     if (selectedDateOnly < todayDateOnly) {
       tempErrors.date = "Tanggal sudah terlewat / kedaluwarsa!";
       isValid = false;
     }
-    if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
+
+    if (
+      formData.startTime &&
+      formData.endTime &&
+      formData.startTime >= formData.endTime
+    ) {
       tempErrors.endTime = "Jam selesai harus lebih lambat dari jam mulai!";
       isValid = false;
     }
-    if (selectedDateOnly.getTime() === todayDateOnly.getTime() && formData.startTime) {
+
+    if (
+      selectedDateOnly.getTime() === todayDateOnly.getTime() &&
+      formData.startTime
+    ) {
       const currentHour = now.getHours();
       const currentMinute = now.getMinutes();
-      const [startHour, startMinute] = formData.startTime.split(":").map(Number);
+      const [startHour, startMinute] = formData.startTime
+        .split(":")
+        .map(Number);
 
-      if (startHour < currentHour || (startHour === currentHour && startMinute < currentMinute)) {
+      if (
+        startHour < currentHour ||
+        (startHour === currentHour && startMinute < currentMinute)
+      ) {
         tempErrors.startTime = "Waktu mulai sudah terlewat untuk hari ini!";
         isValid = false;
       }
@@ -222,17 +361,51 @@ export function BookingForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
-    const { name, organization, participants, phone, date, startTime, endTime, purpose } = formData;
+    if (!roomId) {
+      toast.error(
+        "Ruangan belum dipilih. Kembali dan pilih ruangan terlebih dahulu."
+      );
+      return;
+    }
 
-    if (!name || !organization || !participants || !phone || !date ||
-      !startTime || !endTime || !purpose || !formData.jenisPeminjaman) {
+    const {
+      name,
+      organization,
+      participants,
+      phone,
+      date,
+      startTime,
+      endTime,
+      purpose,
+      jenisPeminjaman,
+    } = formData;
+
+    if (
+      !name.trim() ||
+      !organization.trim() ||
+      !participants ||
+      !phone.trim() ||
+      !date ||
+      !startTime ||
+      !endTime ||
+      !purpose.trim() ||
+      !jenisPeminjaman
+    ) {
       toast.error("Mohon lengkapi semua field!");
       return;
     }
 
     if (!validateTiming()) {
-      toast.error("Gagal memproses. Terdapat ketidaksinkronan pada tanggal atau jam!");
+      toast.error(
+        "Gagal memproses. Terdapat ketidaksinkronan pada tanggal atau jam!"
+      );
+      return;
+    }
+
+    if (availability?.available === false) {
+      toast.error("Ruangan tidak tersedia pada waktu tersebut.");
       return;
     }
 
@@ -241,12 +414,12 @@ export function BookingForm() {
       purpose: purpose.trim(),
       organization: organization.trim(),
       booking_date: date,
-      start_time: startTime?.slice(0, 5),
-      end_time: endTime?.slice(0, 5),
+      start_time: startTime.slice(0, 5),
+      end_time: endTime.slice(0, 5),
       jumlah_peserta: Number(participants),
       pic_name: name.trim(),
       pic_phone: phone.trim(),
-      jenis_peminjaman: formData.jenisPeminjaman,
+      jenis_peminjaman: jenisPeminjaman,
     };
 
     try {
@@ -254,17 +427,25 @@ export function BookingForm() {
       await createBooking(payload);
       setShowSuccess(true);
     } catch (error) {
-      console.error("ERRORS:", JSON.stringify(error.response?.data?.errors, null, 2));
-      
-      const serverMessage = error.response?.data?.message || "";
-      
-      // 🔥 DETEKSI ERROR TABRAKAN JADWAL DARI SERVER
-      // Silakan sesuaikan keyword status code (misal 409 atau 422) atau potongan teks message dari backend-mu
-      if (error.response?.status === 409 || error.response?.status === 422 || serverMessage.toLowerCase().includes("tabrakan") || serverMessage.toLowerCase().includes("already booked") || serverMessage.toLowerCase().includes("konflik")) {
-        setConflictMessage(serverMessage || "Ruangan sudah terisi pada jam tersebut. Silakan pilih alternatif jam atau hari lain.");
+      const responseData = error.response?.data;
+      const serverMessage = responseData?.message || "";
+      const normalizedMessage = serverMessage.toLowerCase();
+      const isBookingConflict =
+        error.response?.status === 409 ||
+        responseData?.reason === "booking_conflict" ||
+        normalizedMessage.includes("bentrok") ||
+        normalizedMessage.includes("tabrakan") ||
+        normalizedMessage.includes("already booked") ||
+        normalizedMessage.includes("konflik");
+
+      if (isBookingConflict) {
+        setConflictMessage(
+          serverMessage ||
+            "Ruangan sudah terisi pada jam tersebut. Silakan pilih alternatif jam atau hari lain."
+        );
         setShowConflict(true);
-      } else {
-        toast.error(serverMessage || "Gagal membuat booking");
+      } else if (!error.alerted) {
+        toast.error(serverMessage || error.message || "Gagal membuat booking");
       }
     } finally {
       setIsSubmitting(false);
@@ -279,15 +460,13 @@ export function BookingForm() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 px-4 py-10">
-      
-      {/* MANAGEMENT POP-UP ROUTER */}
       <AnimatePresence>
         {isSubmitting && !showSuccess && <LoadingOverlay />}
         {showSuccess && <SuccessOverlay onComplete={handleSuccessComplete} />}
         {showConflict && (
-          <ConflictOverlay 
-            message={conflictMessage} 
-            onClose={() => setShowConflict(false)} 
+          <ConflictOverlay
+            message={conflictMessage}
+            onClose={() => setShowConflict(false)}
           />
         )}
       </AnimatePresence>
@@ -299,6 +478,7 @@ export function BookingForm() {
 
       <div className="relative max-w-3xl mx-auto">
         <button
+          type="button"
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-white/80 hover:text-white mb-5 transition"
         >
@@ -354,12 +534,24 @@ export function BookingForm() {
                   onChange={handleChange}
                   className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all appearance-none cursor-pointer"
                 >
-                  <option value="" disabled className="bg-slate-900 text-white/60">Jenis Peminjaman</option>
-                  <option value="kegiatan_mahasiswa" className="bg-slate-900 text-white">Kegiatan Mahasiswa</option>
-                  <option value="seminar" className="bg-slate-900 text-white">Seminar</option>
-                  <option value="rapat" className="bg-slate-900 text-white">Rapat</option>
-                  <option value="praktikum_tambahan" className="bg-slate-900 text-white">Praktikum Tambahan</option>
-                  <option value="lainnya" className="bg-slate-900 text-white">Lainnya</option>
+                  <option value="" disabled className="bg-slate-900 text-white/60">
+                    Jenis Peminjaman
+                  </option>
+                  <option value="kegiatan_mahasiswa" className="bg-slate-900 text-white">
+                    Kegiatan Mahasiswa
+                  </option>
+                  <option value="seminar" className="bg-slate-900 text-white">
+                    Seminar
+                  </option>
+                  <option value="rapat" className="bg-slate-900 text-white">
+                    Rapat
+                  </option>
+                  <option value="praktikum_tambahan" className="bg-slate-900 text-white">
+                    Praktikum Tambahan
+                  </option>
+                  <option value="lainnya" className="bg-slate-900 text-white">
+                    Lainnya
+                  </option>
                 </select>
               </div>
 
@@ -367,6 +559,7 @@ export function BookingForm() {
                 <Input
                   icon={Users}
                   type="number"
+                  min="1"
                   name="participants"
                   placeholder="Jumlah Peserta"
                   value={formData.participants}
@@ -382,7 +575,7 @@ export function BookingForm() {
                 />
               </div>
 
-              {/* Input Tanggal */}
+              {/* Tanggal */}
               <div className="space-y-1">
                 <div className="relative group">
                   <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
@@ -393,47 +586,82 @@ export function BookingForm() {
                     value={formData.date}
                     onChange={handleChange}
                     className={`w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl text-white [color-scheme:dark] focus:outline-none focus:ring-2 transition-all border ${
-                      errors.date ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"
+                      errors.date
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-white/20 focus:ring-cyan-400"
                     }`}
                   />
                 </div>
-                {errors.date && <p className="text-red-400 text-xs pl-2 font-medium">{errors.date}</p>}
+                {errors.date && (
+                  <p className="text-red-400 text-xs pl-2 font-medium">
+                    {errors.date}
+                  </p>
+                )}
               </div>
 
-              {/* Input Jam */}
+              {/* Jam (24 jam) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <div className="relative group">
-                    <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
-                    <input
-                      type="time"
-                      name="startTime"
-                      value={formData.startTime}
-                      onChange={handleChange}
-                      className={`w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl text-white [color-scheme:dark] focus:outline-none focus:ring-2 transition-all border ${
-                        errors.startTime ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"
-                      }`}
-                    />
-                  </div>
-                  {errors.startTime && <p className="text-red-400 text-xs pl-2 font-medium">{errors.startTime}</p>}
+                  <label
+                    htmlFor="startTime"
+                    className="block text-sm font-medium text-white/80"
+                  >
+                    Jam Mulai (24 jam)
+                  </label>
+                  <TimeInput
+                    id="startTime"
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleChange}
+                    error={errors.startTime}
+                  />
+                  {errors.startTime && (
+                    <p className="text-red-400 text-xs pl-2 font-medium">
+                      {errors.startTime}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1">
-                  <div className="relative group">
-                    <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 group-focus-within:text-cyan-400 transition" />
-                    <input
-                      type="time"
-                      name="endTime"
-                      value={formData.endTime}
-                      onChange={handleChange}
-                      className={`w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 backdrop-blur-xl text-white [color-scheme:dark] focus:outline-none focus:ring-2 transition-all border ${
-                        errors.endTime ? "border-red-500 focus:ring-red-500" : "border-white/20 focus:ring-cyan-400"
-                      }`}
-                    />
-                  </div>
-                  {errors.endTime && <p className="text-red-400 text-xs pl-2 font-medium">{errors.endTime}</p>}
+                  <label
+                    htmlFor="endTime"
+                    className="block text-sm font-medium text-white/80"
+                  >
+                    Jam Selesai (24 jam)
+                  </label>
+                  <TimeInput
+                    id="endTime"
+                    name="endTime"
+                    value={formData.endTime}
+                    onChange={handleChange}
+                    error={errors.endTime}
+                  />
+                  {errors.endTime && (
+                    <p className="text-red-400 text-xs pl-2 font-medium">
+                      {errors.endTime}
+                    </p>
+                  )}
                 </div>
               </div>
+
+              {/* Status ketersediaan */}
+              {checking && (
+                <p className="flex items-center gap-2 text-xs text-white/60">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Mengecek
+                  ketersediaan...
+                </p>
+              )}
+              {!checking && availability?.available === true && (
+                <p className="text-xs text-emerald-300">
+                  Ruangan tersedia pada waktu tersebut.
+                </p>
+              )}
+              {!checking && availability?.available === false && (
+                <p className="rounded-xl border border-red-400/30 bg-red-400/10 px-3 py-2 text-xs text-red-200">
+                  {availability.message ||
+                    "Ruangan tidak tersedia (bentrok dengan jadwal kuliah atau booking lain)."}
+                </p>
+              )}
 
               <div className="relative">
                 <FileText className="absolute left-4 top-4 w-4 h-4 text-white/70" />
@@ -450,7 +678,14 @@ export function BookingForm() {
                 whileTap={{ scale: 0.98 }}
                 whileHover={{ scale: 1.01 }}
                 type="submit"
-                disabled={isSubmitting || !!errors.date || !!errors.startTime || !!errors.endTime}
+                disabled={
+                  isSubmitting ||
+                  checking ||
+                  availability?.available === false ||
+                  !!errors.date ||
+                  !!errors.startTime ||
+                  !!errors.endTime
+                }
                 className="w-full py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-cyan-500 to-indigo-600 hover:opacity-90 transition-all shadow-lg shadow-cyan-500/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (

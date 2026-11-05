@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 import echo from "../lib/echo";
-import { clearApiCache } from "../api/api";
+import { clearApiCache } from "../../../../api/api";
 
 export function useRealtimeRooms({ setRooms }) {
   useEffect(() => {

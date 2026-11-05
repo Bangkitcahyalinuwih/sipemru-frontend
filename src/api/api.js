@@ -3,20 +3,36 @@ import axios from "axios";
 const requestCache = new Map();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
 
+// URL yang tidak boleh di-cache (data harus selalu terbaru)
+const NO_CACHE_PATTERNS = ["/qr/", "/bookings/my", "/admin/bookings"];
+
+// Endpoint auth: 401 di sini berarti kredensial salah, bukan sesi habis
+const AUTH_PATTERNS = ["/login", "/register"];
+
 export const clearApiCache = () => {
   requestCache.clear();
 };
 
+const isGet = (config) => config?.method?.toLowerCase() === "get";
+
+const matches = (url, patterns) =>
+  patterns.some((p) => (url || "").includes(p));
+
+const shouldCache = (config) =>
+  isGet(config) && !config.skipCache && !matches(config.url, NO_CACHE_PATTERNS);
+
+const getCacheKey = (config) =>
+  `${config.url}${JSON.stringify(config.params || {})}`;
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-
   headers: {
     Accept: "application/json",
   },
-
-  timeout: 10000,
+  timeout: 30000,
 });
 
+// REQUEST INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -25,24 +41,13 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    if (config.method?.toLowerCase() === "get") {
-      const cacheKey = `${config.url}${JSON.stringify(
-        config.params || {}
-      )}`;
+    if (shouldCache(config)) {
+      const cached = requestCache.get(getCacheKey(config));
 
-      const cachedData =
-        requestCache.get(cacheKey);
-
-      if (
-        cachedData &&
-        Date.now() - cachedData.timestamp <
-          CACHE_DURATION
-      ) {
+      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
         return Promise.reject({
           config,
-          response: {
-            data: cachedData.data,
-          },
+          response: { data: cached.data },
           isFromCache: true,
         });
       }
@@ -50,25 +55,22 @@ api.interceptors.request.use(
 
     return config;
   },
-
   (error) => Promise.reject(error)
 );
 
 // RESPONSE INTERCEPTOR
 api.interceptors.response.use(
   (response) => {
-    if (
-      response.config.method?.toLowerCase() ===
-      "get"
-    ) {
-      const cacheKey = `${response.config.url}${JSON.stringify(
-        response.config.params || {}
-      )}`;
-
-      requestCache.set(cacheKey, {
+    if (shouldCache(response.config)) {
+      requestCache.set(getCacheKey(response.config), {
         data: response.data,
         timestamp: Date.now(),
       });
+    }
+
+    // Data berubah (POST/PUT/PATCH/DELETE) -> cache lama tidak valid lagi
+    if (!isGet(response.config)) {
+      requestCache.clear();
     }
 
     return response;
@@ -85,24 +87,17 @@ api.interceptors.response.use(
       });
     }
 
-    const status =
-      error.response?.status;
+    const status = error.response?.status;
+    const url = error.config?.url;
 
-    if (status === 401) {
-      localStorage.removeItem(
-        "token"
-      );
+    // 401 pada endpoint selain login/register = token tidak valid/kedaluwarsa
+    if (status === 401 && !matches(url, AUTH_PATTERNS)) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      requestCache.clear();
 
-      localStorage.removeItem(
-        "user"
-      );
-
-      if (
-        window.location.pathname !==
-        "/login"
-      ) {
-        window.location.href =
-          "/login";
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login";
       }
     }
 

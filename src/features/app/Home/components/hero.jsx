@@ -10,6 +10,14 @@ export function Hero() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const [selectedDate, setSelectedDate] = useState(null);
+  const marqueeItems = [
+    "120+ Ruangan Tersedia",
+    "Booking Real-time",
+    "Auditorium & Lab Lengkap",
+    "Approval Otomatis",
+    "Akses 24/7",
+    "Seminar & Praktikum",
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -96,7 +104,9 @@ export function Hero() {
           >
             <div className="h-2 w-2 rounded-full bg-purple-400 animate-pulse" />
 
-            <span className="text-xs font-medium text-purple-300">Sistem Booking Terpadu</span>
+            <span className="text-xs font-medium text-purple-300">
+              Sistem Booking Terpadu
+            </span>
           </motion.div>
 
           <motion.div
@@ -126,7 +136,8 @@ export function Hero() {
             transition={{ delay: 0.2 }}
             className="mt-5 max-w-lg text-sm leading-relaxed text-gray-400 md:text-base"
           >
-            Temukan dan booking ruangan kampus untuk kegiatan akademik, seminar, workshop, atau rapat dengan sistem modern dan efisien.
+            Temukan dan booking ruangan kampus untuk kegiatan akademik, seminar,
+            workshop, atau rapat dengan sistem modern dan efisien.
           </motion.p>
 
           <motion.div
@@ -135,8 +146,15 @@ export function Hero() {
             transition={{ delay: 0.3 }}
             className="mt-8 grid grid-cols-3 gap-3"
           >
-            {[{ icon: Calendar, label: "Booking Real-time" }, { icon: Clock, label: "Booking Kapan Saja" }, { icon: MapPin, label: "Multi Ruangan" }].map((item, index) => (
-              <div key={index} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-xl">
+            {[
+              { icon: Calendar, label: "Booking Real-time" },
+              { icon: Clock, label: "Booking Kapan Saja" },
+              { icon: MapPin, label: "Multi Ruangan" },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-xl"
+              >
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.03] border border-white/10">
                   <item.icon className="h-4 w-4 text-purple-400" />
                 </div>
@@ -174,15 +192,26 @@ export function Hero() {
             transition={{ delay: 0.5 }}
             className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] py-3"
           >
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 px-6">
-              {["120+ Ruangan Tersedia", "Booking Real-time", "Auditorium & Lab Lengkap", "Approval Otomatis", "Akses 24/7", "Seminar & Praktikum"].map((item) => (
-                <div key={item} className="flex items-center gap-2 whitespace-nowrap">
-                  <div className="h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.8)]" />
+            {/* Fade kiri-kanan */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#020617] to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#020617] to-transparent" />
 
+            <motion.div
+              className="flex w-max"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 25, ease: "linear", repeat: Infinity }}
+            >
+              {/* Dua set identik agar loop tanpa putus */}
+              {[...marqueeItems, ...marqueeItems].map((item, i) => (
+                <div
+                  key={`${item}-${i}`}
+                  className="flex shrink-0 items-center gap-2 whitespace-nowrap px-4"
+                >
+                  <div className="h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.8)]" />
                   <span className="text-xs text-gray-300">{item}</span>
                 </div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
         </div>
 
@@ -192,9 +221,7 @@ export function Hero() {
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <motion.div
-            className="relative w-full max-w-[400px] overflow-hidden rounded-[32px] border border-white/10 bg-[#151020] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.45)]"
-          >
+          <motion.div className="relative w-full max-w-[400px] overflow-hidden rounded-[32px] border border-white/10 bg-[#151020] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.45)]">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-indigo-500/10" />
 
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent" />
@@ -209,25 +236,35 @@ export function Hero() {
               <div className="flex items-center gap-2 text-purple-300">
                 <Calendar className="h-4 w-4" />
 
-                <span className="text-xs font-semibold tracking-wide">{monthNames[month]} {year}</span>
+                <span className="text-xs font-semibold tracking-wide">
+                  {monthNames[month]} {year}
+                </span>
               </div>
             </div>
 
             <div className="relative mt-5 rounded-[28px] border border-white/10 bg-black/30 p-5">
               <div className="mb-5 flex items-start justify-between">
                 <div>
-                  <h3 className="text-sm font-semibold text-white">Booking Calendar</h3>
+                  <h3 className="text-sm font-semibold text-white">
+                    Booking Calendar
+                  </h3>
 
-                  <p className="mt-1 text-[11px] text-gray-500">Pilih tanggal tersedia</p>
+                  <p className="mt-1 text-[11px] text-gray-500">
+                    Pilih tanggal tersedia
+                  </p>
                 </div>
 
-                <div className="rounded-xl border border-purple-500/20 bg-purple-500/10 px-3 py-1.5 text-[10px] font-medium text-purple-300">Real-time</div>
+                <div className="rounded-xl border border-purple-500/20 bg-purple-500/10 px-3 py-1.5 text-[10px] font-medium text-purple-300">
+                  Real-time
+                </div>
               </div>
 
               <div className="grid grid-cols-7 gap-2 text-center text-[10px] font-medium text-gray-500">
-                {["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map((day) => (
-                  <span key={day}>{day}</span>
-                ))}
+                {["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map(
+                  (day) => (
+                    <span key={day}>{day}</span>
+                  ),
+                )}
               </div>
 
               <div className="mt-4 grid grid-cols-7 gap-2">
@@ -238,7 +275,8 @@ export function Hero() {
 
                   const isToday = isCurrentMonth && dateNumber === today;
 
-                  const hasBooking = dateNumber && [7, 14, 21].includes(dateNumber);
+                  const hasBooking =
+                    dateNumber && [7, 14, 21].includes(dateNumber);
 
                   if (dateNumber === null) {
                     return <div key={i} className="h-10" />;
@@ -262,14 +300,18 @@ export function Hero() {
                     >
                       {dateNumber}
 
-                      {hasBooking && !isSelected && <div className="absolute bottom-1 h-1 w-1 rounded-full bg-indigo-400" />}
+                      {hasBooking && !isSelected && (
+                        <div className="absolute bottom-1 h-1 w-1 rounded-full bg-indigo-400" />
+                      )}
                     </motion.button>
                   );
                 })}
               </div>
 
               <div className="mt-5 flex items-center justify-between">
-                <span className="text-[11px] text-gray-500">{daysInMonth} hari tersedia</span>
+                <span className="text-[11px] text-gray-500">
+                  {daysInMonth} hari tersedia
+                </span>
 
                 <div className="flex items-center gap-2 text-[11px] text-purple-300">
                   <div className="h-2 w-2 rounded-full bg-purple-400" />
@@ -286,7 +328,11 @@ export function Hero() {
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
 
-                  <span>{selectedDate ? `Booking ${selectedDate}` : "Pilih tanggal booking"}</span>
+                  <span>
+                    {selectedDate
+                      ? `Booking ${selectedDate}`
+                      : "Pilih tanggal booking"}
+                  </span>
                 </div>
 
                 <ArrowRight className="h-4 w-4" />

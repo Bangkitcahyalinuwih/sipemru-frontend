@@ -1,15 +1,20 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Mail, Lock, ArrowRight, ShieldCheck, UserCog } from "lucide-react";
-
-import Swal from "sweetalert2";
 
 import {
   loginUser,
   logoutUser,
 } from "../../../Admin/Users/service/UserService";
 import useAuthStore from "../../../../store/useAuthStore";
+
+const emptyErrors = {
+  email: "",
+  password: "",
+  general: "",
+  canReset: false,
+};
 
 const LoginAdminForm = () => {
   const navigate = useNavigate();
@@ -21,7 +26,10 @@ const LoginAdminForm = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState(emptyErrors);
+
+  // Link reset membawa email yang sedang diketik di form
+  const resetLink = `/forgot-password?email=${encodeURIComponent(form.email)}`;
 
   const handleChange = (e) => {
     setForm({
@@ -34,53 +42,26 @@ const LoginAdminForm = () => {
     e.preventDefault();
 
     setLoading(true);
-    setError("");
+    setFieldErrors(emptyErrors);
 
     try {
       const user = await loginUser(form.email, form.password);
 
       if (user.role !== "admin") {
         logoutUser();
-
-        Swal.fire({
-          icon: "error",
-          title: "Akses Ditolak",
-          text: "Akses hanya untuk admin",
-          background: "#0f172a",
-          color: "#fff",
-          confirmButtonColor: "#ef4444",
-        });
-
+        setFieldErrors({ ...emptyErrors, general: "Akses hanya untuk admin" });
         return;
       }
 
-      setAuth(user, user.token || "dummy-token");
+      setAuth(user, user.token || localStorage.getItem("token"));
 
-      Swal.fire({
-        icon: "success",
-        title: "Login Berhasil",
-        text: `Selamat datang Admin ${user.name}`,
-        timer: 1800,
-        showConfirmButton: false,
-        background: "#0f172a",
-        color: "#fff",
-      });
-
-      setTimeout(() => {
-        navigate("/admin/dashboard");
-      }, 1800);
+      navigate("/admin/dashboard");
     } catch (err) {
-      const message = err.message || "Login gagal";
-
-      setError(message);
-
-      Swal.fire({
-        icon: "error",
-        title: "Login Gagal",
-        text: message,
-        background: "#0f172a",
-        color: "#fff",
-        confirmButtonColor: "#ef4444",
+      setFieldErrors({
+        email: err.field === "email" ? err.message : "",
+        password: err.field === "password" ? err.message : "",
+        general: err.field ? "" : err.message || "Login gagal",
+        canReset: err.status === 401 || err.status === 400,
       });
     } finally {
       setLoading(false);
@@ -202,10 +183,28 @@ const LoginAdminForm = () => {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="admin@gmail.com"
-                    className="w-full rounded-xl border border-white/10 bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 backdrop-blur-xl outline-none transition-all focus:border-red-400/50 focus:bg-white/10 focus:ring-4 focus:ring-red-500/10"
+                    className={`w-full rounded-xl border bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 backdrop-blur-xl outline-none transition-all focus:bg-white/10 focus:ring-4 focus:ring-red-500/10 ${
+                      fieldErrors.email
+                        ? "border-red-500/60"
+                        : "border-white/10 focus:border-red-400/50"
+                    }`}
                     required
                   />
                 </div>
+
+                {fieldErrors.email && (
+                  <p className="mt-1.5 text-xs text-red-400">
+                    {fieldErrors.email}
+                    {fieldErrors.canReset && (
+                      <>
+                        {" "}
+                        <Link to={resetLink} className="font-semibold underline">
+                          Reset password
+                        </Link>
+                      </>
+                    )}
+                  </p>
+                )}
               </div>
 
               {/* Password */}
@@ -226,16 +225,37 @@ const LoginAdminForm = () => {
                     value={form.password}
                     onChange={handleChange}
                     placeholder="Masukkan password"
-                    className="w-full rounded-xl border border-white/10 bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 backdrop-blur-xl outline-none transition-all focus:border-red-400/50 focus:bg-white/10 focus:ring-4 focus:ring-red-500/10"
+                    className={`w-full rounded-xl border bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 backdrop-blur-xl outline-none transition-all focus:bg-white/10 focus:ring-4 focus:ring-red-500/10 ${
+                      fieldErrors.password
+                        ? "border-red-500/60"
+                        : "border-white/10 focus:border-red-400/50"
+                    }`}
                     required
                   />
                 </div>
+
+                {fieldErrors.password && (
+                  <p className="mt-1.5 text-xs text-red-400">
+                    {fieldErrors.password}{" "}
+                    <Link to={resetLink} className="font-semibold underline">
+                      Reset password
+                    </Link>
+                  </p>
+                )}
               </div>
 
-              {/* Error */}
-              {error && (
+              {/* Error umum */}
+              {fieldErrors.general && (
                 <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">
-                  {error}
+                  {fieldErrors.general}
+                  {fieldErrors.canReset && (
+                    <>
+                      {" "}
+                      <Link to={resetLink} className="font-semibold underline">
+                        Reset password
+                      </Link>
+                    </>
+                  )}
                 </div>
               )}
 

@@ -20,15 +20,21 @@ export default function Sidebar({ collapsed, active, onNavClick }) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         <ul className="flex flex-col gap-0.5">
-          {sidebarMenu.map((item, i) => {
-            // Section Header
-            if (item.section && !collapsed) {
+          {sidebarMenu.map((item, index) => {
+            if (item.section) {
               return (
-                <div key={i} className={`${i > 0 ? 'mt-6' : 'mt-0'} mb-3`}>
-                  <p className="text-[10px] text-slate-500 px-3 uppercase tracking-widest font-bold">
-                    {item.section}
-                  </p>
-                </div>
+                <li
+                  key={`section-${item.section}`}
+                  className={index > 0 ? "mt-6" : "mt-0"}
+                >
+                  {collapsed ? (
+                    <div className="my-2 border-t border-slate-800" />
+                  ) : (
+                    <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      {item.section}
+                    </p>
+                  )}
+                </li>
               );
             }
 
@@ -38,7 +44,10 @@ export default function Sidebar({ collapsed, active, onNavClick }) {
             return (
               <li key={item.key}>
                 <button
+                  type="button"
                   onClick={() => onNavClick(item.key)}
+                  title={collapsed ? item.label : undefined}
+                  aria-current={isActive ? "page" : undefined}
                   className={`
                     w-full flex items-center gap-3 px-3 py-2.5 rounded-lg
                     transition-all duration-200 font-medium text-sm
@@ -70,6 +79,8 @@ export default function Sidebar({ collapsed, active, onNavClick }) {
       {/* Settings Footer */}
       <div className="border-t border-slate-800/50 p-3">
         <button
+          type="button"
+          title={collapsed ? "Pengaturan" : undefined}
           className={`
             w-full flex items-center gap-3 px-3 py-2.5 rounded-lg
             transition-all duration-200 font-medium text-sm

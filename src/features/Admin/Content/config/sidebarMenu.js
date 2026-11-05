@@ -1,14 +1,8 @@
-import { label } from "framer-motion/client";
 import {
   LayoutDashboard,
-  Users,
-  Settings,
   Home,
-  Plus,
-  History,
   CalendarDays,
   LayoutTemplate,
-  Book,
   CalendarCheck,
 } from "lucide-react";
 
@@ -19,8 +13,8 @@ export const sidebarMenu = [
     icon: LayoutDashboard,
   },
   {
-    key:"building",
-    label:"Gedung",
+    key: "building",
+    label: "Gedung",
     icon: Home,
   },
   {
@@ -35,7 +29,7 @@ export const sidebarMenu = [
   },
   {
     key: "booking",
-    label: "Boooking",
+    label: "Booking",
     icon: CalendarCheck,
   },
   {

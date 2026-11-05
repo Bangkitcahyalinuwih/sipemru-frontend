@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 
 // ✅ UBAH DISINI: Ganti updateBooking menjadi approveBooking dan rejectBooking
@@ -13,35 +13,61 @@ const ApprovalBooking = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetchData();
+    let isActive = true;
+
+    const loadBookings = async () => {
+      try {
+        const data = await getBookings();
+        if (isActive) setBookings(data);
+      } catch {
+        if (isActive) Swal.fire("Error", "Gagal mengambil data", "error");
+      } finally {
+        if (isActive) setLoading(false);
+      }
+    };
+
+    loadBookings();
+    return () => {
+      isActive = false;
+    };
   }, []);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const data = await getBookings();
-      setBookings(data);
-    } catch (err) {
-      Swal.fire("Error", "Gagal mengambil data", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const pendingBookings = useMemo(() => {
-    return bookings.filter((item) => item.status === "pending");
+    return bookings.filter((item) => item.status?.toLowerCase() === "pending");
   }, [bookings]);
 
   const filtered = useMemo(() => {
     return pendingBookings.filter((item) => {
-      const keyword = search.toLowerCase();
+      const keyword = search.trim().toLowerCase();
+      const searchableValues = [
+        item.id,
+        item.room_name,
+        item.room?.name,
+        item.room?.room_name,
+        item.room?.building?.name,
+        item.user?.name,
+        item.user?.email,
+        item.user?.nim,
+        item.user?.student_id,
+        item.user_name,
+        item.user_email,
+        item.email,
+        item.nim,
+        item.pic_name,
+        item.pic_phone,
+        item.organization,
+        item.purpose,
+        item.jenis_peminjaman,
+        item.jumlah_peserta,
+        item.booking_date,
+        item.start_time,
+        item.end_time,
+      ]
+        .filter((value) => value !== null && value !== undefined)
+        .join(" ")
+        .toLowerCase();
 
-      return (
-        item.room_name?.toLowerCase().includes(keyword) ||
-        item.pic_name?.toLowerCase().includes(keyword) ||
-        item.organization?.toLowerCase().includes(keyword) ||
-        item.purpose?.toLowerCase().includes(keyword)
-      );
+      return searchableValues.includes(keyword);
     });
   }, [pendingBookings, search]);
 
@@ -64,7 +90,11 @@ const ApprovalBooking = () => {
 
       if (success) {
         Swal.fire("Success", `Booking berhasil di-${status}`, "success");
-        fetchData();
+        setBookings((currentBookings) =>
+          currentBookings.map((booking) =>
+            booking.id === id ? { ...booking, status } : booking
+          )
+        );
       } else {
         Swal.fire("Error", `Gagal melakukan ${status} booking`, "error");
       }

@@ -93,11 +93,11 @@ export const AdminLayout = () => {
   const getActiveMenu = () => {
     const path = location.pathname;
 
+    if (path.includes("approval")) return "approval";
     if (path.includes("rooms")) return "rooms";
     if (path.includes("building")) return "building";
     if (path.includes("schedule")) return "schedule";
     if (path.includes("booking")) return "booking";
-    if (path.includes("approval")) return "approval";
 
     return "dashboard";
   };
